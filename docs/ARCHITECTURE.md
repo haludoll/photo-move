@@ -67,23 +67,25 @@ PhotoMoveは、ドメイン駆動設計（DDD）に基づいて設計されたiO
 - CapacityAlert: 容量アラート
 
 ### 2.4 AssetTransferContext
-**概要**: アセット（写真・動画）の転送機能を提供するコンテキスト。送信・受信のAPIとビジネスロジックを実装。
+**概要**: アセット（写真・動画）の転送機能を提供するコンテキスト。送信・受信のAPIとビジネスロジックを実装。転送時の役割管理も担当。
 
 **主な責務**:
 - 転送APIの実装（送信/受信）
 - 転送進捗の管理
 - エラーハンドリング
 - 転送完了後の処理
+- 転送時の役割管理（Sender/Receiver）
 
-**役割別機能**:
-- **Primary**: アセット送信API利用
-- **Storage**: アセット受信API実装
+**転送役割**:
+- **Sender**: 写真を選択・送信する側（転送時の一時的な役割）
+- **Receiver**: 写真を受信・保存する側（転送時の一時的な役割）
 
 **主要な概念**:
 - TransferRequest: 転送リクエスト
 - TransferProgress: 進捗状態
 - TransferResult: 転送結果
 - AssetPackage: 転送データパッケージ
+- TransferRole: 転送時の役割（Sender/Receiver）
 
 **API定義**:
 ```
@@ -91,22 +93,6 @@ GET  /assets/:id        - アセットデータの取得
 POST /transfer/receive  - アセットの受信
 ```
 
-### 2.5 DeviceRoleContext
-**概要**: PhotoMoveアプリにおけるデバイスの役割（Primary/Storage）を管理するコンテキスト。アプリ全体の動作モードを決定する。
-
-**主な責務**:
-- デバイス役割の決定・保存
-- 役割の永続化
-- 役割切り替え機能
-- 役割に基づく機能の有効化
-
-**役割別機能**:
-- 役割に依存しない（役割を決定する側）
-
-**主要な概念**:
-- DeviceRole: Primary/Storage
-- RoleConfiguration: 役割設定
-- RoleTransition: 役割切り替え
 
 ## 3. アプリケーション基盤パッケージ
 
@@ -142,19 +128,18 @@ POST /transfer/receive  - アセットの受信
 
 ## 5. パッケージ構成
 
-**最終的な6つのパッケージ：**
+**最終的な5つのパッケージ：**
 1. **MediaLibraryContext** - 写真・動画の管理
 2. **NetworkConnectionContext** - 通信基盤とデバイス発見  
 3. **SystemMonitoringContext** - システム状態監視
-4. **AssetTransferContext** - アセット転送
-5. **DeviceRoleContext** - デバイス役割管理
-6. **AppFoundation** - アプリケーション基盤
+4. **AssetTransferContext** - アセット転送と転送時役割管理
+5. **AppFoundation** - アプリケーション基盤
+
 
 ## 6. 依存関係
 
 ```
-AppFoundation ──→ DeviceRoleContext
-    │        └→ MediaLibraryContext ──→ AssetTransferContext ──→ NetworkConnectionContext
+AppFoundation ──→ MediaLibraryContext ──→ AssetTransferContext ──→ NetworkConnectionContext
     │                                  
     └──────────→ SystemMonitoringContext
 ```
@@ -162,28 +147,27 @@ AppFoundation ──→ DeviceRoleContext
 ### 6.1 依存関係の詳細
 
 1. **NetworkConnectionContext**: 最下位層、他に依存しない（通信基盤とデバイス発見）
-2. **AssetTransferContext**: NetworkConnectionを利用してAPI実装
+2. **AssetTransferContext**: NetworkConnectionを利用してAPI実装、転送時役割管理も担当
 3. **MediaLibraryContext**: AssetTransferを利用して写真を送信・取得
 4. **SystemMonitoringContext**: 完全に独立
-5. **DeviceRoleContext**: 完全に独立
-6. **AppFoundation**: 各コンテキストを統合（最上位層）
+5. **AppFoundation**: 各コンテキストを統合（最上位層）
 
 ### 6.2 アプリケーション統合
 
 各コンテキストはそれぞれ独立した機能を提供し、AppFoundationで以下のように統合されます：
 
-1. AppFoundationがDeviceRoleContextでデバイスの役割を決定
-2. 役割に応じて各コンテキストの適切なViewを選択・表示
-3. 各コンテキストは役割に関わらず全機能を公開（AppFoundationが選択）
+1. AppFoundationがメイン画面を表示（共通UI）
+2. ユーザーの選択に応じて適切な機能を呼び出し
+3. AssetTransferContextで転送時の役割（Sender/Receiver）を動的に決定
 
-### 6.3 役割別インターフェース
+### 6.3 転送時の役割
 
-各コンテキストは役割（Primary/Storage）に応じた異なるインターフェースを提供しますが、コンテキスト自体は統一されています：
+転送時に動的に決定される役割：
 
-- **Primary役割**: 容量確保、写真選択、送信、リモート閲覧
-- **Storage役割**: 受信、保存、提供、容量管理
+- **Sender役割**: 写真を選択・送信する側（「写真を送る」選択時）
+- **Receiver役割**: 写真を受信・保存する側（「写真を受け取る」選択時）
 
-Presentation層で役割に応じたViewとViewModelを使い分けることで、適切な機能を利用します。
+各役割は転送セッション中のみ有効で、転送完了後は解除されます。
 
 ## 7. データフロー
 
@@ -234,3 +218,9 @@ Presentation層で役割に応じたViewとViewModelを使い分けることで�
 - PhotoOrganizationContext: 写真の整理・重複検出
 - BackupContext: 自動バックアップ機能
 - CloudSyncContext: クラウド連携（オプション）
+
+## 11. Architecture Decision Records (ADR)
+
+設計決定の詳細な経緯と背景については、以下のADRを参照してください：
+
+- [ADR-001: DeviceRoleContextの削除とシンプルな転送機能への回帰](/docs/adr/001-device-role-context-removal.md)
