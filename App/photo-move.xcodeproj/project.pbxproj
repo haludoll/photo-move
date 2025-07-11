@@ -6,63 +6,68 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		0C4409EC2E210A3B00FA56F2 /* AppFoundation in Frameworks */ = {isa = PBXBuildFile; productRef = 0C4409EB2E210A3B00FA56F2 /* AppFoundation */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXContainerItemProxy section */
-		0CA29E1E2E21040300401494 /* PBXContainerItemProxy */ = {
+		0CA29E5D2E21080100401494 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
-			containerPortal = 0CA29E082E21040100401494 /* Project object */;
+			containerPortal = 0CA29E472E2107FF00401494 /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = 0CA29E0F2E21040100401494;
-			remoteInfo = "photo-move-ios";
+			remoteGlobalIDString = 0CA29E4E2E2107FF00401494;
+			remoteInfo = "photo-move";
 		};
-		0CA29E282E21040300401494 /* PBXContainerItemProxy */ = {
+		0CA29E672E21080100401494 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
-			containerPortal = 0CA29E082E21040100401494 /* Project object */;
+			containerPortal = 0CA29E472E2107FF00401494 /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = 0CA29E0F2E21040100401494;
-			remoteInfo = "photo-move-ios";
+			remoteGlobalIDString = 0CA29E4E2E2107FF00401494;
+			remoteInfo = "photo-move";
 		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		0CA29E102E21040100401494 /* photo-move-ios.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "photo-move-ios.app"; sourceTree = BUILT_PRODUCTS_DIR; };
-		0CA29E1D2E21040300401494 /* photo-move-iosTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "photo-move-iosTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
-		0CA29E272E21040300401494 /* photo-move-iosUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "photo-move-iosUITests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
+		0CA29E4F2E2107FF00401494 /* photo-move.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "photo-move.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		0CA29E5C2E21080100401494 /* photo-moveTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "photo-moveTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
+		0CA29E662E21080100401494 /* photo-moveUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "photo-moveUITests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
-		0CA29E122E21040100401494 /* photo-move-ios */ = {
+		0CA29E512E2107FF00401494 /* photo-move */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
-			path = "photo-move-ios";
+			path = "photo-move";
 			sourceTree = "<group>";
 		};
-		0CA29E202E21040300401494 /* photo-move-iosTests */ = {
+		0CA29E5F2E21080100401494 /* photo-moveTests */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
-			path = "photo-move-iosTests";
+			path = "photo-moveTests";
 			sourceTree = "<group>";
 		};
-		0CA29E2A2E21040300401494 /* photo-move-iosUITests */ = {
+		0CA29E692E21080100401494 /* photo-moveUITests */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
-			path = "photo-move-iosUITests";
+			path = "photo-moveUITests";
 			sourceTree = "<group>";
 		};
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
-		0CA29E0D2E21040100401494 /* Frameworks */ = {
+		0CA29E4C2E2107FF00401494 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				0C4409EC2E210A3B00FA56F2 /* AppFoundation in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		0CA29E592E21080100401494 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		0CA29E1A2E21040300401494 /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		0CA29E242E21040300401494 /* Frameworks */ = {
+		0CA29E632E21080100401494 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -72,22 +77,22 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		0CA29E072E21040100401494 = {
+		0CA29E462E2107FF00401494 = {
 			isa = PBXGroup;
 			children = (
-				0CA29E122E21040100401494 /* photo-move-ios */,
-				0CA29E202E21040300401494 /* photo-move-iosTests */,
-				0CA29E2A2E21040300401494 /* photo-move-iosUITests */,
-				0CA29E112E21040100401494 /* Products */,
+				0CA29E512E2107FF00401494 /* photo-move */,
+				0CA29E5F2E21080100401494 /* photo-moveTests */,
+				0CA29E692E21080100401494 /* photo-moveUITests */,
+				0CA29E502E2107FF00401494 /* Products */,
 			);
 			sourceTree = "<group>";
 		};
-		0CA29E112E21040100401494 /* Products */ = {
+		0CA29E502E2107FF00401494 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				0CA29E102E21040100401494 /* photo-move-ios.app */,
-				0CA29E1D2E21040300401494 /* photo-move-iosTests.xctest */,
-				0CA29E272E21040300401494 /* photo-move-iosUITests.xctest */,
+				0CA29E4F2E2107FF00401494 /* photo-move.app */,
+				0CA29E5C2E21080100401494 /* photo-moveTests.xctest */,
+				0CA29E662E21080100401494 /* photo-moveUITests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -95,134 +100,138 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		0CA29E0F2E21040100401494 /* photo-move-ios */ = {
+		0CA29E4E2E2107FF00401494 /* photo-move */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 0CA29E312E21040300401494 /* Build configuration list for PBXNativeTarget "photo-move-ios" */;
+			buildConfigurationList = 0CA29E702E21080100401494 /* Build configuration list for PBXNativeTarget "photo-move" */;
 			buildPhases = (
-				0CA29E0C2E21040100401494 /* Sources */,
-				0CA29E0D2E21040100401494 /* Frameworks */,
-				0CA29E0E2E21040100401494 /* Resources */,
+				0CA29E4B2E2107FF00401494 /* Sources */,
+				0CA29E4C2E2107FF00401494 /* Frameworks */,
+				0CA29E4D2E2107FF00401494 /* Resources */,
 			);
 			buildRules = (
 			);
 			dependencies = (
 			);
 			fileSystemSynchronizedGroups = (
-				0CA29E122E21040100401494 /* photo-move-ios */,
+				0CA29E512E2107FF00401494 /* photo-move */,
 			);
-			name = "photo-move-ios";
+			name = "photo-move";
 			packageProductDependencies = (
+				0C4409EB2E210A3B00FA56F2 /* AppFoundation */,
 			);
-			productName = "photo-move-ios";
-			productReference = 0CA29E102E21040100401494 /* photo-move-ios.app */;
+			productName = "photo-move";
+			productReference = 0CA29E4F2E2107FF00401494 /* photo-move.app */;
 			productType = "com.apple.product-type.application";
 		};
-		0CA29E1C2E21040300401494 /* photo-move-iosTests */ = {
+		0CA29E5B2E21080100401494 /* photo-moveTests */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 0CA29E342E21040300401494 /* Build configuration list for PBXNativeTarget "photo-move-iosTests" */;
+			buildConfigurationList = 0CA29E732E21080100401494 /* Build configuration list for PBXNativeTarget "photo-moveTests" */;
 			buildPhases = (
-				0CA29E192E21040300401494 /* Sources */,
-				0CA29E1A2E21040300401494 /* Frameworks */,
-				0CA29E1B2E21040300401494 /* Resources */,
+				0CA29E582E21080100401494 /* Sources */,
+				0CA29E592E21080100401494 /* Frameworks */,
+				0CA29E5A2E21080100401494 /* Resources */,
 			);
 			buildRules = (
 			);
 			dependencies = (
-				0CA29E1F2E21040300401494 /* PBXTargetDependency */,
+				0CA29E5E2E21080100401494 /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
-				0CA29E202E21040300401494 /* photo-move-iosTests */,
+				0CA29E5F2E21080100401494 /* photo-moveTests */,
 			);
-			name = "photo-move-iosTests";
+			name = "photo-moveTests";
 			packageProductDependencies = (
 			);
-			productName = "photo-move-iosTests";
-			productReference = 0CA29E1D2E21040300401494 /* photo-move-iosTests.xctest */;
+			productName = "photo-moveTests";
+			productReference = 0CA29E5C2E21080100401494 /* photo-moveTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
-		0CA29E262E21040300401494 /* photo-move-iosUITests */ = {
+		0CA29E652E21080100401494 /* photo-moveUITests */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 0CA29E372E21040300401494 /* Build configuration list for PBXNativeTarget "photo-move-iosUITests" */;
+			buildConfigurationList = 0CA29E762E21080100401494 /* Build configuration list for PBXNativeTarget "photo-moveUITests" */;
 			buildPhases = (
-				0CA29E232E21040300401494 /* Sources */,
-				0CA29E242E21040300401494 /* Frameworks */,
-				0CA29E252E21040300401494 /* Resources */,
+				0CA29E622E21080100401494 /* Sources */,
+				0CA29E632E21080100401494 /* Frameworks */,
+				0CA29E642E21080100401494 /* Resources */,
 			);
 			buildRules = (
 			);
 			dependencies = (
-				0CA29E292E21040300401494 /* PBXTargetDependency */,
+				0CA29E682E21080100401494 /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
-				0CA29E2A2E21040300401494 /* photo-move-iosUITests */,
+				0CA29E692E21080100401494 /* photo-moveUITests */,
 			);
-			name = "photo-move-iosUITests";
+			name = "photo-moveUITests";
 			packageProductDependencies = (
 			);
-			productName = "photo-move-iosUITests";
-			productReference = 0CA29E272E21040300401494 /* photo-move-iosUITests.xctest */;
+			productName = "photo-moveUITests";
+			productReference = 0CA29E662E21080100401494 /* photo-moveUITests.xctest */;
 			productType = "com.apple.product-type.bundle.ui-testing";
 		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
-		0CA29E082E21040100401494 /* Project object */ = {
+		0CA29E472E2107FF00401494 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
 				BuildIndependentTargetsInParallel = 1;
 				LastSwiftUpdateCheck = 1630;
 				LastUpgradeCheck = 1630;
 				TargetAttributes = {
-					0CA29E0F2E21040100401494 = {
+					0CA29E4E2E2107FF00401494 = {
 						CreatedOnToolsVersion = 16.3;
 					};
-					0CA29E1C2E21040300401494 = {
+					0CA29E5B2E21080100401494 = {
 						CreatedOnToolsVersion = 16.3;
-						TestTargetID = 0CA29E0F2E21040100401494;
+						TestTargetID = 0CA29E4E2E2107FF00401494;
 					};
-					0CA29E262E21040300401494 = {
+					0CA29E652E21080100401494 = {
 						CreatedOnToolsVersion = 16.3;
-						TestTargetID = 0CA29E0F2E21040100401494;
+						TestTargetID = 0CA29E4E2E2107FF00401494;
 					};
 				};
 			};
-			buildConfigurationList = 0CA29E0B2E21040100401494 /* Build configuration list for PBXProject "photo-move-ios" */;
+			buildConfigurationList = 0CA29E4A2E2107FF00401494 /* Build configuration list for PBXProject "photo-move" */;
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
 				en,
 				Base,
 			);
-			mainGroup = 0CA29E072E21040100401494;
+			mainGroup = 0CA29E462E2107FF00401494;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				0C4409EA2E210A3B00FA56F2 /* XCLocalSwiftPackageReference "../AppFoundation" */,
+			);
 			preferredProjectObjectVersion = 77;
-			productRefGroup = 0CA29E112E21040100401494 /* Products */;
+			productRefGroup = 0CA29E502E2107FF00401494 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				0CA29E0F2E21040100401494 /* photo-move-ios */,
-				0CA29E1C2E21040300401494 /* photo-move-iosTests */,
-				0CA29E262E21040300401494 /* photo-move-iosUITests */,
+				0CA29E4E2E2107FF00401494 /* photo-move */,
+				0CA29E5B2E21080100401494 /* photo-moveTests */,
+				0CA29E652E21080100401494 /* photo-moveUITests */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
-		0CA29E0E2E21040100401494 /* Resources */ = {
+		0CA29E4D2E2107FF00401494 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		0CA29E1B2E21040300401494 /* Resources */ = {
+		0CA29E5A2E21080100401494 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		0CA29E252E21040300401494 /* Resources */ = {
+		0CA29E642E21080100401494 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -232,21 +241,21 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
-		0CA29E0C2E21040100401494 /* Sources */ = {
+		0CA29E4B2E2107FF00401494 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		0CA29E192E21040300401494 /* Sources */ = {
+		0CA29E582E21080100401494 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		0CA29E232E21040300401494 /* Sources */ = {
+		0CA29E622E21080100401494 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -256,20 +265,20 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
-		0CA29E1F2E21040300401494 /* PBXTargetDependency */ = {
+		0CA29E5E2E21080100401494 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 0CA29E0F2E21040100401494 /* photo-move-ios */;
-			targetProxy = 0CA29E1E2E21040300401494 /* PBXContainerItemProxy */;
+			target = 0CA29E4E2E2107FF00401494 /* photo-move */;
+			targetProxy = 0CA29E5D2E21080100401494 /* PBXContainerItemProxy */;
 		};
-		0CA29E292E21040300401494 /* PBXTargetDependency */ = {
+		0CA29E682E21080100401494 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 0CA29E0F2E21040100401494 /* photo-move-ios */;
-			targetProxy = 0CA29E282E21040300401494 /* PBXContainerItemProxy */;
+			target = 0CA29E4E2E2107FF00401494 /* photo-move */;
+			targetProxy = 0CA29E672E21080100401494 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
-		0CA29E2F2E21040300401494 /* Debug */ = {
+		0CA29E6E2E21080100401494 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -333,7 +342,7 @@
 			};
 			name = Debug;
 		};
-		0CA29E302E21040300401494 /* Release */ = {
+		0CA29E6F2E21080100401494 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -390,7 +399,7 @@
 			};
 			name = Release;
 		};
-		0CA29E322E21040300401494 /* Debug */ = {
+		0CA29E712E21080100401494 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
@@ -405,12 +414,13 @@
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = "com.haludoll.photo-move-ios";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.haludoll.photo-move";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
@@ -418,7 +428,7 @@
 			};
 			name = Debug;
 		};
-		0CA29E332E21040300401494 /* Release */ = {
+		0CA29E722E21080100401494 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
@@ -433,12 +443,13 @@
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = "com.haludoll.photo-move-ios";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.haludoll.photo-move";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
@@ -446,7 +457,7 @@
 			};
 			name = Release;
 		};
-		0CA29E352E21040300401494 /* Debug */ = {
+		0CA29E742E21080100401494 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
@@ -456,16 +467,16 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 18.4;
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = "com.haludoll.photo-move-iosTests";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.haludoll.photo-moveTests";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = NO;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/photo-move-ios.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/photo-move-ios";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/photo-move.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/photo-move";
 			};
 			name = Debug;
 		};
-		0CA29E362E21040300401494 /* Release */ = {
+		0CA29E752E21080100401494 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
@@ -475,16 +486,16 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 18.4;
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = "com.haludoll.photo-move-iosTests";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.haludoll.photo-moveTests";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = NO;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/photo-move-ios.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/photo-move-ios";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/photo-move.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/photo-move";
 			};
 			name = Release;
 		};
-		0CA29E382E21040300401494 /* Debug */ = {
+		0CA29E772E21080100401494 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
@@ -492,16 +503,16 @@
 				DEVELOPMENT_TEAM = U2W9UR892A;
 				GENERATE_INFOPLIST_FILE = YES;
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = "com.haludoll.photo-move-iosUITests";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.haludoll.photo-moveUITests";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = NO;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_TARGET_NAME = "photo-move-ios";
+				TEST_TARGET_NAME = "photo-move";
 			};
 			name = Debug;
 		};
-		0CA29E392E21040300401494 /* Release */ = {
+		0CA29E782E21080100401494 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
@@ -509,55 +520,69 @@
 				DEVELOPMENT_TEAM = U2W9UR892A;
 				GENERATE_INFOPLIST_FILE = YES;
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = "com.haludoll.photo-move-iosUITests";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.haludoll.photo-moveUITests";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = NO;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_TARGET_NAME = "photo-move-ios";
+				TEST_TARGET_NAME = "photo-move";
 			};
 			name = Release;
 		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		0CA29E0B2E21040100401494 /* Build configuration list for PBXProject "photo-move-ios" */ = {
+		0CA29E4A2E2107FF00401494 /* Build configuration list for PBXProject "photo-move" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				0CA29E2F2E21040300401494 /* Debug */,
-				0CA29E302E21040300401494 /* Release */,
+				0CA29E6E2E21080100401494 /* Debug */,
+				0CA29E6F2E21080100401494 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		0CA29E312E21040300401494 /* Build configuration list for PBXNativeTarget "photo-move-ios" */ = {
+		0CA29E702E21080100401494 /* Build configuration list for PBXNativeTarget "photo-move" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				0CA29E322E21040300401494 /* Debug */,
-				0CA29E332E21040300401494 /* Release */,
+				0CA29E712E21080100401494 /* Debug */,
+				0CA29E722E21080100401494 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		0CA29E342E21040300401494 /* Build configuration list for PBXNativeTarget "photo-move-iosTests" */ = {
+		0CA29E732E21080100401494 /* Build configuration list for PBXNativeTarget "photo-moveTests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				0CA29E352E21040300401494 /* Debug */,
-				0CA29E362E21040300401494 /* Release */,
+				0CA29E742E21080100401494 /* Debug */,
+				0CA29E752E21080100401494 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		0CA29E372E21040300401494 /* Build configuration list for PBXNativeTarget "photo-move-iosUITests" */ = {
+		0CA29E762E21080100401494 /* Build configuration list for PBXNativeTarget "photo-moveUITests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				0CA29E382E21040300401494 /* Debug */,
-				0CA29E392E21040300401494 /* Release */,
+				0CA29E772E21080100401494 /* Debug */,
+				0CA29E782E21080100401494 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCLocalSwiftPackageReference section */
+		0C4409EA2E210A3B00FA56F2 /* XCLocalSwiftPackageReference "../AppFoundation" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ../AppFoundation;
+		};
+/* End XCLocalSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		0C4409EB2E210A3B00FA56F2 /* AppFoundation */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = AppFoundation;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
-	rootObject = 0CA29E082E21040100401494 /* Project object */;
+	rootObject = 0CA29E472E2107FF00401494 /* Project object */;
 }
