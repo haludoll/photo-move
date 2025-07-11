@@ -1,6 +1,6 @@
 //
 //  ContentView.swift
-//  photo-move-ios
+//  photo-move
 //
 //  Created by haludoll on 2025/07/11.
 //

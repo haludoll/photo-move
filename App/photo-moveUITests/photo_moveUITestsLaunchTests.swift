@@ -1,13 +1,13 @@
 //
-//  photo_move_iosUITestsLaunchTests.swift
-//  photo-move-iosUITests
+//  photo_moveUITestsLaunchTests.swift
+//  photo-moveUITests
 //
 //  Created by haludoll on 2025/07/11.
 //
 
 import XCTest
 
-final class photo_move_iosUITestsLaunchTests: XCTestCase {
+final class photo_moveUITestsLaunchTests: XCTestCase {
 
     override class var runsForEachTargetApplicationUIConfiguration: Bool {
         true

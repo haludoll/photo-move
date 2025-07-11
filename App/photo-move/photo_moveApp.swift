@@ -1,6 +1,6 @@
 //
-//  photo_move_iosApp.swift
-//  photo-move-ios
+//  photo_moveApp.swift
+//  photo-move
 //
 //  Created by haludoll on 2025/07/11.
 //
@@ -8,7 +8,7 @@
 import SwiftUI
 
 @main
-struct photo_move_iosApp: App {
+struct photo_moveApp: App {
     var body: some Scene {
         WindowGroup {
             ContentView()
