@@ -5,7 +5,8 @@
       "Bash(git push:*)",
       "mcp__github__get_me",
       "Bash(gh auth:*)",
-      "mcp__github__create_issue"
+      "mcp__github__create_issue",
+      "Bash(git checkout:*)"
     ],
     "deny": []
   }
