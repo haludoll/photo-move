@@ -6,6 +6,10 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		0C4409EC2E210A3B00FA56F2 /* AppFoundation in Frameworks */ = {isa = PBXBuildFile; productRef = 0C4409EB2E210A3B00FA56F2 /* AppFoundation */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXContainerItemProxy section */
 		0CA29E5D2E21080100401494 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -52,6 +56,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				0C4409EC2E210A3B00FA56F2 /* AppFoundation in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -112,6 +117,7 @@
 			);
 			name = "photo-move";
 			packageProductDependencies = (
+				0C4409EB2E210A3B00FA56F2 /* AppFoundation */,
 			);
 			productName = "photo-move";
 			productReference = 0CA29E4F2E2107FF00401494 /* photo-move.app */;
@@ -196,6 +202,7 @@
 			mainGroup = 0CA29E462E2107FF00401494;
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
+				0C4409EA2E210A3B00FA56F2 /* XCLocalSwiftPackageReference "../AppFoundation" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 0CA29E502E2107FF00401494 /* Products */;
@@ -407,6 +414,7 @@
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -435,6 +443,7 @@
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -560,6 +569,20 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCLocalSwiftPackageReference section */
+		0C4409EA2E210A3B00FA56F2 /* XCLocalSwiftPackageReference "../AppFoundation" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ../AppFoundation;
+		};
+/* End XCLocalSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		0C4409EB2E210A3B00FA56F2 /* AppFoundation */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = AppFoundation;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 0CA29E472E2107FF00401494 /* Project object */;
 }
