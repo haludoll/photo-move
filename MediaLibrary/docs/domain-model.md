@@ -6,346 +6,133 @@ MediaLibraryContextのドメインモデルを、ドメイン駆動設計の原�
 
 ## エンティティ (Entities)
 
-### Media
-写真・動画を表現するルートエンティティ
+### Media（メディア）
+写真または動画を表現する中心的な概念
 
-```swift
-struct Media {
-    let id: MediaID
-    let type: MediaType
-    let filePath: String
-    let metadata: MediaMetadata
-    let createdAt: Date
-    let modifiedAt: Date
-}
-```
+**構成要素:**
+- **識別子**: 各メディアを一意に特定するID
+- **種類**: 写真または動画
+- **ファイルパス**: デバイス内での保存場所
+- **メタデータ**: 撮影日時、サイズ、場所などの詳細情報
 
-**特徴**:
+**特徴:**
 - 一意の識別子を持つ
-- 不変オブジェクト
-- ファイルシステムとの連携を抽象化
+- 一度作成されると変更されない
 
 ## 値オブジェクト (Value Objects)
 
-### MediaID
-メディアの一意識別子
+### MediaID（メディア識別子）
+メディアを一意に識別するための値
 
-```swift
-struct MediaID {
-    let value: String
-    
-    init(_ value: String) throws {
-        guard !value.isEmpty else {
-            throw MediaError.invalidID
-        }
-        self.value = value
-    }
-}
-```
+**構成要素:**
+- **値**: 文字列形式の識別子
 
-### MediaType
+**制約:**
+- 空の値は許可されない
+
+### MediaType（メディア種類）
 メディアの種類を表現
 
-```swift
-enum MediaType: String, CaseIterable {
-    case photo = "photo"
-    case video = "video"
-}
-```
+**値:**
+- **写真**: 静止画像
+- **動画**: 映像ファイル
 
-### MediaMetadata
-メディアのメタデータを表現
+### MediaMetadata（メディアメタデータ）
+メディアに関連する基本情報
 
-```swift
-struct MediaMetadata {
-    let fileSize: FileSize
-    let resolution: Resolution?
-    let location: GeographicLocation?
-    let format: MediaFormat
-}
-```
+**構成要素:**
+- **ファイル形式**: JPEG、MP4等の形式
+- **撮影日時**: いつ撮影されたか
 
-### FileSize
-ファイルサイズを表現
+### MediaFormat（メディア形式）
+ファイルの形式を表現
 
-```swift
-struct FileSize {
-    let bytes: Int64
-    
-    var megabytes: Double {
-        return Double(bytes) / 1_048_576
-    }
-}
-```
+**写真形式:**
+- JPEG: 標準的な写真形式
+- PNG: 透明度を持つ画像形式
+- HEIC: iOS標準の高効率形式
 
-### Resolution
-解像度を表現
+**動画形式:**
+- MP4: 標準的な動画形式
+- MOV: Apple標準の動画形式
 
-```swift
-struct Resolution {
-    let width: Int
-    let height: Int
-    
-    var aspectRatio: Double {
-        return Double(width) / Double(height)
-    }
-}
-```
+### Thumbnail（サムネイル）
+一覧表示のためのメディア縮小画像
 
-### GeographicLocation
-地理的位置を表現
-
-```swift
-struct GeographicLocation {
-    let latitude: Double
-    let longitude: Double
-    let altitude: Double?
-}
-```
-
-### MediaFormat
-メディアフォーマットを表現
-
-```swift
-enum MediaFormat: String, CaseIterable {
-    // 写真フォーマット
-    case jpeg = "jpeg"
-    case png = "png"
-    case heic = "heic"
-    
-    // 動画フォーマット
-    case mp4 = "mp4"
-    case mov = "mov"
-    case avi = "avi"
-    
-    var isPhotoFormat: Bool {
-        return [.jpeg, .png, .heic].contains(self)
-    }
-    
-    var isVideoFormat: Bool {
-        return [.mp4, .mov, .avi].contains(self)
-    }
-}
-```
-
-### Thumbnail
-サムネイルを表現
-
-```swift
-struct Thumbnail {
-    let mediaID: MediaID
-    let imageData: Data
-    let size: ThumbnailSize
-    let createdAt: Date
-}
-```
-
-### ThumbnailSize
-サムネイルサイズを表現
-
-```swift
-enum ThumbnailSize {
-    case small  // 50x50
-    case medium // 150x150
-    case large  // 300x300
-    
-    var dimensions: (width: Int, height: Int) {
-        switch self {
-        case .small: return (50, 50)
-        case .medium: return (150, 150)
-        case .large: return (300, 300)
-        }
-    }
-}
-```
+**構成要素:**
+- **対象メディア**: 元となるメディアの識別子
+- **画像データ**: 縮小された画像
 
 ## 集約 (Aggregates)
 
-### MediaLibrary
-メディアライブラリ全体を管理する集約ルート
+### MediaLibrary（メディアライブラリ）
+デバイスのメディアライブラリ全体を管理する中心的な概念
 
-```swift
-class MediaLibrary {
-    private var mediaItems: [Media] = []
-    private var selection: MediaSelection
-    private var currentFilter: MediaFilter?
-    
-    // メディア管理
-    func addMedia(_ media: Media)
-    func removeMedia(id: MediaID)
-    func getAllMedia() -> [Media]
-    func getMedia(id: MediaID) -> Media?
-    
-    // フィルタリング
-    func applyFilter(_ filter: MediaFilter) -> [Media]
-    func clearFilter()
-    
-    // 選択機能
-    func selectMedia(id: MediaID) throws
-    func deselectMedia(id: MediaID)
-    func getSelectedMedia() -> [Media]
-    func clearSelection()
-    
-    // 検索
-    func searchMedia(query: String) -> [Media]
-}
-```
+**管理する要素:**
+- **メディア一覧**: デバイスに保存されているすべてのメディア
 
-### MediaSelection
-メディアの選択状態を管理
-
-```swift
-struct MediaSelection {
-    private var selectedIDs: Set<MediaID> = []
-    let maxSelectionCount: Int?
-    
-    mutating func select(id: MediaID) throws
-    mutating func deselect(id: MediaID)
-    mutating func selectAll(ids: [MediaID]) throws
-    mutating func clear()
-    
-    func isSelected(id: MediaID) -> Bool
-    var selectedCount: Int { selectedIDs.count }
-    func canSelect(id: MediaID) -> Bool
-}
-```
-
-### MediaFilter
-フィルタリング条件を表現
-
-```swift
-struct MediaFilter {
-    let dateRange: DateRange?
-    let mediaTypes: Set<MediaType>
-    let fileSizeRange: FileSizeRange?
-    let hasLocation: Bool?
-    
-    func matches(_ media: Media) -> Bool
-}
-```
-
-### DateRange
-日付範囲を表現
-
-```swift
-struct DateRange {
-    let start: Date
-    let end: Date
-    
-    func contains(_ date: Date) -> Bool {
-        return date >= start && date <= end
-    }
-}
-```
-
-### FileSizeRange
-ファイルサイズ範囲を表現
-
-```swift
-struct FileSizeRange {
-    let min: FileSize
-    let max: FileSize
-    
-    func contains(_ size: FileSize) -> Bool {
-        return size.bytes >= min.bytes && size.bytes <= max.bytes
-    }
-}
-```
+**提供する機能:**
+- **メディア取得**: デバイスからメディア一覧を取得
+- **メディア表示**: 取得したメディアを一覧で表示
 
 ## ドメインサービス (Domain Services)
 
-### MediaLibraryService
-メディアライブラリの複合操作を担当
+### MediaLibraryService（メディアライブラリサービス）
+メディアライブラリの操作を担当
 
-```swift
-protocol MediaLibraryService {
-    func loadAllMedia() async throws -> [Media]
-    func searchMedia(query: String, filter: MediaFilter?) async throws -> [Media]
-    func exportSelectedMedia() async throws -> [Media]
-}
-```
+**提供する機能:**
+- **メディア読み込み**: デバイスからすべてのメディアを取得
 
-### ThumbnailService
+### ThumbnailService（サムネイルサービス）
 サムネイル生成・管理を担当
 
-```swift
-protocol ThumbnailService {
-    func generateThumbnail(for media: Media, size: ThumbnailSize) async throws -> Thumbnail
-    func getCachedThumbnail(for mediaID: MediaID, size: ThumbnailSize) -> Thumbnail?
-    func clearExpiredThumbnails() async
-}
-```
+**提供する機能:**
+- **サムネイル生成**: メディアから一覧表示用のサムネイルを作成
+- **キャッシュ取得**: 既に生成されたサムネイルを取得
 
 ## リポジトリインターフェース (Repository Interfaces)
 
-### MediaRepository
-メディアデータの永続化を抽象化
+### MediaRepository（メディアリポジトリ）
+メディアデータの取得を担当
 
-```swift
-protocol MediaRepository {
-    func findAll() async throws -> [Media]
-    func findByID(_ id: MediaID) async throws -> Media?
-    func findByFilter(_ filter: MediaFilter) async throws -> [Media]
-    func search(query: String) async throws -> [Media]
-    func save(_ media: Media) async throws
-    func delete(id: MediaID) async throws
-}
-```
+**提供する機能:**
+- **全メディア取得**: デバイスからすべてのメディアを取得
 
-### ThumbnailRepository
-サムネイルデータの永続化を抽象化
+### ThumbnailRepository（サムネイルリポジトリ）
+サムネイルデータの保存・取得を担当
 
-```swift
-protocol ThumbnailRepository {
-    func findByMediaID(_ mediaID: MediaID, size: ThumbnailSize) async throws -> Thumbnail?
-    func save(_ thumbnail: Thumbnail) async throws
-    func delete(mediaID: MediaID) async throws
-    func deleteExpired() async throws
-}
-```
+**提供する機能:**
+- **サムネイル取得**: メディアに基づくサムネイル取得
+- **サムネイル保存**: 生成されたサムネイルの保存
 
 ## ドメインエラー
 
-### MediaError
-メディア関連のエラーを表現
+### MediaError（メディアエラー）
+メディア関連のエラー
 
-```swift
-enum MediaError: Error {
-    case invalidID
-    case mediaNotFound(MediaID)
-    case unsupportedFormat(String)
-    case fileSizeExceedsLimit(FileSize)
-    case selectionLimitExceeded(Int)
-    case thumbnailGenerationFailed
-    case invalidFilter
-}
-```
+**エラー種類:**
+- **無効な識別子**: 空または不正な識別子
+- **メディア未発見**: 指定されたメディアが見つからない
+- **未対応形式**: サポートされていないファイル形式
+- **サムネイル生成失敗**: サムネイル作成に失敗
+- **メディア読み込み失敗**: デバイスからのメディア取得に失敗
 
 ## 集約の境界
 
 ```
-MediaLibrary (集約ルート)
-├── Media (エンティティ)
-├── MediaSelection (値オブジェクト)
-├── MediaFilter (値オブジェクト)
-└── Thumbnail (値オブジェクト)
+MediaLibrary（メディアライブラリ集約）
+├── Media（メディア）
+└── Thumbnail（サムネイル）
 ```
 
 ## 不変条件
 
-### MediaLibrary集約
-- 選択されたメディアは必ず存在するメディアでなければならない
-- 選択数は設定された上限を超えてはならない
-- フィルター適用後も選択状態は保持される
+### MediaLibrary集約の不変条件
+- **メディア一意性**: 同じメディアが重複して存在しない
 
-### Media エンティティ
-- IDは一意でなければならない
-- ファイルパスは有効なパスでなければならない
-
-### MediaSelection
-- 選択されたIDは重複してはならない
-- 選択数は0以上でなければならない
-- 上限が設定されている場合は超過してはならない
+### Media エンティティの不変条件
+- **識別子の一意性**: メディアIDは一意である
+- **ファイルパスの有効性**: ファイルパスは有効な形式である
 
 ## 基本的なビジネスルール（暫定）
 
@@ -353,21 +140,13 @@ MediaLibrary (集約ルート)
 
 ### メディア管理
 - メディアは一意の識別子を持つ
-- メディアは作成日時を基準にソートされる
-
-### 選択機能
-- 選択は一時的な状態である
-- 選択可能な上限数は設定可能
-
-### フィルタリング
-- 複数のフィルター条件はAND条件で適用される
+- メディアは撮影日時を基準にソートされる
 
 ### サムネイル
-- サムネイルは必要に応じて生成される
+- サムネイルは一覧表示時に生成される
 - サムネイルはキャッシュされる
 
 ## 他のコンテキストとの関係
 
 ### AssetTransferContext
-- MediaSelectionで選択されたメディアを転送対象として提供
-- 選択されたメディアのリストを転送コンテキストに渡す
+- 将来的に、選択されたメディアを転送対象として提供する予定
