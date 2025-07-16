@@ -104,6 +104,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 0CA29E702E21080100401494 /* Build configuration list for PBXNativeTarget "photo-move" */;
 			buildPhases = (
+				0C86E8242E28326F003CE59D /* ShellScript */,
 				0CA29E4B2E2107FF00401494 /* Sources */,
 				0CA29E4C2E2107FF00401494 /* Frameworks */,
 				0CA29E4D2E2107FF00401494 /* Resources */,
@@ -239,6 +240,27 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		0C86E8242E28326F003CE59D /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "if [ -f \"${SRCROOT}/../Scripts/xcode-swiftformat.sh\" ]; then\n    \"${SRCROOT}/../Scripts/xcode-swiftformat.sh\"\nfi\n";
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		0CA29E4B2E2107FF00401494 /* Sources */ = {
