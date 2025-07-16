@@ -6,6 +6,7 @@
 //
 
 import Testing
+
 @testable import photo_move
 
 struct photo_moveTests {
