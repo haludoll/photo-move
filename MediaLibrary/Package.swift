@@ -7,7 +7,7 @@ let package = Package(
     name: "MediaLibrary",
     platforms: [
         .iOS(.v15),
-        .macOS(.v10_15)
+        .macOS(.v10_15) // Required by swift-dependencies, but only iOS is actually used
     ],
     products: [
         .library(name: "Presentation", targets: ["Presentation"]),
