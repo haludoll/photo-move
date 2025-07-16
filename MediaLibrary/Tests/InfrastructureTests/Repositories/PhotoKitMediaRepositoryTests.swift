@@ -3,6 +3,7 @@ import Photos
 @testable import Infrastructure
 @testable import Domain
 
+#if os(iOS)
 /// PhotoKitMediaRepositoryのテスト
 final class PhotoKitMediaRepositoryTests: XCTestCase {
     
@@ -62,3 +63,5 @@ final class PhotoKitMediaRepositoryTests: XCTestCase {
         XCTAssertTrue(true) // プレースホルダー
     }
 }
+
+#endif

@@ -2,12 +2,11 @@ import Foundation
 import Photos
 import Domain
 
-#if canImport(UIKit)
+#if os(iOS)
 import UIKit
-#endif
 
 /// PhotoKitを使用したMediaRepositoryの実装
-@available(iOS 15.0, macOS 12.0, *)
+@available(iOS 15.0, *)
 package final class PhotoKitMediaRepository: MediaRepository {
     
     // MARK: - Public Methods
@@ -126,21 +125,15 @@ package final class PhotoKitMediaRepository: MediaRepository {
                 }
                 
                 // UIImageをData形式に変換
-                #if canImport(UIKit)
                 guard let imageData = image.jpegData(compressionQuality: 0.8) else {
                     continuation.resume(throwing: MediaError.thumbnailGenerationFailed)
                     return
                 }
-                #else
-                // macOSテスト環境では代替実装
-                guard let imageData = "mock-image-data".data(using: .utf8) else {
-                    continuation.resume(throwing: MediaError.thumbnailGenerationFailed)
-                    return
-                }
-                #endif
                 
                 continuation.resume(returning: imageData)
             }
         }
     }
 }
+
+#endif
