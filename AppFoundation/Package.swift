@@ -10,7 +10,7 @@ let package = Package(
         // Products define the executables and libraries a package produces, making them visible to other packages.
         .library(
             name: "AppFoundation",
-            targets: ["AppFoundation"]),
+            targets: ["AppFoundation"])
     ],
     targets: [
         // Targets are the basic building blocks of a package, defining a module or a test suite.
@@ -19,7 +19,5 @@ let package = Package(
             name: "AppFoundation"),
         .testTarget(
             name: "AppFoundationTests",
-            dependencies: ["AppFoundation"]
-        ),
-    ]
-)
+            dependencies: ["AppFoundation"])
+    ])
