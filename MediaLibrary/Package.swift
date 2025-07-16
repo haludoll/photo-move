@@ -6,16 +6,19 @@ import PackageDescription
 let package = Package(
     name: "MediaLibrary",
     platforms: [
-        .iOS(.v15)
+        .iOS(.v15),
+        .macOS(.v10_15)
     ],
     products: [
         .library(name: "Presentation", targets: ["Presentation"]),
         .library(name: "Application", targets: ["Application"]),
         .library(name: "Domain", targets: ["Domain"]),
         .library(name: "Infrastructure", targets: ["Infrastructure"]),
+        .library(name: "DependencyInjection", targets: ["DependencyInjection"]),
     ],
     dependencies: [
-        .package(url: "https://github.com/swiftlang/swift-format", from: "509.0.0")
+        .package(url: "https://github.com/swiftlang/swift-format", from: "509.0.0"),
+        .package(url: "https://github.com/pointfreeco/swift-dependencies", from: "1.0.0")
     ],
     targets: [
         // Presentation Layer
@@ -24,13 +27,17 @@ let package = Package(
             dependencies: [
                 "Application",
                 "Domain",
+                "DependencyInjection",
+                .product(name: "Dependencies", package: "swift-dependencies"),
             ]),
 
         // Application Layer
         .target(
             name: "Application",
             dependencies: [
-                "Domain"
+                "Domain",
+                "DependencyInjection",
+                .product(name: "Dependencies", package: "swift-dependencies"),
             ]),
 
         // Domain Layer
@@ -42,6 +49,15 @@ let package = Package(
             name: "Infrastructure",
             dependencies: [
                 "Domain"
+            ]),
+
+        // DependencyInjection Layer
+        .target(
+            name: "DependencyInjection",
+            dependencies: [
+                "Domain",
+                "Infrastructure",
+                .product(name: "Dependencies", package: "swift-dependencies"),
             ]),
 
         // Tests
@@ -66,5 +82,13 @@ let package = Package(
                 "Presentation",
                 "Application",
                 "Domain",
+                "DependencyInjection",
+            ]),
+        .testTarget(
+            name: "DependencyInjectionTests",
+            dependencies: [
+                "DependencyInjection",
+                "Domain",
+                "Infrastructure",
             ]),
     ])

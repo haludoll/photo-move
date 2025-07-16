@@ -7,7 +7,7 @@ import UIKit
 
 /// PhotoKitを使用したMediaRepositoryの実装
 @available(iOS 15.0, *)
-package final class PhotoKitMediaRepository: MediaRepository {
+package final class PhotoKitMediaRepository: MediaRepository, @unchecked Sendable {
     
     // MARK: - Public Methods
     

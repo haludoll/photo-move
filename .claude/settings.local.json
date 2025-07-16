@@ -16,7 +16,8 @@
       "Bash(chmod:*)",
       "Bash(rm:*)",
       "Bash(git commit:*)",
-      "Bash(swift build)"
+      "Bash(swift build)",
+      "Bash(swift build:*)"
     ],
     "deny": []
   }
