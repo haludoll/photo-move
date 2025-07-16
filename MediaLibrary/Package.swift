@@ -5,20 +5,75 @@ import PackageDescription
 
 let package = Package(
     name: "MediaLibrary",
+    platforms: [
+        .iOS(.v15)
+    ],
     products: [
-        // Products define the executables and libraries a package produces, making them visible to other packages.
-        .library(
-            name: "MediaLibrary",
-            targets: ["MediaLibrary"]),
+        .library(name: "Presentation", targets: ["Presentation"]),
+        .library(name: "Application", targets: ["Application"]),
+        .library(name: "Domain", targets: ["Domain"]),
+        .library(name: "Infrastructure", targets: ["Infrastructure"]),
+    ],
+    dependencies: [
+        .package(url: "https://github.com/nicklockwood/SwiftFormat", from: "0.50.0")
     ],
     targets: [
-        // Targets are the basic building blocks of a package, defining a module or a test suite.
-        // Targets can depend on other targets in this package and products from dependencies.
+        // Presentation Layer
         .target(
-            name: "MediaLibrary"),
+            name: "Presentation",
+            dependencies: [
+                "Application",
+                "Domain"
+            ]
+        ),
+        
+        // Application Layer
+        .target(
+            name: "Application",
+            dependencies: [
+                "Domain"
+            ]
+        ),
+        
+        // Domain Layer
+        .target(
+            name: "Domain"
+        ),
+        
+        // Infrastructure Layer
+        .target(
+            name: "Infrastructure",
+            dependencies: [
+                "Domain"
+            ]
+        ),
+        
+        // Tests
         .testTarget(
-            name: "MediaLibraryTests",
-            dependencies: ["MediaLibrary"]
+            name: "DomainTests",
+            dependencies: ["Domain"]
+        ),
+        .testTarget(
+            name: "ApplicationTests",
+            dependencies: [
+                "Application",
+                "Domain"
+            ]
+        ),
+        .testTarget(
+            name: "InfrastructureTests",
+            dependencies: [
+                "Infrastructure",
+                "Domain"
+            ]
+        ),
+        .testTarget(
+            name: "PresentationTests",
+            dependencies: [
+                "Presentation",
+                "Application",
+                "Domain"
+            ]
         ),
     ]
 )

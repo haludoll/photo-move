@@ -6,7 +6,12 @@
       "mcp__github__get_me",
       "Bash(gh auth:*)",
       "mcp__github__create_issue",
-      "Bash(git checkout:*)"
+      "Bash(git checkout:*)",
+      "Bash(mkdir:*)",
+      "Bash(mv:*)",
+      "Bash(swift test:*)",
+      "Bash(./Scripts/format.sh:*)",
+      "Bash(./Scripts/test.sh:*)"
     ],
     "deny": []
   }
