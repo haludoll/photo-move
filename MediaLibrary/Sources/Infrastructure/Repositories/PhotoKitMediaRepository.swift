@@ -8,11 +8,11 @@ import UIKit
 
 /// PhotoKitを使用したMediaRepositoryの実装
 @available(iOS 15.0, macOS 12.0, *)
-public final class PhotoKitMediaRepository: MediaRepository {
+package final class PhotoKitMediaRepository: MediaRepository {
     
     // MARK: - Public Methods
     
-    public func fetchMedia() async throws -> [Media] {
+    package func fetchMedia() async throws -> [Media] {
         // 権限チェック
         guard await hasPhotoLibraryPermission() else {
             throw MediaError.permissionDenied
@@ -35,7 +35,7 @@ public final class PhotoKitMediaRepository: MediaRepository {
         return media
     }
     
-    public func fetchThumbnail(for mediaID: Media.ID, size: CGSize) async throws -> Media.Thumbnail {
+    package func fetchThumbnail(for mediaID: Media.ID, size: CGSize) async throws -> Media.Thumbnail {
         // 権限チェック
         guard await hasPhotoLibraryPermission() else {
             throw MediaError.permissionDenied

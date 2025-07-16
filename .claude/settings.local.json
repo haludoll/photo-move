@@ -15,7 +15,8 @@
       "mcp__github__create_pull_request",
       "Bash(chmod:*)",
       "Bash(rm:*)",
-      "Bash(git commit:*)"
+      "Bash(git commit:*)",
+      "Bash(swift build)"
     ],
     "deny": []
   }

@@ -1,7 +1,7 @@
 import Foundation
 
 /// メディア関連のドメインエラー
-public enum MediaError: Error, LocalizedError {
+package enum MediaError: Error, LocalizedError {
     case invalidMediaID
     case invalidFilePath
     case invalidThumbnailData
@@ -11,7 +11,7 @@ public enum MediaError: Error, LocalizedError {
     case thumbnailGenerationFailed
     case mediaLoadFailed
 
-    public var errorDescription: String? {
+    package var errorDescription: String? {
         switch self {
         case .invalidMediaID:
             "Invalid media ID"

@@ -1,13 +1,13 @@
 import Foundation
 
 /// メディア（写真）エンティティ
-public struct Media: Identifiable {
+package struct Media: Identifiable {
     /// メディアIDの値オブジェクト
-    public struct ID: Hashable, Identifiable {
-        public let value: String
-        public var id: String { value }
+    package struct ID: Hashable, Identifiable {
+        package let value: String
+        package var id: String { value }
 
-        public init(_ value: String) throws {
+        package init(_ value: String) throws {
             guard !value.isEmpty else {
                 throw MediaError.invalidMediaID
             }
@@ -16,23 +16,23 @@ public struct Media: Identifiable {
     }
 
     /// メディアメタデータの値オブジェクト
-    public struct Metadata {
-        public let format: MediaFormat
-        public let capturedAt: Date
+    package struct Metadata {
+        package let format: MediaFormat
+        package let capturedAt: Date
 
-        public init(format: MediaFormat, capturedAt: Date) {
+        package init(format: MediaFormat, capturedAt: Date) {
             self.format = format
             self.capturedAt = capturedAt
         }
     }
 
     /// サムネイル画像の値オブジェクト
-    public struct Thumbnail {
-        public let mediaID: ID
-        public let imageData: Data
-        public let size: CGSize
+    package struct Thumbnail {
+        package let mediaID: ID
+        package let imageData: Data
+        package let size: CGSize
 
-        public init(mediaID: ID, imageData: Data, size: CGSize) throws {
+        package init(mediaID: ID, imageData: Data, size: CGSize) throws {
             guard !imageData.isEmpty else {
                 throw MediaError.invalidThumbnailData
             }
@@ -45,14 +45,14 @@ public struct Media: Identifiable {
 
     // MARK: - Properties
 
-    public let id: ID
-    public let type: MediaType
-    public let metadata: Metadata
-    public let filePath: String
+    package let id: ID
+    package let type: MediaType
+    package let metadata: Metadata
+    package let filePath: String
 
     // MARK: - Initialization
 
-    public init(id: ID, type: MediaType, metadata: Metadata, filePath: String) throws {
+    package init(id: ID, type: MediaType, metadata: Metadata, filePath: String) throws {
         guard !filePath.isEmpty else {
             throw MediaError.invalidFilePath
         }

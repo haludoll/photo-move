@@ -1,7 +1,7 @@
 import Foundation
 
 /// メディアライブラリへのアクセスを抽象化するリポジトリ
-public protocol MediaRepository {
+package protocol MediaRepository {
     /// デバイスから利用可能なメディアを取得する
     /// - Returns: メディアの配列
     /// - Throws: MediaError 取得に失敗した場合
