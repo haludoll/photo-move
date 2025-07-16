@@ -21,18 +21,23 @@ MediaLibraryは、写真・動画の管理、閲覧、検索機能を提供す�
 
 ## アーキテクチャ
 
-本パッケージは以下の層構造を持ちます：
+本パッケージは以下のDDDに基づく層構造を持ちます：
 
 ```
 MediaLibrary/
-├── Presentation/        # View (SwiftUI)
-├── ViewModel/          # 画面ロジック
-├── Repository/         # データアクセス実装
-├── Entity/
-│   ├── DataModel/      # ドメインモデル
-│   ├── RepositoryInterface/  # 抽象化
-│   └── DomainService/  # ドメインロジック
-└── Dependency/         # DI設定
+├── Presentation/          # プレゼンテーション層
+│   ├── Views/            # SwiftUI Views
+│   └── ViewModels/       # MVVM ViewModels
+├── Application/          # アプリケーション層
+│   └── Services/         # アプリケーションサービス
+├── Domain/               # ドメイン層
+│   ├── Entities/         # エンティティ
+│   ├── ValueObjects/     # 値オブジェクト
+│   ├── Aggregates/       # 集約
+│   └── Repositories/     # リポジトリインターフェース
+└── Infrastructure/       # インフラストラクチャ層
+    ├── Repositories/     # リポジトリ実装
+    └── External/         # 外部API、PhotoKit等
 ```
 
 ## 依存関係

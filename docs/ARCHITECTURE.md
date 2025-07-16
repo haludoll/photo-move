@@ -2,7 +2,7 @@
 
 ## 1. 概要
 
-PhotoMoveは、ドメイン駆動設計（DDD）に基づいて設計されたiOSアプリケーションです。5つの境界づけられたコンテキストとアプリケーション基盤パッケージに分割され、各パッケージはMVVM + Layered Architectureを採用しています。
+PhotoMoveは、ドメイン駆動設計（DDD）に基づいて設計されたiOSアプリケーションです。5つの境界づけられたコンテキストとアプリケーション基盤パッケージに分割され、各パッケージはDDDの4層アーキテクチャを採用しています。
 
 ## 2. 境界づけられたコンテキスト
 
@@ -112,18 +112,23 @@ POST /transfer/receive  - アセットの受信
 
 ## 4. レイヤー構成
 
-各パッケージは以下のレイヤー構成を持ちます：
+各パッケージは以下のDDDに基づくレイヤー構成を持ちます：
 
 ```
 [Package]/
-├── Presentation/     # View (SwiftUI)
-├── ViewModel/        # 画面ロジック
-├── Repository/       # データアクセス実装
-├── Entity/          
-│   ├── DataModel/    # ドメインモデル
-│   ├── RepositoryInterface/ # 抽象化
-│   └── DomainService/ # ドメインロジック
-└── Dependency/       # DI設定
+├── Presentation/          # プレゼンテーション層
+│   ├── Views/            # SwiftUI Views
+│   └── ViewModels/       # MVVM ViewModels
+├── Application/          # アプリケーション層
+│   └── Services/         # アプリケーションサービス
+├── Domain/               # ドメイン層
+│   ├── Entities/         # エンティティ
+│   ├── ValueObjects/     # 値オブジェクト
+│   ├── Aggregates/       # 集約
+│   └── Repositories/     # リポジトリインターフェース
+└── Infrastructure/       # インフラストラクチャ層
+    ├── Repositories/     # リポジトリ実装
+    └── External/         # 外部API、PhotoKit等
 ```
 
 ## 5. パッケージ構成
