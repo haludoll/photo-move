@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# SwiftFormat script for photo-move project
+# Swift Format script for photo-move project
 # This script formats all Swift files in the project
 
 set -e
@@ -11,7 +11,13 @@ PROJECT_ROOT="$SCRIPT_DIR/.."
 
 echo "🔧 Formatting Swift files in photo-move project..."
 
-# Format all Swift files in the project
-swiftformat "$PROJECT_ROOT" --config "$PROJECT_ROOT/.swiftformat"
+# Check if swift-format is installed
+if ! command -v swift-format &> /dev/null; then
+    echo "❌ swift-format not found. Please install it with: brew install swift-format"
+    exit 1
+fi
 
-echo "✅ SwiftFormat completed!"
+# Format all Swift files in the project
+find "$PROJECT_ROOT" -name "*.swift" -exec swift-format --configuration "$PROJECT_ROOT/.swift-format" --in-place {} \;
+
+echo "✅ swift-format completed!"

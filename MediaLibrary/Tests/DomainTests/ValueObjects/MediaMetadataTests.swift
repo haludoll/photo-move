@@ -1,5 +1,6 @@
 import Foundation
 import Testing
+
 @testable import Domain
 
 @Test("Media.Metadata - 正常な値で初期化できる")

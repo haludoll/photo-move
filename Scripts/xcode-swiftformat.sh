@@ -1,14 +1,14 @@
 #!/bin/bash
 
-# SwiftFormat Build Phase Script for Xcode
+# Swift Format Build Phase Script for Xcode
 # This script is called by Xcode during the build process
 
 # Exit immediately if any command fails
 set -e
 
-# Check if swiftformat is installed
-if ! command -v swiftformat &> /dev/null; then
-    echo "warning: SwiftFormat not installed. Install with 'brew install swiftformat'"
+# Check if swift-format is installed
+if ! command -v swift-format &> /dev/null; then
+    echo "warning: swift-format not installed. Install with 'brew install swift-format'"
     exit 0
 fi
 
@@ -16,46 +16,44 @@ fi
 # If called from Xcode, SRCROOT is set to the App directory
 # If called manually, use the script location
 if [ -n "$SRCROOT" ]; then
-    # When called from Xcode, the .swiftformat file is in the SRCROOT (App directory)
-    CONFIG_DIR="${SRCROOT}"
+    # When called from Xcode, the .swiftformat file is in the project root (one level up from App)
     PROJECT_ROOT="${SRCROOT}/.."
+    CONFIG_DIR="${PROJECT_ROOT}"
 else
     # Get the directory of this script and go up one level
     SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
     PROJECT_ROOT="$SCRIPT_DIR/.."
-    CONFIG_DIR="$PROJECT_ROOT/App"
+    CONFIG_DIR="$PROJECT_ROOT"
 fi
 
-# Check if .swiftformat config exists and is readable
-if [ ! -r "$CONFIG_DIR/.swiftformat" ]; then
-    echo "warning: .swiftformat configuration file not found or not readable at $CONFIG_DIR"
-    echo "Running SwiftFormat with default configuration..."
+# Check if .swift-format config exists and is readable
+if [ ! -r "$CONFIG_DIR/.swift-format" ]; then
+    echo "warning: .swift-format configuration file not found or not readable at $CONFIG_DIR"
+    echo "Running swift-format with default configuration..."
     
-    # Create a temporary directory and run SwiftFormat from there to avoid config file auto-detection
-    TEMP_DIR=$(mktemp -d)
+    # Use swift-format with default configuration
     if [ -n "$SRCROOT" ]; then
-        cd "$TEMP_DIR" && swiftformat "${SRCROOT}" --cache ignore --disable fileHeader
+        find "${SRCROOT}" -name "*.swift" -exec swift-format --in-place {} \;
     else
-        cd "$TEMP_DIR" && swiftformat "$PROJECT_ROOT" --cache ignore --disable fileHeader
+        find "$PROJECT_ROOT" -name "*.swift" -exec swift-format --in-place {} \;
     fi
-    rm -rf "$TEMP_DIR"
     
-    echo "SwiftFormat completed with default configuration"
+    echo "swift-format completed with default configuration"
     exit 0
 fi
 
 # Only format files that have been modified
 # This makes the build faster by not formatting everything every time
-echo "Running SwiftFormat..."
+echo "Running swift-format..."
 
 # Format all Swift files in the project
 # If called from Xcode, format the SRCROOT directory
 # If called manually, format the entire project
 if [ -n "$SRCROOT" ]; then
     # When called from Xcode, use the config file directly in the same directory
-    swiftformat "${SRCROOT}" --config "$CONFIG_DIR/.swiftformat" --cache ignore
+    find "${SRCROOT}" -name "*.swift" -exec swift-format --configuration "$CONFIG_DIR/.swift-format" --in-place {} \;
 else
-    swiftformat "$PROJECT_ROOT" --config "$CONFIG_DIR/.swiftformat" --cache ignore
+    find "$PROJECT_ROOT" -name "*.swift" -exec swift-format --configuration "$CONFIG_DIR/.swift-format" --in-place {} \;
 fi
 
-echo "SwiftFormat completed"
+echo "swift-format completed"

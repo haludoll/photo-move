@@ -1,4 +1,5 @@
 import Testing
+
 @testable import Infrastructure
 
 @Test("Infrastructure - module test placeholder")

@@ -12,10 +12,10 @@ let package = Package(
         .library(name: "Presentation", targets: ["Presentation"]),
         .library(name: "Application", targets: ["Application"]),
         .library(name: "Domain", targets: ["Domain"]),
-        .library(name: "Infrastructure", targets: ["Infrastructure"])
+        .library(name: "Infrastructure", targets: ["Infrastructure"]),
     ],
     dependencies: [
-        .package(url: "https://github.com/nicklockwood/SwiftFormat", from: "0.50.0")
+        .package(url: "https://github.com/swiftlang/swift-format", from: "509.0.0")
     ],
     targets: [
         // Presentation Layer
@@ -23,7 +23,7 @@ let package = Package(
             name: "Presentation",
             dependencies: [
                 "Application",
-                "Domain"
+                "Domain",
             ]),
 
         // Application Layer
@@ -52,19 +52,19 @@ let package = Package(
             name: "ApplicationTests",
             dependencies: [
                 "Application",
-                "Domain"
+                "Domain",
             ]),
         .testTarget(
             name: "InfrastructureTests",
             dependencies: [
                 "Infrastructure",
-                "Domain"
+                "Domain",
             ]),
         .testTarget(
             name: "PresentationTests",
             dependencies: [
                 "Presentation",
                 "Application",
-                "Domain"
-            ])
+                "Domain",
+            ]),
     ])

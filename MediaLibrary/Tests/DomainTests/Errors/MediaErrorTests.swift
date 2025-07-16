@@ -1,4 +1,5 @@
 import Testing
+
 @testable import Domain
 
 @Test("MediaError - エラーメッセージが正しく設定されている")
@@ -11,7 +12,7 @@ func mediaErrorLocalizedDescription() async throws {
         (.mediaNotFound, "Media not found"),
         (.unsupportedFormat, "Unsupported file format"),
         (.thumbnailGenerationFailed, "Thumbnail generation failed"),
-        (.mediaLoadFailed, "Media loading failed")
+        (.mediaLoadFailed, "Media loading failed"),
     ]
 
     for (error, expectedMessage) in errors {

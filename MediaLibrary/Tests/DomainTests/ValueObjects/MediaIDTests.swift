@@ -1,4 +1,5 @@
 import Testing
+
 @testable import Domain
 
 @Test("Media.ID - 正常な値で初期化できる")

@@ -19,5 +19,5 @@ let package = Package(
             name: "AppFoundation"),
         .testTarget(
             name: "AppFoundationTests",
-            dependencies: ["AppFoundation"])
+            dependencies: ["AppFoundation"]),
     ])

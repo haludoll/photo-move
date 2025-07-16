@@ -5,7 +5,7 @@
 ## 利用可能なスクリプト
 
 ### format.sh
-プロジェクト全体のSwiftコードをフォーマットします。
+プロジェクト全体のSwiftコードをフォーマットします（Apple公式のswift-formatを使用）。
 
 ```bash
 ./Scripts/format.sh
@@ -26,7 +26,7 @@
 ```
 
 ### xcode-swiftformat.sh
-XcodeのBuild Phaseから呼び出される自動フォーマットスクリプトです。
+XcodeのBuild Phaseから呼び出される自動フォーマットスクリプトです（Apple公式のswift-formatを使用）。
 直接実行する必要はありません。
 
 ## Xcode統合
@@ -55,4 +55,4 @@ fi
 
 ## 設定ファイル
 
-SwiftFormatの設定は、プロジェクトルートの`.swiftformat`ファイルで管理されています。
+swift-formatの設定は、プロジェクトルートの`.swift-format`ファイルで管理されています。
