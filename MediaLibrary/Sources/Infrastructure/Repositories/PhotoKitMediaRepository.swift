@@ -12,11 +12,6 @@ package final class PhotoKitMediaRepository: MediaRepository {
     // MARK: - Public Methods
     
     package func fetchMedia() async throws -> [Media] {
-        // 権限チェック
-        guard await hasPhotoLibraryPermission() else {
-            throw MediaError.permissionDenied
-        }
-        
         // PHAssetを取得
         let fetchResult = PHAsset.fetchAssets(with: .image, options: createFetchOptions())
         
@@ -35,11 +30,6 @@ package final class PhotoKitMediaRepository: MediaRepository {
     }
     
     package func fetchThumbnail(for mediaID: Media.ID, size: CGSize) async throws -> Media.Thumbnail {
-        // 権限チェック
-        guard await hasPhotoLibraryPermission() else {
-            throw MediaError.permissionDenied
-        }
-        
         // PHAssetを取得
         guard let asset = await findAsset(by: mediaID) else {
             throw MediaError.mediaNotFound
@@ -56,10 +46,6 @@ package final class PhotoKitMediaRepository: MediaRepository {
     }
     
     // MARK: - Private Methods
-    
-    private func hasPhotoLibraryPermission() async -> Bool {
-        return await PHPhotoLibrary.requestAuthorization(for: .readWrite) == .authorized
-    }
     
     private func createFetchOptions() -> PHFetchOptions {
         let options = PHFetchOptions()

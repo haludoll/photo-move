@@ -21,13 +21,9 @@ final class PhotoKitMediaRepositoryTests: XCTestCase {
     
     // MARK: - テストケース
     
-    func testFetchMedia_権限が拒否されている場合はエラーを投げる() async {
-        // Note: 実際のアプリテストでは権限の状態を制御するのが困難なため、
-        // このテストは統合テストで検証する
-        // ここでは基本的な動作確認のみ
-        
+    func testFetchMedia_基本的な動作確認() async {
         // Given & When & Then
-        // 権限がない場合のテストは実機でのみ可能
+        // PhotoKitのテストは実機でのみ可能
         // 単体テストレベルでは動作確認のみ実施
         XCTAssertNotNil(repository)
     }
@@ -40,7 +36,6 @@ final class PhotoKitMediaRepositoryTests: XCTestCase {
         // When & Then
         do {
             _ = try await repository.fetchThumbnail(for: invalidMediaID, size: size)
-            // 権限がない場合はpermissionDeniedが先に投げられる可能性があるため、
             // 実際のテストは統合テストで実施
         } catch {
             // エラーが投げられることを確認
