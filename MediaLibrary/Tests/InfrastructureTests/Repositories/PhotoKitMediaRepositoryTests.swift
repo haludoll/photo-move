@@ -3,7 +3,7 @@ import Photos
 @testable import Infrastructure
 @testable import Domain
 
-#if os(iOS)
+#if canImport(UIKit)
 /// PhotoKitMediaRepositoryのテスト
 final class PhotoKitMediaRepositoryTests: XCTestCase {
     

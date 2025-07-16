@@ -2,7 +2,7 @@ import Foundation
 import Photos
 import Domain
 
-#if os(iOS)
+#if canImport(UIKit)
 import UIKit
 
 /// PhotoKitを使用したMediaRepositoryの実装
