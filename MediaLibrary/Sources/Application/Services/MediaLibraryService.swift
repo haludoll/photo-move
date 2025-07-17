@@ -2,7 +2,6 @@ import Dependencies
 import DependencyInjection
 import Domain
 import Foundation
-import Photos
 
 /// フォトライブラリの操作を提供するApplicationサービス
 @available(iOS 15.0, macOS 11.0, *)
@@ -11,6 +10,7 @@ package struct MediaLibraryService: Sendable {
     // MARK: - Dependencies
 
     @Dependency(\.mediaRepository) private var mediaRepository
+    @Dependency(\.photoLibraryPermissionService) private var permissionService
 
     // MARK: - Initialization
 
@@ -22,11 +22,11 @@ package struct MediaLibraryService: Sendable {
     /// - Returns: メディア一覧
     /// - Throws: MediaError
     package func loadMedia() async throws -> [Media] {
-        let permissionStatus = checkPermissionStatus()
+        let permissionStatus = permissionService.checkPermissionStatus()
 
         switch permissionStatus {
         case .notDetermined:
-            let requestedStatus = await requestPermission()
+            let requestedStatus = await permissionService.requestPermission()
             guard requestedStatus == .authorized || requestedStatus == .limited else {
                 throw MediaError.permissionDenied
             }
@@ -47,46 +47,5 @@ package struct MediaLibraryService: Sendable {
     /// - Throws: MediaError
     package func loadThumbnail(for mediaID: Media.ID, size: CGSize) async throws -> Media.Thumbnail {
         return try await mediaRepository.fetchThumbnail(for: mediaID, size: size)
-    }
-
-    // MARK: - Private Methods
-
-    /// Photo library access permission status
-    /// - Returns: Permission status
-    private func checkPermissionStatus() -> PhotoLibraryPermissionStatus {
-        switch PHPhotoLibrary.authorizationStatus(for: .readWrite) {
-        case .authorized:
-            return .authorized
-        case .limited:
-            return .limited
-        case .denied:
-            return .denied
-        case .restricted:
-            return .restricted
-        case .notDetermined:
-            return .notDetermined
-        @unknown default:
-            return .denied
-        }
-    }
-
-    /// Request photo library access permission
-    /// - Returns: Permission status after request
-    private func requestPermission() async -> PhotoLibraryPermissionStatus {
-        let status = await PHPhotoLibrary.requestAuthorization(for: .readWrite)
-        switch status {
-        case .authorized:
-            return .authorized
-        case .limited:
-            return .limited
-        case .denied:
-            return .denied
-        case .restricted:
-            return .restricted
-        case .notDetermined:
-            return .notDetermined
-        @unknown default:
-            return .denied
-        }
     }
 }
