@@ -10,10 +10,10 @@ let package = Package(
         .macOS(.v10_15) // Required by swift-dependencies, but only iOS is actually used
     ],
     products: [
-        .library(name: "Application", targets: ["Application"]),
-        .library(name: "Domain", targets: ["Domain"]),
-        .library(name: "Infrastructure", targets: ["Infrastructure"]),
-        .library(name: "DependencyInjection", targets: ["DependencyInjection"]),
+        .library(name: "MediaLibraryApplication", targets: ["Application"]),
+        .library(name: "MediaLibraryDomain", targets: ["Domain"]),
+        .library(name: "MediaLibraryInfrastructure", targets: ["Infrastructure"]),
+        .library(name: "MediaLibraryDependencyInjection", targets: ["DependencyInjection"]),
     ],
     dependencies: [
         .package(url: "https://github.com/swiftlang/swift-format", from: "509.0.0"),
