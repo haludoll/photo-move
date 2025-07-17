@@ -59,13 +59,15 @@ MediaLibraryContextのドメインモデルを、ドメイン駆動設計の原�
 - **対象メディア**: 元となるメディアの識別子
 - **画像データ**: 縮小された画像
 
-### PhotoLibraryPermission（写真ライブラリ権限）
-写真ライブラリへのアクセス権限を表現
+### PhotoLibraryPermissionStatus（写真ライブラリ権限状態）
+写真ライブラリへのアクセス権限の状態を表現
 
 **状態:**
-- **未確認**: 権限状態が未確認
-- **許可**: アクセスが許可されている
-- **拒否**: アクセスが拒否されている
+- **notDetermined**: 権限状態が未確認
+- **authorized**: 完全なアクセスが許可されている
+- **limited**: 制限付きでアクセスが許可されている
+- **denied**: アクセスが拒否されている
+- **restricted**: システムにより制限されている
 
 ## 集約 (Aggregates)
 
@@ -83,7 +85,17 @@ MediaLibraryContextのドメインモデルを、ドメイン駆動設計の原�
 
 ## ドメインサービス (Domain Services)
 
-今回の設計では、複数の集約にまたがる複雑なドメインロジックがないため、ドメインサービスは定義していません。
+### PhotoLibraryPermissionService（写真ライブラリ権限サービス）
+写真ライブラリへのアクセス権限管理を抽象化
+
+**提供する機能:**
+- **権限状態確認**: 現在の権限状態を取得
+- **権限要求**: ユーザーに権限を要求
+
+**特徴:**
+- 外部システム（iOS PhotoKit）への依存を抽象化
+- テスト時にはモック実装が使用される
+- リポジトリではなくサービスとして定義（データ永続化ではなく外部システム連携）
 
 ## アプリケーションサービス (Application Services)
 
@@ -96,8 +108,8 @@ MediaLibraryContextのドメインモデルを、ドメイン駆動設計の原�
 - **エラーハンドリング**: 権限エラーや読み込みエラーの処理
 
 **依存関係:**
-- MediaRepository: 写真データの取得
-- ThumbnailRepository: サムネイルの取得・生成
+- MediaRepository: メディアデータの取得
+- PhotoLibraryPermissionService: 写真ライブラリ権限の管理
 
 ## リポジトリ (Repository)
 
@@ -106,13 +118,11 @@ MediaLibraryContextのドメインモデルを、ドメイン駆動設計の原�
 
 **提供する機能:**
 - **全メディア取得**: デバイスからすべてのメディアを取得
+- **サムネイル取得**: 指定されたメディアのサムネイルを取得
 
-### ThumbnailRepository（サムネイルリポジトリ）
-サムネイルデータの保存・取得を担当
-
-**提供する機能:**
-- **サムネイル取得**: メディアに基づくサムネイル取得
-- **サムネイル保存**: 生成されたサムネイルの保存
+**実装:**
+- **PhotoKitMediaRepository**: PhotoKitを使用した実装
+- **MockMediaRepository**: テスト用のモック実装
 
 ## 集約の境界
 
@@ -128,11 +138,11 @@ Media（メディア集約）
 メディア関連のエラー
 
 **エラー種類:**
-- **無効な識別子**: 空または不正な識別子
-- **メディア未発見**: 指定されたメディアが見つからない
-- **未対応形式**: サポートされていないファイル形式
-- **サムネイル生成失敗**: サムネイル作成に失敗
-- **メディア読み込み失敗**: デバイスからのメディア取得に失敗
+- **permissionDenied**: 写真ライブラリへのアクセス権限が拒否されている
+- **mediaNotFound**: 指定されたメディアが見つからない
+- **invalidMediaID**: 無効または空のメディア識別子
+- **thumbnailGenerationFailed**: サムネイル生成に失敗
+- **loadingFailed**: メディア読み込みに失敗
 
 ## 不変条件
 
@@ -152,6 +162,21 @@ Media（メディア集約）
 ### サムネイル
 - サムネイルは一覧表示時に生成される
 - サムネイルはキャッシュされる
+
+## 依存性注入 (Dependency Injection)
+
+### 抽象化されたサービス
+- **MediaRepository**: `@Dependency(\.mediaRepository)`
+- **PhotoLibraryPermissionService**: `@Dependency(\.photoLibraryPermissionService)`
+
+### 実装の分離
+- **本番環境**: PhotoKit実装（`PhotoKitMediaRepository`, `PhotoKitPermissionService`）
+- **テスト環境**: Mock実装（`MockMediaRepository`, `MockPermissionService`）
+
+### テスト戦略
+- swift-testingフレームワークを使用
+- 依存性注入により外部システム（PhotoKit）に依存しないテストを実現
+- すべてのテストが独立して実行可能
 
 ## 他のコンテキストとの関係
 
