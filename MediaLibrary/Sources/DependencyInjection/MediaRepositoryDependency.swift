@@ -1,7 +1,7 @@
 import Dependencies
 import Domain
-import Infrastructure
 import Foundation
+import Infrastructure
 
 /// MediaRepositoryの依存関係定義
 extension DependencyValues {
@@ -16,12 +16,12 @@ extension DependencyValues {
 private enum MediaRepositoryKey: DependencyKey {
     static let liveValue: MediaRepository = {
         #if canImport(UIKit)
-        return PhotoKitMediaRepository()
+            return PhotoKitMediaRepository()
         #else
-        fatalError("PhotoKitMediaRepository requires UIKit (iOS only)")
+            fatalError("PhotoKitMediaRepository requires UIKit (iOS only)")
         #endif
     }()
-    
+
     static let testValue: MediaRepository = MockMediaRepository()
 }
 
@@ -47,15 +47,15 @@ private struct MockMediaRepository: MediaRepository, Sendable {
                     capturedAt: Date()
                 ),
                 filePath: "/mock/path/2.png"
-            )
+            ),
         ]
     }
-    
+
     func fetchThumbnail(for mediaID: Media.ID, size: CGSize) async throws -> Media.Thumbnail {
         // テスト用のダミーサムネイル
         return try Media.Thumbnail(
             mediaID: mediaID,
-            imageData: Data([0x89, 0x50, 0x4E, 0x47]), // PNG header
+            imageData: Data([0x89, 0x50, 0x4E, 0x47]),  // PNG header
             size: size
         )
     }

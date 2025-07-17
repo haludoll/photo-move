@@ -10,7 +10,6 @@ let package = Package(
         .macOS(.v10_15) // Required by swift-dependencies, but only iOS is actually used
     ],
     products: [
-        .library(name: "Presentation", targets: ["Presentation"]),
         .library(name: "Application", targets: ["Application"]),
         .library(name: "Domain", targets: ["Domain"]),
         .library(name: "Infrastructure", targets: ["Infrastructure"]),
@@ -21,16 +20,6 @@ let package = Package(
         .package(url: "https://github.com/pointfreeco/swift-dependencies", from: "1.0.0")
     ],
     targets: [
-        // Presentation Layer
-        .target(
-            name: "Presentation",
-            dependencies: [
-                "Application",
-                "Domain",
-                "DependencyInjection",
-                .product(name: "Dependencies", package: "swift-dependencies"),
-            ]),
-
         // Application Layer
         .target(
             name: "Application",
@@ -69,6 +58,8 @@ let package = Package(
             dependencies: [
                 "Application",
                 "Domain",
+                "DependencyInjection",
+                .product(name: "Dependencies", package: "swift-dependencies"),
             ]),
         .testTarget(
             name: "InfrastructureTests",
@@ -76,19 +67,21 @@ let package = Package(
                 "Infrastructure",
                 "Domain",
             ]),
-        .testTarget(
-            name: "PresentationTests",
-            dependencies: [
-                "Presentation",
-                "Application",
-                "Domain",
-                "DependencyInjection",
-            ]),
+        // .testTarget(
+        //     name: "PresentationTests",
+        //     dependencies: [
+        //         "Presentation",
+        //         "Application",
+        //         "Domain",
+        //         "DependencyInjection",
+        //         .product(name: "Dependencies", package: "swift-dependencies"),
+        //     ]),
         .testTarget(
             name: "DependencyInjectionTests",
             dependencies: [
                 "DependencyInjection",
                 "Domain",
                 "Infrastructure",
+                .product(name: "Dependencies", package: "swift-dependencies"),
             ]),
     ])

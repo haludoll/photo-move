@@ -6,7 +6,7 @@ package protocol MediaRepository: Sendable {
     /// - Returns: メディアの配列
     /// - Throws: MediaError 取得に失敗した場合
     func fetchMedia() async throws -> [Media]
-    
+
     /// 指定されたメディアのサムネイルを取得する
     /// - Parameters:
     ///   - mediaID: 取得するメディアのID
