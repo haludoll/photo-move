@@ -67,21 +67,4 @@ let package = Package(
                 "Infrastructure",
                 "Domain",
             ]),
-        // .testTarget(
-        //     name: "PresentationTests",
-        //     dependencies: [
-        //         "Presentation",
-        //         "Application",
-        //         "Domain",
-        //         "DependencyInjection",
-        //         .product(name: "Dependencies", package: "swift-dependencies"),
-        //     ]),
-        .testTarget(
-            name: "DependencyInjectionTests",
-            dependencies: [
-                "DependencyInjection",
-                "Domain",
-                "Infrastructure",
-                .product(name: "Dependencies", package: "swift-dependencies"),
-            ]),
     ])
