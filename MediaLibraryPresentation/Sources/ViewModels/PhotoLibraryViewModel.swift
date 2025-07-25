@@ -1,8 +1,7 @@
-import Application
 import Combine
-import Dependencies
-import Domain
 import Foundation
+import MediaLibraryApplication
+import MediaLibraryDomain
 import SwiftUI
 
 /// 写真ライブラリ画面のViewModel
