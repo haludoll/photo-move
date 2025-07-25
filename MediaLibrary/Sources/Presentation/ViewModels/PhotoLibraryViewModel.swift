@@ -42,8 +42,12 @@ package final class PhotoLibraryViewModel: ObservableObject {
             return "サムネイルの生成に失敗しました。"
         case .invalidFilePath:
             return "無効なファイルパスです。"
-        case let .repositoryError(message):
-            return "エラーが発生しました: \(message)"
+        case .unsupportedFormat:
+            return "サポートされていないファイル形式です。"
+        case .thumbnailGenerationFailed:
+            return "サムネイルの生成に失敗しました。"
+        case .mediaLoadFailed:
+            return "メディアの読み込みに失敗しました。"
         }
     }
 
@@ -66,7 +70,7 @@ package final class PhotoLibraryViewModel: ObservableObject {
             error = mediaError
             media = []
         } catch {
-            self.error = .repositoryError(error.localizedDescription)
+            self.error = .mediaLoadFailed
             media = []
         }
 
@@ -123,6 +127,7 @@ package final class PhotoLibraryViewModel: ObservableObject {
     // MARK: - Private Methods
 
     deinit {
-        cancelAllThumbnailTasks()
+        // MainActorのコンテキストでタスクをキャンセル
+        thumbnailLoadingTasks.values.forEach { $0.cancel() }
     }
 }
