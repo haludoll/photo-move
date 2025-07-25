@@ -14,6 +14,7 @@ let package = Package(
         .library(name: "MediaLibraryDomain", targets: ["Domain"]),
         .library(name: "MediaLibraryInfrastructure", targets: ["Infrastructure"]),
         .library(name: "MediaLibraryDependencyInjection", targets: ["DependencyInjection"]),
+        .library(name: "MediaLibraryPresentation", targets: ["Presentation"]),
     ],
     dependencies: [
         .package(url: "https://github.com/swiftlang/swift-format", from: "509.0.0"),
@@ -46,6 +47,16 @@ let package = Package(
             dependencies: [
                 "Domain",
                 "Infrastructure",
+                .product(name: "Dependencies", package: "swift-dependencies"),
+            ]),
+
+        // Presentation Layer
+        .target(
+            name: "Presentation",
+            dependencies: [
+                "Application",
+                "Domain",
+                "DependencyInjection",
                 .product(name: "Dependencies", package: "swift-dependencies"),
             ]),
 
