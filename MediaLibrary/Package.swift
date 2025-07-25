@@ -78,4 +78,12 @@ let package = Package(
                 "Infrastructure",
                 "Domain",
             ]),
+        .testTarget(
+            name: "PresentationTests",
+            dependencies: [
+                "Presentation",
+                "Application",
+                "Domain",
+                .product(name: "Dependencies", package: "swift-dependencies"),
+            ]),
     ])
