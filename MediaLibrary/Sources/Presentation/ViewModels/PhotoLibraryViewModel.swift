@@ -28,29 +28,6 @@ package final class PhotoLibraryViewModel: ObservableObject {
         error != nil
     }
 
-    package var errorMessage: String? {
-        guard let error = error else { return nil }
-
-        switch error {
-        case .permissionDenied:
-            return "写真へのアクセスが許可されていません。設定画面から写真へのアクセスを許可してください。"
-        case .mediaNotFound:
-            return "写真が見つかりませんでした。"
-        case .invalidMediaID:
-            return "無効なメディアIDです。"
-        case .invalidThumbnailData:
-            return "サムネイルの生成に失敗しました。"
-        case .invalidFilePath:
-            return "無効なファイルパスです。"
-        case .unsupportedFormat:
-            return "サポートされていないファイル形式です。"
-        case .thumbnailGenerationFailed:
-            return "サムネイルの生成に失敗しました。"
-        case .mediaLoadFailed:
-            return "メディアの読み込みに失敗しました。"
-        }
-    }
-
     // MARK: - Initialization
 
     package init(mediaLibraryService: MediaLibraryService = MediaLibraryService()) {
