@@ -1,18 +1,22 @@
-import Dependencies
 import Domain
 import Foundation
-import Infrastructure
 
-/// フォトライブラリの操作を提供するApplicationサービス
-package struct MediaLibraryAppService: Sendable {
+/// フォトライブラリの操作を提供するApplicationサービス実装
+package final class MediaLibraryAppService: MediaLibraryAppServiceProtocol, Sendable {
     // MARK: - Dependencies
 
-    @Dependency(\.mediaRepository) private var mediaRepository
-    @Dependency(\.photoLibraryPermissionService) private var permissionService
+    private let mediaRepository: any MediaRepository
+    private let permissionService: any PhotoLibraryPermissionService
 
     // MARK: - Initialization
 
-    package init() {}
+    package init(
+        mediaRepository: any MediaRepository,
+        permissionService: any PhotoLibraryPermissionService
+    ) {
+        self.mediaRepository = mediaRepository
+        self.permissionService = permissionService
+    }
 
     // MARK: - Public Methods
 

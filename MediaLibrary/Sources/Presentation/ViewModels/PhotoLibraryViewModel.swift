@@ -1,6 +1,5 @@
 import Application
 import Combine
-import Dependencies
 import Domain
 import Foundation
 import SwiftUI
@@ -18,7 +17,7 @@ package final class PhotoLibraryViewModel: ObservableObject {
 
     // MARK: - Private Properties
 
-    @Dependency(\.mediaLibraryAppService) private var mediaLibraryService
+    private let mediaLibraryService: any MediaLibraryAppServiceProtocol
     private var thumbnailLoadingTasks: [Media.ID: Task<Void, Never>] = [:]
 
     // MARK: - Computed Properties
@@ -29,7 +28,9 @@ package final class PhotoLibraryViewModel: ObservableObject {
 
     // MARK: - Initialization
 
-    package init() {}
+    package init(mediaLibraryService: any MediaLibraryAppServiceProtocol) {
+        self.mediaLibraryService = mediaLibraryService
+    }
 
     // MARK: - Public Methods
 

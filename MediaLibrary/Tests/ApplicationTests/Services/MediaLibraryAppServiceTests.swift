@@ -1,11 +1,9 @@
 import CoreGraphics
-import Dependencies
 import Foundation
 import Testing
 
 @testable import Application
 @testable import Domain
-@testable import Infrastructure
 
 /// MediaLibraryAppServiceのテスト
 struct MediaLibraryAppServiceTests {
@@ -17,32 +15,34 @@ struct MediaLibraryAppServiceTests {
             createTestMedia(id: "2"),
         ]
 
-        try await withDependencies { dependencies in
-            dependencies.mediaRepository = MockSuccessRepository(media: mockMedia)
-        } operation: {
-            let service = MediaLibraryAppService()
+        let mockRepository = MockSuccessRepository(media: mockMedia)
+        let mockPermissionService = MockPermissionService()
+        let service = MediaLibraryAppService(
+            mediaRepository: mockRepository,
+            permissionService: mockPermissionService
+        )
 
-            // When
-            let result = try await service.loadMedia()
+        // When
+        let result = try await service.loadMedia()
 
-            // Then
-            #expect(result.count == 2)
-            #expect(result[0].id.value == "1")
-            #expect(result[1].id.value == "2")
-        }
+        // Then
+        #expect(result.count == 2)
+        #expect(result[0].id.value == "1")
+        #expect(result[1].id.value == "2")
     }
 
     @Test("メディア一覧取得が失敗する")
     func loadMediaFailure() async throws {
-        await withDependencies { dependencies in
-            dependencies.mediaRepository = MockFailureRepository()
-        } operation: {
-            let service = MediaLibraryAppService()
+        let mockRepository = MockFailureRepository()
+        let mockPermissionService = MockPermissionDeniedService()
+        let service = MediaLibraryAppService(
+            mediaRepository: mockRepository,
+            permissionService: mockPermissionService
+        )
 
-            // When & Then
-            await #expect(throws: MediaError.permissionDenied) {
-                try await service.loadMedia()
-            }
+        // When & Then
+        await #expect(throws: MediaError.permissionDenied) {
+            try await service.loadMedia()
         }
     }
 
@@ -57,19 +57,20 @@ struct MediaLibraryAppServiceTests {
             size: size
         )
 
-        try await withDependencies { dependencies in
-            dependencies.mediaRepository = MockSuccessRepository(thumbnail: expectedThumbnail)
-        } operation: {
-            let service = MediaLibraryAppService()
+        let mockRepository = MockSuccessRepository(thumbnail: expectedThumbnail)
+        let mockPermissionService = MockPermissionService()
+        let service = MediaLibraryAppService(
+            mediaRepository: mockRepository,
+            permissionService: mockPermissionService
+        )
 
-            // When
-            let thumbnail = try await service.loadThumbnail(for: mediaID, size: size)
+        // When
+        let thumbnail = try await service.loadThumbnail(for: mediaID, size: size)
 
-            // Then
-            #expect(thumbnail.mediaID == mediaID)
-            #expect(thumbnail.size == size)
-            #expect(thumbnail.imageData == expectedThumbnail.imageData)
-        }
+        // Then
+        #expect(thumbnail.mediaID == mediaID)
+        #expect(thumbnail.size == size)
+        #expect(thumbnail.imageData == expectedThumbnail.imageData)
     }
 
     @Test("サムネイル取得が失敗する")
@@ -78,15 +79,16 @@ struct MediaLibraryAppServiceTests {
         let mediaID = try Media.ID("test-id")
         let size = CGSize(width: 100, height: 100)
 
-        await withDependencies { dependencies in
-            dependencies.mediaRepository = MockFailureRepository()
-        } operation: {
-            let service = MediaLibraryAppService()
+        let mockRepository = MockFailureRepository()
+        let mockPermissionService = MockPermissionService()
+        let service = MediaLibraryAppService(
+            mediaRepository: mockRepository,
+            permissionService: mockPermissionService
+        )
 
-            // When & Then
-            await #expect(throws: MediaError.mediaNotFound) {
-                try await service.loadThumbnail(for: mediaID, size: size)
-            }
+        // When & Then
+        await #expect(throws: MediaError.mediaNotFound) {
+            try await service.loadThumbnail(for: mediaID, size: size)
         }
     }
 
@@ -142,5 +144,29 @@ private struct MockFailureRepository: MediaRepository, Sendable {
 
     func fetchThumbnail(for _: Media.ID, size _: CGSize) async throws -> Media.Thumbnail {
         throw MediaError.mediaNotFound
+    }
+}
+
+// MARK: - Mock Permission Service
+
+/// 成功用のMockPermissionService
+private struct MockPermissionService: PhotoLibraryPermissionService, Sendable {
+    func checkPermissionStatus() -> PhotoLibraryPermissionStatus {
+        return .authorized
+    }
+    
+    func requestPermission() async -> PhotoLibraryPermissionStatus {
+        return .authorized
+    }
+}
+
+/// 権限拒否用のMockPermissionService
+private struct MockPermissionDeniedService: PhotoLibraryPermissionService, Sendable {
+    func checkPermissionStatus() -> PhotoLibraryPermissionStatus {
+        return .denied
+    }
+    
+    func requestPermission() async -> PhotoLibraryPermissionStatus {
+        return .denied
     }
 }

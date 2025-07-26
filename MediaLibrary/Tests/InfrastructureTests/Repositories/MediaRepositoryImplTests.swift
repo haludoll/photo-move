@@ -1,3 +1,4 @@
+#if os(iOS)
 import Photos
 import XCTest
 
@@ -57,3 +58,5 @@ final class MediaRepositoryImplTests: XCTestCase {
         XCTAssertTrue(true) // プレースホルダー
     }
 }
+
+#endif

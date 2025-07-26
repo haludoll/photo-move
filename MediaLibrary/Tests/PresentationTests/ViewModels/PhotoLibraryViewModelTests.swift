@@ -1,5 +1,4 @@
 import Application
-import Dependencies
 import Domain
 import Presentation
 import Testing
@@ -10,18 +9,19 @@ struct PhotoLibraryViewModelTests {
     @Test("初期状態のテスト")
     @MainActor
     func testInitialState() async {
-        await withDependencies {
-            $0.mediaRepository = MockSuccessRepository()
-            $0.photoLibraryPermissionService = MockPermissionService()
-        } operation: {
-            let viewModel = PhotoLibraryViewModel()
-            
-            #expect(viewModel.media.count == 0)
-            #expect(viewModel.isLoading == false)
-            #expect(viewModel.error == nil)
-            #expect(viewModel.hasError == false)
-            #expect(viewModel.thumbnails.count == 0)
-        }
+        let mockRepository = MockSuccessRepository()
+        let mockPermissionService = MockPermissionService()
+        let mockAppService = MediaLibraryAppService(
+            mediaRepository: mockRepository,
+            permissionService: mockPermissionService
+        )
+        let viewModel = PhotoLibraryViewModel(mediaLibraryService: mockAppService)
+        
+        #expect(viewModel.media.count == 0)
+        #expect(viewModel.isLoading == false)
+        #expect(viewModel.error == nil)
+        #expect(viewModel.hasError == false)
+        #expect(viewModel.thumbnails.count == 0)
     }
 
     @Test("写真読み込み成功のテスト")
@@ -32,163 +32,170 @@ struct PhotoLibraryViewModelTests {
             createTestMedia(id: "2"),
         ]
         
-        await withDependencies {
-            $0.mediaRepository = MockSuccessRepository(media: mockMedia)
-            $0.photoLibraryPermissionService = MockPermissionService()
-        } operation: {
-            let viewModel = PhotoLibraryViewModel()
+        let mockRepository = MockSuccessRepository(media: mockMedia)
+        let mockPermissionService = MockPermissionService()
+        let mockAppService = MediaLibraryAppService(
+            mediaRepository: mockRepository,
+            permissionService: mockPermissionService
+        )
+        let viewModel = PhotoLibraryViewModel(mediaLibraryService: mockAppService)
 
-            // Act
-            await viewModel.loadPhotos()
+        // Act
+        await viewModel.loadPhotos()
 
-            // Assert
-            #expect(viewModel.media.count == 2)
-            #expect(viewModel.isLoading == false)
-            #expect(viewModel.error == nil)
-            #expect(viewModel.hasError == false)
-        }
+        // Assert
+        #expect(viewModel.media.count == 2)
+        #expect(viewModel.isLoading == false)
+        #expect(viewModel.error == nil)
+        #expect(viewModel.hasError == false)
     }
 
     @Test("権限拒否エラーのテスト")
     @MainActor
     func testLoadPhotosPermissionDenied() async {
-        await withDependencies {
-            $0.mediaRepository = MockFailureRepository()
-            $0.photoLibraryPermissionService = MockDeniedPermissionService()
-        } operation: {
-            let viewModel = PhotoLibraryViewModel()
+        let mockRepository = MockFailureRepository()
+        let mockPermissionService = MockDeniedPermissionService()
+        let mockAppService = MediaLibraryAppService(
+            mediaRepository: mockRepository,
+            permissionService: mockPermissionService
+        )
+        let viewModel = PhotoLibraryViewModel(mediaLibraryService: mockAppService)
 
-            // Act
-            await viewModel.loadPhotos()
+        // Act
+        await viewModel.loadPhotos()
 
-            // Assert
-            #expect(viewModel.media.count == 0)
-            #expect(viewModel.isLoading == false)
-            #expect(viewModel.error == .permissionDenied)
-            #expect(viewModel.hasError == true)
-        }
+        // Assert
+        #expect(viewModel.media.count == 0)
+        #expect(viewModel.isLoading == false)
+        #expect(viewModel.error == .permissionDenied)
+        #expect(viewModel.hasError == true)
     }
 
     @Test("メディア読み込み失敗のテスト")
     @MainActor
     func testLoadPhotosMediaLoadFailed() async {
-        await withDependencies {
-            $0.mediaRepository = MockFailureRepository()
-            $0.photoLibraryPermissionService = MockPermissionService()
-        } operation: {
-            let viewModel = PhotoLibraryViewModel()
+        let mockRepository = MockFailureRepository()
+        let mockPermissionService = MockPermissionService()
+        let mockAppService = MediaLibraryAppService(
+            mediaRepository: mockRepository,
+            permissionService: mockPermissionService
+        )
+        let viewModel = PhotoLibraryViewModel(mediaLibraryService: mockAppService)
 
-            // Act
-            await viewModel.loadPhotos()
+        // Act
+        await viewModel.loadPhotos()
 
-            // Assert
-            #expect(viewModel.media.count == 0)
-            #expect(viewModel.isLoading == false)
-            #expect(viewModel.error == .permissionDenied)
-            #expect(viewModel.hasError == true)
-        }
+        // Assert
+        #expect(viewModel.media.count == 0)
+        #expect(viewModel.isLoading == false)
+        #expect(viewModel.error == .permissionDenied)
+        #expect(viewModel.hasError == true)
     }
 
     @Test("サムネイル読み込みのテスト")
     @MainActor
     func testLoadThumbnail() async {
         let mockMedia = try! [createTestMedia(id: "1")]
+        let mockRepository = MockSuccessRepository(media: mockMedia)
+        let mockPermissionService = MockPermissionService()
+        let mockAppService = MediaLibraryAppService(
+            mediaRepository: mockRepository,
+            permissionService: mockPermissionService
+        )
+        let viewModel = PhotoLibraryViewModel(mediaLibraryService: mockAppService)
         
-        await withDependencies {
-            $0.mediaRepository = MockSuccessRepository(media: mockMedia)
-            $0.photoLibraryPermissionService = MockPermissionService()
-        } operation: {
-            let viewModel = PhotoLibraryViewModel()
-            await viewModel.loadPhotos()
-            guard let firstMedia = viewModel.media.first else {
-                Issue.record("No media loaded")
-                return
-            }
-
-            // Act
-            viewModel.loadThumbnail(for: firstMedia.id, size: CGSize(width: 100, height: 100))
-
-            // 非同期処理の完了を待つ
-            try? await Task.sleep(nanoseconds: 100_000_000) // 0.1秒
-
-            // Assert
-            #expect(viewModel.thumbnails[firstMedia.id] != nil)
+        await viewModel.loadPhotos()
+        guard let firstMedia = viewModel.media.first else {
+            Issue.record("No media loaded")
+            return
         }
+
+        // Act
+        viewModel.loadThumbnail(for: firstMedia.id, size: CGSize(width: 100, height: 100))
+
+        // 非同期処理の完了を待つ
+        try? await Task.sleep(nanoseconds: 100_000_000) // 0.1秒
+
+        // Assert
+        #expect(viewModel.thumbnails[firstMedia.id] != nil)
     }
 
     @Test("サムネイル重複読み込みのテスト")
     @MainActor
     func testLoadThumbnailDuplicate() async {
         let mockMedia = try! [createTestMedia(id: "1")]
+        let mockRepository = MockSuccessRepository(media: mockMedia)
+        let mockPermissionService = MockPermissionService()
+        let mockAppService = MediaLibraryAppService(
+            mediaRepository: mockRepository,
+            permissionService: mockPermissionService
+        )
+        let viewModel = PhotoLibraryViewModel(mediaLibraryService: mockAppService)
         
-        await withDependencies {
-            $0.mediaRepository = MockSuccessRepository(media: mockMedia)
-            $0.photoLibraryPermissionService = MockPermissionService()
-        } operation: {
-            let viewModel = PhotoLibraryViewModel()
-            await viewModel.loadPhotos()
-            guard let firstMedia = viewModel.media.first else {
-                Issue.record("No media loaded")
-                return
-            }
-
-            // Act - 同じサムネイルを2回読み込み
-            viewModel.loadThumbnail(for: firstMedia.id, size: CGSize(width: 100, height: 100))
-            viewModel.loadThumbnail(for: firstMedia.id, size: CGSize(width: 100, height: 100))
-
-            // 非同期処理の完了を待つ
-            try? await Task.sleep(nanoseconds: 100_000_000) // 0.1秒
-
-            // Assert - 重複読み込みされない
-            #expect(viewModel.thumbnails[firstMedia.id] != nil)
+        await viewModel.loadPhotos()
+        guard let firstMedia = viewModel.media.first else {
+            Issue.record("No media loaded")
+            return
         }
+
+        // Act - 同じサムネイルを2回読み込み
+        viewModel.loadThumbnail(for: firstMedia.id, size: CGSize(width: 100, height: 100))
+        viewModel.loadThumbnail(for: firstMedia.id, size: CGSize(width: 100, height: 100))
+
+        // 非同期処理の完了を待つ
+        try? await Task.sleep(nanoseconds: 100_000_000) // 0.1秒
+
+        // Assert - 重複読み込みされない
+        #expect(viewModel.thumbnails[firstMedia.id] != nil)
     }
 
     @Test("エラークリアのテスト")
     @MainActor
     func testClearError() async {
-        await withDependencies {
-            $0.mediaRepository = MockFailureRepository()
-            $0.photoLibraryPermissionService = MockDeniedPermissionService()
-        } operation: {
-            let viewModel = PhotoLibraryViewModel()
+        let mockRepository = MockFailureRepository()
+        let mockPermissionService = MockDeniedPermissionService()
+        let mockAppService = MediaLibraryAppService(
+            mediaRepository: mockRepository,
+            permissionService: mockPermissionService
+        )
+        let viewModel = PhotoLibraryViewModel(mediaLibraryService: mockAppService)
 
-            await viewModel.loadPhotos()
-            #expect(viewModel.hasError == true)
+        await viewModel.loadPhotos()
+        #expect(viewModel.hasError == true)
 
-            // Act
-            viewModel.clearError()
+        // Act
+        viewModel.clearError()
 
-            // Assert
-            #expect(viewModel.error == nil)
-            #expect(viewModel.hasError == false)
-        }
+        // Assert
+        #expect(viewModel.error == nil)
+        #expect(viewModel.hasError == false)
     }
 
     @Test("サムネイルタスクキャンセルのテスト")
     @MainActor
     func testCancelAllThumbnailTasks() async {
         let mockMedia = try! [createTestMedia(id: "1")]
+        let mockRepository = MockSuccessRepository(media: mockMedia)
+        let mockPermissionService = MockPermissionService()
+        let mockAppService = MediaLibraryAppService(
+            mediaRepository: mockRepository,
+            permissionService: mockPermissionService
+        )
+        let viewModel = PhotoLibraryViewModel(mediaLibraryService: mockAppService)
         
-        await withDependencies {
-            $0.mediaRepository = MockSuccessRepository(media: mockMedia)
-            $0.photoLibraryPermissionService = MockPermissionService()
-        } operation: {
-            let viewModel = PhotoLibraryViewModel()
-            await viewModel.loadPhotos()
-            guard let firstMedia = viewModel.media.first else {
-                Issue.record("No media loaded")
-                return
-            }
-
-            viewModel.loadThumbnail(for: firstMedia.id, size: CGSize(width: 100, height: 100))
-
-            // Act
-            viewModel.cancelAllThumbnailTasks()
-
-            // Assert - タスクがキャンセルされても例外が発生しないことを確認
-            #expect(true) // テストが完了すれば成功
+        await viewModel.loadPhotos()
+        guard let firstMedia = viewModel.media.first else {
+            Issue.record("No media loaded")
+            return
         }
+
+        viewModel.loadThumbnail(for: firstMedia.id, size: CGSize(width: 100, height: 100))
+
+        // Act
+        viewModel.cancelAllThumbnailTasks()
+
+        // Assert - タスクがキャンセルされても例外が発生しないことを確認
+        #expect(true) // テストが完了すれば成功
     }
 }
 

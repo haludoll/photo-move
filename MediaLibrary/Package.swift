@@ -16,17 +16,14 @@ let package = Package(
         .library(name: "MediaLibraryPresentation", targets: ["Presentation"]),
     ],
     dependencies: [
-        .package(url: "https://github.com/swiftlang/swift-format", from: "509.0.0"),
-        .package(url: "https://github.com/pointfreeco/swift-dependencies", from: "1.0.0")
+        .package(url: "https://github.com/swiftlang/swift-format", from: "509.0.0")
     ],
     targets: [
         // Application Layer
         .target(
             name: "Application",
             dependencies: [
-                "Domain",
-                "Infrastructure",
-                .product(name: "Dependencies", package: "swift-dependencies"),
+                "Domain"
             ]),
 
         // Domain Layer
@@ -37,8 +34,7 @@ let package = Package(
         .target(
             name: "Infrastructure",
             dependencies: [
-                "Domain",
-                .product(name: "Dependencies", package: "swift-dependencies"),
+                "Domain"
             ]),
 
         // Presentation Layer
@@ -46,8 +42,7 @@ let package = Package(
             name: "Presentation",
             dependencies: [
                 "Application",
-                "Domain",
-                .product(name: "Dependencies", package: "swift-dependencies"),
+                "Domain"
             ]),
 
         // Tests
@@ -59,8 +54,7 @@ let package = Package(
             dependencies: [
                 "Application",
                 "Domain",
-                "Infrastructure",
-                .product(name: "Dependencies", package: "swift-dependencies"),
+                "Infrastructure"
             ]),
         .testTarget(
             name: "InfrastructureTests",
@@ -73,7 +67,6 @@ let package = Package(
             dependencies: [
                 "Presentation",
                 "Application",
-                "Domain",
-                .product(name: "Dependencies", package: "swift-dependencies"),
+                "Domain"
             ]),
     ])
