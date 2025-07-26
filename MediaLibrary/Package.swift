@@ -7,7 +7,6 @@ let package = Package(
     name: "MediaLibrary",
     platforms: [
         .iOS(.v15),
-        .macOS(.v10_15),
     ],
     products: [
         .library(name: "MediaLibraryApplication", targets: ["Application"]),

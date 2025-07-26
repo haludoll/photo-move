@@ -22,7 +22,9 @@
       "Bash(ls:*)",
       "WebFetch(domain:pointfreeco.github.io)",
       "WebFetch(domain:github.com)",
-      "Bash(find:*)"
+      "Bash(find:*)",
+      "Bash(xcodebuild test:*)",
+      "Bash(xcrun xcodebuild test:*)"
     ],
     "deny": []
   }
