@@ -1,50 +1,46 @@
-import Foundation
-import Domain
 import Application
+import Domain
+import Foundation
 import Infrastructure
 import Presentation
 
 /// アプリケーション全体の依存関係を管理する構造体
 /// Composition Rootパターンを実装
-package struct AppDependencies {
-    
+package enum AppDependencies {
     // MARK: - Infrastructure Layer
-    
+
     /// MediaRepository の実装
     package static let mediaRepository: any MediaRepository = MediaRepositoryImpl()
-    
+
     /// PhotoLibraryPermissionService の実装
     package static let photoLibraryPermissionService: any PhotoLibraryPermissionService = PhotoLibraryPermissionServiceImpl()
-    
+
     // MARK: - Application Layer
-    
+
     /// MediaLibraryAppService の実装
-    package static let mediaLibraryAppService: any MediaLibraryAppServiceProtocol = {
-        MediaLibraryAppService(
-            mediaRepository: mediaRepository,
-            permissionService: photoLibraryPermissionService
-        )
-    }()
-    
+    package static let mediaLibraryAppService: any MediaLibraryAppServiceProtocol = MediaLibraryAppService(
+        mediaRepository: mediaRepository,
+        permissionService: photoLibraryPermissionService
+    )
+
     // MARK: - Presentation Layer
-    
+
     /// PhotoLibraryViewModel の実装
     @MainActor
-    package static let photoLibraryViewModel: PhotoLibraryViewModel = PhotoLibraryViewModel(mediaLibraryService: mediaLibraryAppService)
+    package static let photoLibraryViewModel: PhotoLibraryViewModel = .init(mediaLibraryService: mediaLibraryAppService)
 }
 
 // MARK: - Test Support
 
 /// テスト用の依存関係を管理する構造体
 package struct TestDependencies {
-    
     // MARK: - Mock Dependencies
-    
+
     package let mediaRepository: any MediaRepository
     package let photoLibraryPermissionService: any PhotoLibraryPermissionService
-    
+
     // MARK: - Computed Properties
-    
+
     /// MediaLibraryAppService のテスト実装
     package var mediaLibraryAppService: any MediaLibraryAppServiceProtocol {
         MediaLibraryAppService(
@@ -52,20 +48,20 @@ package struct TestDependencies {
             permissionService: photoLibraryPermissionService
         )
     }
-    
+
     /// PhotoLibraryViewModel のテスト実装
     @MainActor
     package var photoLibraryViewModel: PhotoLibraryViewModel {
         PhotoLibraryViewModel(mediaLibraryService: mediaLibraryAppService)
     }
-    
+
     // MARK: - Initialization
-    
+
     package init(
         mediaRepository: any MediaRepository,
         permissionService: any PhotoLibraryPermissionService
     ) {
         self.mediaRepository = mediaRepository
-        self.photoLibraryPermissionService = permissionService
+        photoLibraryPermissionService = permissionService
     }
 }

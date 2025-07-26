@@ -4,7 +4,7 @@ import Foundation
 package protocol PhotoLibraryPermissionService: Sendable {
     /// 現在の権限状態を取得する
     func checkPermissionStatus() -> PhotoLibraryPermissionStatus
-    
+
     /// 権限を要求する
     func requestPermission() async -> PhotoLibraryPermissionStatus
 }
