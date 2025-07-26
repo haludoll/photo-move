@@ -121,8 +121,8 @@ MediaLibraryContextのドメインモデルを、ドメイン駆動設計の原�
 - **サムネイル取得**: 指定されたメディアのサムネイルを取得
 
 **実装:**
-- **PhotoKitMediaRepository**: PhotoKitを使用した実装
-- **MockMediaRepository**: テスト用のモック実装
+- **MediaRepositoryImpl**: PhotoKitを使用したstruct実装
+- **Mock実装**: テスト用のプロトコル準拠モック実装
 
 ## 集約の境界
 
@@ -165,18 +165,33 @@ Media（メディア集約）
 
 ## 依存性注入 (Dependency Injection)
 
+### Composition Rootパターン
+- **AppDependencies**: アプリケーション全体の依存関係を管理する中央集権的なenum
+- **静的プロパティ**: 各依存関係は`static let`プロパティとして定義
+- **explicit any**: Swift 6対応のため`any`修飾子を明示的に使用
+- **DependencyInjection**モジュールが Composition Root として機能
+
 ### 抽象化されたサービス
-- **MediaRepository**: `@Dependency(\.mediaRepository)`
-- **PhotoLibraryPermissionService**: `@Dependency(\.photoLibraryPermissionService)`
+- **MediaRepository**: プロトコルベースの抽象化
+- **PhotoLibraryPermissionService**: プロトコルベースの抽象化
+- **MediaLibraryAppServiceProtocol**: アプリケーションサービスの抽象化
 
 ### 実装の分離
-- **本番環境**: PhotoKit実装（`PhotoKitMediaRepository`, `PhotoKitPermissionService`）
-- **テスト環境**: Mock実装（`MockMediaRepository`, `MockPermissionService`）
+- **本番環境**: 
+  - `MediaRepositoryImpl`: PhotoKitを使用したstruct実装
+  - `PhotoLibraryPermissionServiceImpl`: PhotoKitを使用したstruct実装
+  - `MediaLibraryAppService`: アプリケーションサービスのstruct実装
+- **テスト環境**: 
+  - `TestDependencies`: テスト用依存関係管理構造体
+  - Mock実装: プロトコル準拠のモック実装
 
 ### テスト戦略
-- swift-testingフレームワークを使用
-- 依存性注入により外部システム（PhotoKit）に依存しないテストを実現
-- すべてのテストが独立して実行可能
+- **swift-testing**: 新しいテストフレームワークを使用（XCTest廃止）
+- **@Test属性**: XCTestの代わりにswift-testingの@Test属性
+- **#expect**: XCTAssertの代わりに#expect マクロ
+- **依存性注入**: 外部システム（PhotoKit）に依存しないテストを実現
+- **独立実行**: すべてのテストが独立して実行可能
+- **struct実装**: ステートレスなサービスはstruct で実装しテスト性向上
 
 ## 他のコンテキストとの関係
 

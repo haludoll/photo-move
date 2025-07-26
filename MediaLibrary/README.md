@@ -26,25 +26,50 @@ MediaLibraryは、写真・動画の管理、閲覧、検索機能を提供す�
 ```
 MediaLibrary/
 ├── Presentation/          # プレゼンテーション層
-│   ├── Views/            # SwiftUI Views
-│   └── ViewModels/       # MVVM ViewModels
+│   └── ViewModels/       # MVVM ViewModels (ObservableObject)
 ├── Application/          # アプリケーション層
-│   └── Services/         # アプリケーションサービス
+│   └── Services/         # アプリケーションサービス (struct)
 ├── Domain/               # ドメイン層
 │   ├── Entities/         # エンティティ
 │   ├── ValueObjects/     # 値オブジェクト
-│   ├── Aggregates/       # 集約
-│   └── Repositories/     # リポジトリインターフェース
-└── Infrastructure/       # インフラストラクチャ層
-    ├── Repositories/     # リポジトリ実装
-    └── External/         # 外部API、PhotoKit等
+│   ├── Services/         # ドメインサービス
+│   ├── Repositories/     # リポジトリプロトコル
+│   └── Errors/          # ドメインエラー
+├── Infrastructure/       # インフラストラクチャ層
+│   ├── Repositories/     # リポジトリ実装 (struct)
+│   └── Services/        # ドメインサービス実装 (struct)
+└── DependencyInjection/  # 依存性注入層 (Composition Root)
+    ├── AppContainer.swift # 本番用依存関係管理
+    └── AppFactory.swift  # ファクトリーパターン
 ```
+
+### 依存性注入アーキテクチャ
+
+- **Composition Rootパターン**: `AppDependencies`が全体の依存関係を管理
+- **Protocol-based DI**: swift-dependenciesの代わりにプロトコルベースの依存性注入
+- **struct-based services**: ステートレスなサービスはstructで実装
+- **静的プロパティ**: 各依存関係は`static let`プロパティで定義
+- **Swift 6対応**: 明示的な`any`修飾子を使用
+
+## 技術仕様
+
+### 対応プラットフォーム
+- **iOS 15+**: iOS専用パッケージ
+- **Swift 6**: Swift 6 strict concurrency対応
+
+### テストフレームワーク
+- **swift-testing**: 新しいテストフレームワークを使用
+- **@Test属性**: XCTestの代わりにswift-testingの@Test属性
+- **#expect**: XCTAssertの代わりに#expectマクロ
+
+### コードフォーマット
+- **swift-format**: 自動コードフォーマットツール
 
 ## 依存関係
 
 MediaLibraryは以下の依存関係を持ちます：
 
-- **AssetTransferContext**: 選択されたメディアの転送機能を利用
+- **AssetTransferContext**: 選択されたメディアの転送機能を利用（将来実装予定）
 
 ## 詳細仕様
 
