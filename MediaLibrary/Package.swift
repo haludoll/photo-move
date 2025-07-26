@@ -16,15 +16,16 @@ let package = Package(
         .library(name: "MediaLibraryDependencyInjection", targets: ["DependencyInjection"]),
     ],
     dependencies: [
-        .package(url: "https://github.com/swiftlang/swift-format", from: "509.0.0")
+        .package(url: "https://github.com/swiftlang/swift-format", from: "509.0.0"),
     ],
     targets: [
         // Application Layer
         .target(
             name: "Application",
             dependencies: [
-                "Domain"
-            ]),
+                "Domain",
+            ]
+        ),
 
         // Domain Layer
         .target(
@@ -34,41 +35,47 @@ let package = Package(
         .target(
             name: "Infrastructure",
             dependencies: [
-                "Domain"
-            ]),
+                "Domain",
+            ]
+        ),
 
         // Presentation Layer
         .target(
             name: "Presentation",
             dependencies: [
                 "Application",
-                "Domain"
-            ]),
+                "Domain",
+            ]
+        ),
 
         // Tests
         .testTarget(
             name: "DomainTests",
-            dependencies: ["Domain"]),
+            dependencies: ["Domain"]
+        ),
         .testTarget(
             name: "ApplicationTests",
             dependencies: [
                 "Application",
                 "Domain",
-                "Infrastructure"
-            ]),
+                "Infrastructure",
+            ]
+        ),
         .testTarget(
             name: "InfrastructureTests",
             dependencies: [
                 "Infrastructure",
                 "Domain",
-            ]),
+            ]
+        ),
         .testTarget(
             name: "PresentationTests",
             dependencies: [
                 "Presentation",
                 "Application",
-                "Domain"
-            ]),
+                "Domain",
+            ]
+        ),
 
         // DependencyInjection Layer
         .target(
@@ -77,6 +84,8 @@ let package = Package(
                 "Domain",
                 "Application",
                 "Infrastructure",
-                "Presentation"
-            ]),
-    ])
+                "Presentation",
+            ]
+        ),
+    ]
+)

@@ -2,7 +2,7 @@ import Domain
 import Foundation
 
 /// フォトライブラリの操作を提供するApplicationサービス実装
-package final class MediaLibraryAppService: MediaLibraryAppServiceProtocol, Sendable {
+package struct MediaLibraryAppService: MediaLibraryAppServiceProtocol {
     // MARK: - Dependencies
 
     private let mediaRepository: any MediaRepository

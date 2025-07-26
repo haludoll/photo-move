@@ -4,7 +4,7 @@ import Photos
 import UIKit
 
 /// PhotoKitを使用したMediaRepositoryの実装
-package final class MediaRepositoryImpl: MediaRepository, @unchecked Sendable {
+package struct MediaRepositoryImpl: MediaRepository {
     // MARK: - Initialization
 
     package init() {}
