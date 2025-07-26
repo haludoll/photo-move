@@ -5,14 +5,13 @@ import XCTest
 @testable import Infrastructure
 
 #if canImport(UIKit)
-    /// PhotoKitMediaRepositoryのテスト
-    final class PhotoKitMediaRepositoryTests: XCTestCase {
-
-        private var repository: PhotoKitMediaRepository!
+    /// MediaRepositoryImplのテスト
+    final class MediaRepositoryImplTests: XCTestCase {
+        private var repository: MediaRepositoryImpl!
 
         override func setUp() {
             super.setUp()
-            repository = PhotoKitMediaRepository()
+            repository = MediaRepositoryImpl()
         }
 
         override func tearDown() {
@@ -56,7 +55,7 @@ import XCTest
             // 実際のテストはE2Eテストで実施する
             // ここでは基本的な型チェックのみ
 
-            XCTAssertTrue(true)  // プレースホルダー
+            XCTAssertTrue(true) // プレースホルダー
         }
     }
 

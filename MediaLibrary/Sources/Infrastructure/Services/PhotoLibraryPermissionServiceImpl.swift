@@ -2,12 +2,11 @@ import Domain
 import Foundation
 import Photos
 
-/// PhotoKitを使用した権限管理の実装
+/// PhotoKitを使用した写真ライブラリ権限管理の実装
 @available(iOS 15.0, macOS 11.0, *)
-package struct PhotoKitPermissionService: PhotoLibraryPermissionService {
-    
+package struct PhotoLibraryPermissionServiceImpl: PhotoLibraryPermissionService {
     package init() {}
-    
+
     package func checkPermissionStatus() -> PhotoLibraryPermissionStatus {
         switch PHPhotoLibrary.authorizationStatus(for: .readWrite) {
         case .authorized:
@@ -24,7 +23,7 @@ package struct PhotoKitPermissionService: PhotoLibraryPermissionService {
             return .denied
         }
     }
-    
+
     package func requestPermission() async -> PhotoLibraryPermissionStatus {
         let status = await PHPhotoLibrary.requestAuthorization(for: .readWrite)
         switch status {

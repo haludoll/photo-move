@@ -4,9 +4,9 @@ import Foundation
 import Infrastructure
 
 /// MediaRepositoryの依存関係定義
-extension DependencyValues {
+package extension DependencyValues {
     /// メディアリポジトリの依存関係
-    package var mediaRepository: MediaRepository {
+    var mediaRepository: MediaRepository {
         get { self[MediaRepositoryKey.self] }
         set { self[MediaRepositoryKey.self] = newValue }
     }
@@ -16,9 +16,9 @@ extension DependencyValues {
 private enum MediaRepositoryKey: DependencyKey {
     static let liveValue: MediaRepository = {
         #if canImport(UIKit)
-            return PhotoKitMediaRepository()
+            return MediaRepositoryImpl()
         #else
-            fatalError("PhotoKitMediaRepository requires UIKit (iOS only)")
+            fatalError("MediaRepositoryImpl requires UIKit (iOS only)")
         #endif
     }()
 
@@ -29,9 +29,9 @@ private enum MediaRepositoryKey: DependencyKey {
 private struct MockMediaRepository: MediaRepository, Sendable {
     func fetchMedia() async throws -> [Media] {
         // テスト用のダミーデータ
-        return [
-            try Media(
-                id: try Media.ID("mock-1"),
+        return try [
+            Media(
+                id: Media.ID("mock-1"),
                 type: .photo,
                 metadata: Media.Metadata(
                     format: .jpeg,
@@ -39,8 +39,8 @@ private struct MockMediaRepository: MediaRepository, Sendable {
                 ),
                 filePath: "/mock/path/1.jpg"
             ),
-            try Media(
-                id: try Media.ID("mock-2"),
+            Media(
+                id: Media.ID("mock-2"),
                 type: .photo,
                 metadata: Media.Metadata(
                     format: .png,
@@ -55,7 +55,7 @@ private struct MockMediaRepository: MediaRepository, Sendable {
         // テスト用のダミーサムネイル
         return try Media.Thumbnail(
             mediaID: mediaID,
-            imageData: Data([0x89, 0x50, 0x4E, 0x47]),  // PNG header
+            imageData: Data([0x89, 0x50, 0x4E, 0x47]), // PNG header
             size: size
         )
     }

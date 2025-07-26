@@ -7,8 +7,7 @@ import Photos
 
     /// PhotoKitを使用したMediaRepositoryの実装
     @available(iOS 15.0, *)
-    package final class PhotoKitMediaRepository: MediaRepository, @unchecked Sendable {
-
+    package final class MediaRepositoryImpl: MediaRepository, @unchecked Sendable {
         // MARK: - Initialization
 
         package init() {}
@@ -54,7 +53,7 @@ import Photos
         private func createFetchOptions() -> PHFetchOptions {
             let options = PHFetchOptions()
             options.sortDescriptors = [
-                NSSortDescriptor(key: "creationDate", ascending: false)
+                NSSortDescriptor(key: "creationDate", ascending: false),
             ]
             return options
         }
@@ -70,11 +69,11 @@ import Photos
                 id: mediaID,
                 type: .photo,
                 metadata: metadata,
-                filePath: asset.localIdentifier  // PhotoKitではlocalIdentifierをファイルパスとして使用
+                filePath: asset.localIdentifier // PhotoKitではlocalIdentifierをファイルパスとして使用
             )
         }
 
-        private func convertMediaFormat(from asset: PHAsset) -> MediaFormat {
+        private func convertMediaFormat(from _: PHAsset) -> MediaFormat {
             // PhotoKitではフォーマット情報を直接取得できないため、
             // 一般的なケースとしてJPEGを返す
             return .jpeg
@@ -101,7 +100,6 @@ import Photos
                     contentMode: .aspectFill,
                     options: options
                 ) { image, info in
-
                     // エラーチェック
                     if info?[PHImageErrorKey] != nil {
                         continuation.resume(throwing: MediaError.thumbnailGenerationFailed)
