@@ -4,8 +4,8 @@ import Foundation
 import Testing
 
 @testable import Application
-@testable import DependencyInjection
 @testable import Domain
+@testable import Infrastructure
 
 /// MediaLibraryAppServiceのテスト
 struct MediaLibraryAppServiceTests {

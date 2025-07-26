@@ -7,7 +7,6 @@ import SwiftUI
 
 /// 写真ライブラリ画面のViewModel
 @MainActor
-@available(iOS 15.0, macOS 11.0, *)
 package final class PhotoLibraryViewModel: ObservableObject {
     // MARK: - Published Properties
 
@@ -19,7 +18,7 @@ package final class PhotoLibraryViewModel: ObservableObject {
 
     // MARK: - Private Properties
 
-    private let mediaLibraryService: MediaLibraryAppServiceProtocol
+    @Dependency(\.mediaLibraryAppService) private var mediaLibraryService
     private var thumbnailLoadingTasks: [Media.ID: Task<Void, Never>] = [:]
 
     // MARK: - Computed Properties
@@ -30,9 +29,7 @@ package final class PhotoLibraryViewModel: ObservableObject {
 
     // MARK: - Initialization
 
-    package init(mediaLibraryService: MediaLibraryAppServiceProtocol = MediaLibraryAppService()) {
-        self.mediaLibraryService = mediaLibraryService
-    }
+    package init() {}
 
     // MARK: - Public Methods
 

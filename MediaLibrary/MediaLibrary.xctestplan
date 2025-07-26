@@ -19,6 +19,13 @@
     {
       "target" : {
         "containerPath" : "container:..\/MediaLibrary",
+        "identifier" : "InfrastructureTests",
+        "name" : "InfrastructureTests"
+      }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:..\/MediaLibrary",
         "identifier" : "ApplicationTests",
         "name" : "ApplicationTests"
       }
@@ -26,15 +33,15 @@
     {
       "target" : {
         "containerPath" : "container:..\/MediaLibrary",
-        "identifier" : "DomainTests",
-        "name" : "DomainTests"
+        "identifier" : "PresentationTests",
+        "name" : "PresentationTests"
       }
     },
     {
       "target" : {
         "containerPath" : "container:..\/MediaLibrary",
-        "identifier" : "InfrastructureTests",
-        "name" : "InfrastructureTests"
+        "identifier" : "DomainTests",
+        "name" : "DomainTests"
       }
     }
   ],

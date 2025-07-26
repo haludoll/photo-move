@@ -1,7 +1,6 @@
 import Dependencies
 import Domain
 import Foundation
-import Infrastructure
 
 /// MediaRepositoryの依存関係定義
 package extension DependencyValues {
@@ -15,10 +14,10 @@ package extension DependencyValues {
 /// MediaRepositoryのDependencyKey
 private enum MediaRepositoryKey: DependencyKey {
     static let liveValue: MediaRepository = {
-        #if canImport(UIKit)
+        #if os(iOS)
             return MediaRepositoryImpl()
         #else
-            fatalError("MediaRepositoryImpl requires UIKit (iOS only)")
+            fatalError("MediaRepositoryImpl requires iOS")
         #endif
     }()
 

@@ -7,13 +7,12 @@ let package = Package(
     name: "MediaLibrary",
     platforms: [
         .iOS(.v15),
-        .macOS(.v10_15) // Required by swift-dependencies, but only iOS is actually used
+        .macOS(.v10_15),
     ],
     products: [
         .library(name: "MediaLibraryApplication", targets: ["Application"]),
         .library(name: "MediaLibraryDomain", targets: ["Domain"]),
         .library(name: "MediaLibraryInfrastructure", targets: ["Infrastructure"]),
-        .library(name: "MediaLibraryDependencyInjection", targets: ["DependencyInjection"]),
         .library(name: "MediaLibraryPresentation", targets: ["Presentation"]),
     ],
     dependencies: [
@@ -26,7 +25,7 @@ let package = Package(
             name: "Application",
             dependencies: [
                 "Domain",
-                "DependencyInjection",
+                "Infrastructure",
                 .product(name: "Dependencies", package: "swift-dependencies"),
             ]),
 
@@ -38,15 +37,7 @@ let package = Package(
         .target(
             name: "Infrastructure",
             dependencies: [
-                "Domain"
-            ]),
-
-        // DependencyInjection Layer
-        .target(
-            name: "DependencyInjection",
-            dependencies: [
                 "Domain",
-                "Infrastructure",
                 .product(name: "Dependencies", package: "swift-dependencies"),
             ]),
 
@@ -56,7 +47,6 @@ let package = Package(
             dependencies: [
                 "Application",
                 "Domain",
-                "DependencyInjection",
                 .product(name: "Dependencies", package: "swift-dependencies"),
             ]),
 
@@ -69,7 +59,7 @@ let package = Package(
             dependencies: [
                 "Application",
                 "Domain",
-                "DependencyInjection",
+                "Infrastructure",
                 .product(name: "Dependencies", package: "swift-dependencies"),
             ]),
         .testTarget(

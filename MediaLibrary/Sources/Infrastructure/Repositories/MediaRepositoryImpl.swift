@@ -2,12 +2,11 @@ import Domain
 import Foundation
 import Photos
 
-#if canImport(UIKit)
-    import UIKit
+#if os(iOS)
+import UIKit
 
-    /// PhotoKitを使用したMediaRepositoryの実装
-    @available(iOS 15.0, *)
-    package final class MediaRepositoryImpl: MediaRepository, @unchecked Sendable {
+/// PhotoKitを使用したMediaRepositoryの実装
+package final class MediaRepositoryImpl: MediaRepository, @unchecked Sendable {
         // MARK: - Initialization
 
         package init() {}

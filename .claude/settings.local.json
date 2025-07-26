@@ -19,7 +19,9 @@
       "Bash(swift build)",
       "Bash(swift build:*)",
       "Bash(swiftformat:*)",
-      "Bash(ls:*)"
+      "Bash(ls:*)",
+      "WebFetch(domain:pointfreeco.github.io)",
+      "WebFetch(domain:github.com)"
     ],
     "deny": []
   }
