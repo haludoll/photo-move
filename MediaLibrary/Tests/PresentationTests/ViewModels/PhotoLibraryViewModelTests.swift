@@ -7,7 +7,7 @@ import XCTest
 @available(iOS 15.0, macOS 11.0, *)
 final class PhotoLibraryViewModelTests: XCTestCase {
     @MainActor
-    private func createViewModel(service: MediaLibraryServiceProtocol = MockMediaLibraryService()) -> PhotoLibraryViewModel {
+    private func createViewModel(service: MediaLibraryAppServiceProtocol = MockMediaLibraryAppService()) -> PhotoLibraryViewModel {
         return PhotoLibraryViewModel(mediaLibraryService: service)
     }
 
@@ -39,7 +39,7 @@ final class PhotoLibraryViewModelTests: XCTestCase {
     @MainActor
     func testLoadPhotosPermissionDenied() async {
         // Arrange
-        let viewModel = createViewModel(service: MockMediaLibraryServiceWithError(.permissionDenied))
+        let viewModel = createViewModel(service: MockMediaLibraryAppServiceWithError(.permissionDenied))
 
         // Act
         await viewModel.loadPhotos()
@@ -54,7 +54,7 @@ final class PhotoLibraryViewModelTests: XCTestCase {
     @MainActor
     func testLoadPhotosMediaLoadFailed() async {
         // Arrange
-        let viewModel = createViewModel(service: MockMediaLibraryServiceWithError(.mediaLoadFailed))
+        let viewModel = createViewModel(service: MockMediaLibraryAppServiceWithError(.mediaLoadFailed))
 
         // Act
         await viewModel.loadPhotos()
@@ -110,7 +110,7 @@ final class PhotoLibraryViewModelTests: XCTestCase {
     @MainActor
     func testClearError() async {
         // Arrange
-        let viewModel = createViewModel(service: MockMediaLibraryServiceWithError(.permissionDenied))
+        let viewModel = createViewModel(service: MockMediaLibraryAppServiceWithError(.permissionDenied))
 
         await viewModel.loadPhotos()
         XCTAssertTrue(viewModel.hasError)
@@ -146,7 +146,7 @@ final class PhotoLibraryViewModelTests: XCTestCase {
 // MARK: - Mock Services
 
 @available(iOS 15.0, macOS 11.0, *)
-private struct MockMediaLibraryService: MediaLibraryServiceProtocol {
+private struct MockMediaLibraryAppService: MediaLibraryAppServiceProtocol {
     func loadMedia() async throws -> [Media] {
         return try [
             Media(
@@ -180,7 +180,7 @@ private struct MockMediaLibraryService: MediaLibraryServiceProtocol {
 }
 
 @available(iOS 15.0, macOS 11.0, *)
-private struct MockMediaLibraryServiceWithError: MediaLibraryServiceProtocol {
+private struct MockMediaLibraryAppServiceWithError: MediaLibraryAppServiceProtocol {
     private let error: MediaError
 
     init(_ error: MediaError) {

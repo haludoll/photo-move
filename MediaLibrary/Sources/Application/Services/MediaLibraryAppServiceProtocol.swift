@@ -1,9 +1,9 @@
 import Domain
 import Foundation
 
-/// MediaLibraryServiceのプロトコル
+/// MediaLibraryAppServiceのプロトコル
 @available(iOS 15.0, macOS 11.0, *)
-package protocol MediaLibraryServiceProtocol: Sendable {
+package protocol MediaLibraryAppServiceProtocol: Sendable {
     /// メディア一覧を取得する
     /// - Returns: メディア一覧
     /// - Throws: MediaError
@@ -18,6 +18,6 @@ package protocol MediaLibraryServiceProtocol: Sendable {
     func loadThumbnail(for mediaID: Media.ID, size: CGSize) async throws -> Media.Thumbnail
 }
 
-/// MediaLibraryServiceのプロトコル準拠
+/// MediaLibraryAppServiceのプロトコル準拠
 @available(iOS 15.0, macOS 11.0, *)
-extension MediaLibraryService: MediaLibraryServiceProtocol {}
+extension MediaLibraryAppService: MediaLibraryAppServiceProtocol {}

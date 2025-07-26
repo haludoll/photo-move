@@ -19,7 +19,7 @@ package final class PhotoLibraryViewModel: ObservableObject {
 
     // MARK: - Private Properties
 
-    private let mediaLibraryService: MediaLibraryServiceProtocol
+    private let mediaLibraryService: MediaLibraryAppServiceProtocol
     private var thumbnailLoadingTasks: [Media.ID: Task<Void, Never>] = [:]
 
     // MARK: - Computed Properties
@@ -30,7 +30,7 @@ package final class PhotoLibraryViewModel: ObservableObject {
 
     // MARK: - Initialization
 
-    package init(mediaLibraryService: MediaLibraryServiceProtocol = MediaLibraryService()) {
+    package init(mediaLibraryService: MediaLibraryAppServiceProtocol = MediaLibraryAppService()) {
         self.mediaLibraryService = mediaLibraryService
     }
 

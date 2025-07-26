@@ -5,8 +5,7 @@ import Foundation
 
 /// フォトライブラリの操作を提供するApplicationサービス
 @available(iOS 15.0, macOS 11.0, *)
-package struct MediaLibraryService: Sendable {
-
+package struct MediaLibraryAppService: Sendable {
     // MARK: - Dependencies
 
     @Dependency(\.mediaRepository) private var mediaRepository
