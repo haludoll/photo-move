@@ -1,7 +1,5 @@
 import Domain
 import Foundation
-
-#if os(iOS)
 import Photos
 
 /// PhotoKitを使用した写真ライブラリ権限管理の実装
@@ -43,5 +41,3 @@ package struct PhotoLibraryPermissionServiceImpl: PhotoLibraryPermissionService 
         }
     }
 }
-
-#endif

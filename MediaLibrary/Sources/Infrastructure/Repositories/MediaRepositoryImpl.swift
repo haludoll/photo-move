@@ -1,8 +1,6 @@
 import Domain
 import Foundation
 import Photos
-
-#if os(iOS)
 import UIKit
 
 /// PhotoKitを使用したMediaRepositoryの実装
@@ -122,5 +120,3 @@ package final class MediaRepositoryImpl: MediaRepository, @unchecked Sendable {
             }
         }
     }
-
-#endif
