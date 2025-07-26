@@ -154,7 +154,7 @@ private struct MockPermissionService: PhotoLibraryPermissionService, Sendable {
     func checkPermissionStatus() -> PhotoLibraryPermissionStatus {
         return .authorized
     }
-    
+
     func requestPermission() async -> PhotoLibraryPermissionStatus {
         return .authorized
     }
@@ -165,7 +165,7 @@ private struct MockPermissionDeniedService: PhotoLibraryPermissionService, Senda
     func checkPermissionStatus() -> PhotoLibraryPermissionStatus {
         return .denied
     }
-    
+
     func requestPermission() async -> PhotoLibraryPermissionStatus {
         return .denied
     }

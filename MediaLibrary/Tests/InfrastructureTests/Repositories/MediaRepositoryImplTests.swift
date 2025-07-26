@@ -1,34 +1,24 @@
 import Photos
-import XCTest
+import Testing
 
 @testable import Domain
 @testable import Infrastructure
 
 /// MediaRepositoryImplのテスト
-final class MediaRepositoryImplTests: XCTestCase {
-    private var repository: MediaRepositoryImpl!
-
-    override func setUp() {
-        super.setUp()
-        repository = MediaRepositoryImpl()
-    }
-
-    override func tearDown() {
-        repository = nil
-        super.tearDown()
-    }
-
-    // MARK: - テストケース
-
-    func testFetchMedia_基本的な動作確認() async {
+struct MediaRepositoryImplTests {
+    @Test("MediaRepositoryImpl - 基本的な動作確認")
+    func fetchMediaBasicOperation() async {
         // Given & When & Then
         // PhotoKitのテストは実機でのみ可能
         // 単体テストレベルでは動作確認のみ実施
-        XCTAssertNotNil(repository)
+        let repository = MediaRepositoryImpl()
+        #expect(repository != nil)
     }
 
-    func testFetchThumbnail_無効なメディアIDの場合はエラーを投げる() async {
+    @Test("MediaRepositoryImpl - 無効なメディアIDの場合はエラーを投げる")
+    func fetchThumbnailWithInvalidMediaID() async {
         // Given
+        let repository = MediaRepositoryImpl()
         let invalidMediaID = try! Media.ID("invalid-media-id")
         let size = CGSize(width: 100, height: 100)
 
@@ -38,22 +28,23 @@ final class MediaRepositoryImplTests: XCTestCase {
             // 実際のテストは統合テストで実施
         } catch {
             // エラーが投げられることを確認
-            XCTAssertTrue(error is MediaError)
+            #expect(error is MediaError)
         }
     }
 
-    func testRepository_初期化が成功する() {
+    @Test("MediaRepositoryImpl - 初期化が成功する")
+    func repositoryInitializationSuccess() {
         // Given & When & Then
-        XCTAssertNotNil(repository)
+        let repository = MediaRepositoryImpl()
+        #expect(repository != nil)
     }
 
-    // MARK: - 内部メソッドのテスト用のヘルパー
-
-    func testMediaConversion_PHAssetからMediaへの変換をテストする() {
+    @Test("MediaRepositoryImpl - PHAssetからMediaへの変換をテストする")
+    func mediaConversionTest() {
         // Note: PHAssetのモックを作成するのは困難なため、
         // 実際のテストはE2Eテストで実施する
         // ここでは基本的な型チェックのみ
 
-        XCTAssertTrue(true) // プレースホルダー
+        #expect(Bool(true)) // プレースホルダー
     }
 }

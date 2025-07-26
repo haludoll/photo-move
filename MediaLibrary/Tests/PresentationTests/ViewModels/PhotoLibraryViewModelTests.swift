@@ -1,14 +1,14 @@
 import Application
+import CoreGraphics
 import Domain
+import Foundation
 import Presentation
 import Testing
-import Foundation
-import CoreGraphics
 
 struct PhotoLibraryViewModelTests {
     @Test("初期状態のテスト")
     @MainActor
-    func testInitialState() async {
+    func initialState() async {
         let mockRepository = MockSuccessRepository()
         let mockPermissionService = MockPermissionService()
         let mockAppService = MediaLibraryAppService(
@@ -16,7 +16,7 @@ struct PhotoLibraryViewModelTests {
             permissionService: mockPermissionService
         )
         let viewModel = PhotoLibraryViewModel(mediaLibraryService: mockAppService)
-        
+
         #expect(viewModel.media.count == 0)
         #expect(viewModel.isLoading == false)
         #expect(viewModel.error == nil)
@@ -26,12 +26,12 @@ struct PhotoLibraryViewModelTests {
 
     @Test("写真読み込み成功のテスト")
     @MainActor
-    func testLoadPhotosSuccess() async {
+    func loadPhotosSuccess() async {
         let mockMedia = try! [
             createTestMedia(id: "1"),
             createTestMedia(id: "2"),
         ]
-        
+
         let mockRepository = MockSuccessRepository(media: mockMedia)
         let mockPermissionService = MockPermissionService()
         let mockAppService = MediaLibraryAppService(
@@ -52,7 +52,7 @@ struct PhotoLibraryViewModelTests {
 
     @Test("権限拒否エラーのテスト")
     @MainActor
-    func testLoadPhotosPermissionDenied() async {
+    func loadPhotosPermissionDenied() async {
         let mockRepository = MockFailureRepository()
         let mockPermissionService = MockDeniedPermissionService()
         let mockAppService = MediaLibraryAppService(
@@ -73,7 +73,7 @@ struct PhotoLibraryViewModelTests {
 
     @Test("メディア読み込み失敗のテスト")
     @MainActor
-    func testLoadPhotosMediaLoadFailed() async {
+    func loadPhotosMediaLoadFailed() async {
         let mockRepository = MockFailureRepository()
         let mockPermissionService = MockPermissionService()
         let mockAppService = MediaLibraryAppService(
@@ -103,7 +103,7 @@ struct PhotoLibraryViewModelTests {
             permissionService: mockPermissionService
         )
         let viewModel = PhotoLibraryViewModel(mediaLibraryService: mockAppService)
-        
+
         await viewModel.loadPhotos()
         guard let firstMedia = viewModel.media.first else {
             Issue.record("No media loaded")
@@ -122,7 +122,7 @@ struct PhotoLibraryViewModelTests {
 
     @Test("サムネイル重複読み込みのテスト")
     @MainActor
-    func testLoadThumbnailDuplicate() async {
+    func loadThumbnailDuplicate() async {
         let mockMedia = try! [createTestMedia(id: "1")]
         let mockRepository = MockSuccessRepository(media: mockMedia)
         let mockPermissionService = MockPermissionService()
@@ -131,7 +131,7 @@ struct PhotoLibraryViewModelTests {
             permissionService: mockPermissionService
         )
         let viewModel = PhotoLibraryViewModel(mediaLibraryService: mockAppService)
-        
+
         await viewModel.loadPhotos()
         guard let firstMedia = viewModel.media.first else {
             Issue.record("No media loaded")
@@ -182,7 +182,7 @@ struct PhotoLibraryViewModelTests {
             permissionService: mockPermissionService
         )
         let viewModel = PhotoLibraryViewModel(mediaLibraryService: mockAppService)
-        
+
         await viewModel.loadPhotos()
         guard let firstMedia = viewModel.media.first else {
             Issue.record("No media loaded")

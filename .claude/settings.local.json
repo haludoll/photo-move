@@ -21,7 +21,8 @@
       "Bash(swiftformat:*)",
       "Bash(ls:*)",
       "WebFetch(domain:pointfreeco.github.io)",
-      "WebFetch(domain:github.com)"
+      "WebFetch(domain:github.com)",
+      "Bash(find:*)"
     ],
     "deny": []
   }

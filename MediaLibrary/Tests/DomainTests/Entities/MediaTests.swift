@@ -14,7 +14,8 @@ func mediaInitialization() async throws {
         id: mediaID,
         type: mediaType,
         metadata: metadata,
-        filePath: filePath)
+        filePath: filePath
+    )
 
     #expect(media.id == mediaID)
     #expect(media.type == mediaType)
@@ -35,7 +36,8 @@ func mediaInitializationWithEmptyFilePath() async throws {
             id: mediaID,
             type: mediaType,
             metadata: metadata,
-            filePath: emptyFilePath)
+            filePath: emptyFilePath
+        )
     }
 }
 
@@ -50,7 +52,8 @@ func mediaIdentifiable() async throws {
         id: mediaID,
         type: mediaType,
         metadata: metadata,
-        filePath: filePath)
+        filePath: filePath
+    )
 
     #expect(media.id.id == mediaID.value)
 }
