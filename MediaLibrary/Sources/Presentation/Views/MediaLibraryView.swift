@@ -65,8 +65,6 @@ internal struct MediaLibraryContentView: View {
                     photoGridView
                 }
             }
-            .navigationTitle(String(localized: "Photos", bundle: .module))
-            .navigationBarTitleDisplayMode(.inline)
             .alert(String(localized: "Error", bundle: .module), isPresented: .constant(hasError)) {
                 Button(String(localized: "OK", bundle: .module)) {
                     onClearError()
