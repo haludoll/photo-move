@@ -25,7 +25,8 @@
       "Bash(find:*)",
       "Bash(xcodebuild test:*)",
       "Bash(xcrun xcodebuild test:*)",
-      "WebFetch(domain:developer.apple.com)"
+      "WebFetch(domain:developer.apple.com)",
+      "Bash(swift package:*)"
     ],
     "deny": []
   }

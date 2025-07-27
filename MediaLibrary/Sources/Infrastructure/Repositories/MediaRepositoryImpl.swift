@@ -1,5 +1,5 @@
-import MediaLibraryDomain
 import Foundation
+import MediaLibraryDomain
 import Photos
 import UIKit
 
@@ -50,7 +50,7 @@ package struct MediaRepositoryImpl: MediaRepository {
     private func createFetchOptions() -> PHFetchOptions {
         let options = PHFetchOptions()
         options.sortDescriptors = [
-            NSSortDescriptor(key: "creationDate", ascending: false)
+            NSSortDescriptor(key: "creationDate", ascending: false),
         ]
         return options
     }
@@ -66,7 +66,7 @@ package struct MediaRepositoryImpl: MediaRepository {
             id: mediaID,
             type: .photo,
             metadata: metadata,
-            filePath: asset.localIdentifier  // PhotoKitではlocalIdentifierをファイルパスとして使用
+            filePath: asset.localIdentifier // PhotoKitではlocalIdentifierをファイルパスとして使用
         )
     }
 
@@ -88,8 +88,11 @@ package struct MediaRepositoryImpl: MediaRepository {
         return try await withCheckedThrowingContinuation { continuation in
             let options = PHImageRequestOptions()
             options.isSynchronous = false
-            options.deliveryMode = .opportunistic
+            options.deliveryMode = .highQualityFormat // .opportunisticから変更
             options.resizeMode = .fast
+
+            // continuationが複数回呼ばれることを防ぐためのフラグ
+            var isResumed = false
 
             PHImageManager.default().requestImage(
                 for: asset,
@@ -97,24 +100,36 @@ package struct MediaRepositoryImpl: MediaRepository {
                 contentMode: .aspectFill,
                 options: options
             ) { image, info in
+                // 既にresumeされている場合は何もしない
+                guard !isResumed else { return }
+
+                // degraded画像の場合はスキップ（高品質画像を待つ）
+                if let isDegraded = info?[PHImageResultIsDegradedKey] as? Bool, isDegraded {
+                    return
+                }
+
                 // エラーチェック
                 if info?[PHImageErrorKey] != nil {
+                    isResumed = true
                     continuation.resume(throwing: MediaError.thumbnailGenerationFailed)
                     return
                 }
 
                 // 画像チェック
                 guard let image = image else {
+                    isResumed = true
                     continuation.resume(throwing: MediaError.thumbnailGenerationFailed)
                     return
                 }
 
                 // UIImageをData形式に変換
                 guard let imageData = image.jpegData(compressionQuality: 0.8) else {
+                    isResumed = true
                     continuation.resume(throwing: MediaError.thumbnailGenerationFailed)
                     return
                 }
 
+                isResumed = true
                 continuation.resume(returning: imageData)
             }
         }
