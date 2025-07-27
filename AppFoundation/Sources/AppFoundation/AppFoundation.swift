@@ -1,9 +1,10 @@
 import SwiftUI
+import MediaLibraryDependencyInjection
 
 public struct RootView: View {
     public init() {}
 
     public var body: some View {
-        Text("Root, World!")
+        AppViewFactory.makePhotoLibraryView()
     }
 }
