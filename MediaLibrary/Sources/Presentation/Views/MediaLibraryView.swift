@@ -48,7 +48,7 @@ internal struct MediaLibraryContentView: View {
     let onLoadThumbnail: (Media.ID, CGSize) -> Void
     let onClearError: () -> Void
 
-    private let columns = [GridItem(.adaptive(minimum: 80), spacing: 2)]
+    private let columns = Array(repeating: GridItem(.flexible(), spacing: 2), count: 5)
     private let thumbnailSize = CGSize(width: 200, height: 200)
 
     // MARK: - Body
