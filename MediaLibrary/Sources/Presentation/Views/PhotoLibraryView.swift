@@ -80,10 +80,18 @@ package struct PhotoLibraryView: View {
 
     private var errorMessage: String {
         switch viewModel.error {
+        case .invalidMediaID:
+            return "無効なメディアIDです。"
+        case .invalidFilePath:
+            return "無効なファイルパスです。"
+        case .invalidThumbnailData:
+            return "無効なサムネイルデータです。"
         case .permissionDenied:
             return "写真へのアクセスが許可されていません。設定アプリから許可してください。"
         case .mediaNotFound:
             return "写真が見つかりませんでした。"
+        case .unsupportedFormat:
+            return "サポートされていないファイル形式です。"
         case .thumbnailGenerationFailed:
             return "サムネイルの生成に失敗しました。"
         case .mediaLoadFailed:
