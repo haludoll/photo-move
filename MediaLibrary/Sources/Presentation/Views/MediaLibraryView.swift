@@ -110,24 +110,24 @@ internal struct MediaLibraryContentView: View {
     private var errorMessage: String {
         switch error {
         case .invalidMediaID:
-            return String(localized: "Invalid media ID", bundle: .module)
+            String(localized: "Invalid media ID", bundle: .module)
         case .invalidFilePath:
-            return String(localized: "Invalid file path", bundle: .module)
+            String(localized: "Invalid file path", bundle: .module)
         case .invalidThumbnailData:
-            return String(localized: "Invalid thumbnail data", bundle: .module)
+            String(localized: "Invalid thumbnail data", bundle: .module)
         case .permissionDenied:
-            return String(
+            String(
                 localized: "Photo library access permission denied. Please allow access in Settings.", bundle: .module)
         case .mediaNotFound:
-            return String(localized: "Photo not found", bundle: .module)
+            String(localized: "Photo not found", bundle: .module)
         case .unsupportedFormat:
-            return String(localized: "Unsupported file format", bundle: .module)
+            String(localized: "Unsupported file format", bundle: .module)
         case .thumbnailGenerationFailed:
-            return String(localized: "Thumbnail generation failed", bundle: .module)
+            String(localized: "Thumbnail generation failed", bundle: .module)
         case .mediaLoadFailed:
-            return String(localized: "Photo loading failed", bundle: .module)
+            String(localized: "Photo loading failed", bundle: .module)
         case .none:
-            return ""
+            ""
         }
     }
 }
@@ -145,12 +145,11 @@ private struct PhotoThumbnailView: View {
             {
                 Image(uiImage: uiImage)
                     .resizable()
-                    .aspectRatio(1, contentMode: .fill)
-                    .clipped()
+                    .scaledToFit()
             } else {
                 Rectangle()
                     .fill(Color.gray.opacity(0.2))
-                    .aspectRatio(1, contentMode: .fit)
+                    .scaledToFit()
                     .overlay(
                         ProgressView()
                             .progressViewStyle(CircularProgressViewStyle(tint: .gray))
