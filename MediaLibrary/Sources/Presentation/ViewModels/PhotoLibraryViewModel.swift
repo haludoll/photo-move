@@ -6,7 +6,7 @@ import SwiftUI
 
 /// 写真ライブラリ画面のViewModel
 @MainActor
-package final class PhotoLibraryViewModel: ObservableObject {
+package class PhotoLibraryViewModel: ObservableObject {
     // MARK: - Published Properties
 
     @Published package private(set) var media: [Media] = []
