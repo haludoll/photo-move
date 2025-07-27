@@ -31,9 +31,18 @@ import SwiftUI
         }
 
         func loadThumbnail(for mediaID: Media.ID, size: CGSize) async throws -> Media.Thumbnail {
-            // プレビュー用のダミー画像データを生成
-            let image = UIImage(systemName: "photo.fill")!
-            let data = image.jpegData(compressionQuality: 0.8)!
+            // プレビュー用の多様なダミー画像データを生成
+            let systemImages = ["photo.fill", "camera.fill", "video.fill", "heart.fill", "star.fill"]
+            let colors: [UIColor] = [.systemBlue, .systemGreen, .systemOrange, .systemPink, .systemPurple]
+            
+            let index = abs(mediaID.value.hashValue) % systemImages.count
+            let imageName = systemImages[index]
+            let color = colors[index]
+            
+            let config = UIImage.SymbolConfiguration(pointSize: min(size.width, size.height) * 0.6, weight: .medium)
+            let image = UIImage(systemName: imageName, withConfiguration: config)?.withTintColor(color, renderingMode: .alwaysOriginal)
+            
+            let data = image?.jpegData(compressionQuality: 0.8) ?? UIImage().jpegData(compressionQuality: 0.8)!
             return try Media.Thumbnail(
                 mediaID: mediaID,
                 imageData: data,
@@ -43,7 +52,7 @@ import SwiftUI
     }
 
     #Preview {
-        MediaLibraryView()
+        MediaLibraryView(viewModel: MediaLibraryViewModel(mediaLibraryService: MockMediaLibraryAppService()))
     }
 
 #endif

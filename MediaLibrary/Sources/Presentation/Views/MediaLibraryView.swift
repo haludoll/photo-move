@@ -9,19 +9,33 @@ public struct MediaLibraryView: View {
 
     @StateObject private var viewModel: MediaLibraryViewModel
 
-    private let columns = Array(repeating: GridItem(.flexible(), spacing: 2), count: 5)
-    private let thumbnailSize = CGSize(width: 200, height: 200)
-
     // MARK: - Initialization
 
     public init() {
         _viewModel = StateObject(
             wrappedValue: MediaLibraryViewModel(mediaLibraryService: AppDependencies.mediaLibraryAppService))
     }
+    
+    /// プレビュー用のイニシャライザ
+    internal init(viewModel: MediaLibraryViewModel) {
+        _viewModel = StateObject(wrappedValue: viewModel)
+    }
 
     // MARK: - Body
 
     public var body: some View {
+        ContentView(viewModel: viewModel)
+    }
+}
+
+/// メディアライブラリ画面のコンテンツ
+internal struct ContentView: View {
+    @ObservedObject let viewModel: MediaLibraryViewModel
+    
+    private let columns = Array(repeating: GridItem(.flexible(), spacing: 2), count: 5)
+    private let thumbnailSize = CGSize(width: 200, height: 200)
+
+    var body: some View {
         NavigationView {
             Group {
                 if viewModel.isLoading && viewModel.media.isEmpty {
