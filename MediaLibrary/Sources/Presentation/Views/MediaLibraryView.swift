@@ -145,11 +145,13 @@ private struct PhotoThumbnailView: View {
             {
                 Image(uiImage: uiImage)
                     .resizable()
-                    .scaledToFit()
+                    .scaledToFill()
+                    .aspectRatio(1, contentMode: .fill)
+                    .clipped()
             } else {
                 Rectangle()
                     .fill(Color.gray.opacity(0.2))
-                    .scaledToFit()
+                    .aspectRatio(1, contentMode: .fill)
                     .overlay(
                         ProgressView()
                             .progressViewStyle(CircularProgressViewStyle(tint: .gray))
