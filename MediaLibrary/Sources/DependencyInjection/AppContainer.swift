@@ -2,7 +2,6 @@ import Application
 import Domain
 import Foundation
 import Infrastructure
-import Presentation
 
 /// アプリケーション全体の依存関係を管理する構造体
 /// Composition Rootパターンを実装
@@ -22,12 +21,6 @@ package enum AppDependencies {
         mediaRepository: mediaRepository,
         permissionService: photoLibraryPermissionService
     )
-
-    // MARK: - Presentation Layer
-
-    /// PhotoLibraryViewModel の実装
-    @MainActor
-    package static let photoLibraryViewModel: PhotoLibraryViewModel = .init(mediaLibraryService: mediaLibraryAppService)
 }
 
 // MARK: - Test Support
@@ -49,11 +42,6 @@ package struct TestDependencies {
         )
     }
 
-    /// PhotoLibraryViewModel のテスト実装
-    @MainActor
-    package var photoLibraryViewModel: PhotoLibraryViewModel {
-        PhotoLibraryViewModel(mediaLibraryService: mediaLibraryAppService)
-    }
 
     // MARK: - Initialization
 

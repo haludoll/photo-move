@@ -1,6 +1,5 @@
-import Application
+import DependencyInjection
 import Domain
-import Infrastructure
 import SwiftUI
 import UIKit
 
@@ -16,13 +15,7 @@ public struct PhotoLibraryView: View {
     // MARK: - Initialization
 
     public init() {
-        let mediaRepository = MediaRepositoryImpl()
-        let permissionService = PhotoLibraryPermissionServiceImpl()
-        let appService = MediaLibraryAppServiceImpl(
-            mediaRepository: mediaRepository,
-            permissionService: permissionService
-        )
-        _viewModel = StateObject(wrappedValue: PhotoLibraryViewModel(mediaLibraryService: appService))
+        _viewModel = StateObject(wrappedValue: PhotoLibraryViewModel(mediaLibraryService: AppDependencies.mediaLibraryAppService))
     }
 
     // MARK: - Body
