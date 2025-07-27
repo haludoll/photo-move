@@ -6,14 +6,14 @@ import SwiftUI
 
 /// 写真ライブラリ画面のViewModel
 @MainActor
-package class PhotoLibraryViewModel: ObservableObject {
+class PhotoLibraryViewModel: ObservableObject {
     // MARK: - Published Properties
 
-    @Published package private(set) var media: [Media] = []
-    @Published package private(set) var isLoading = false
-    @Published package private(set) var error: MediaError?
-    @Published package private(set) var permissionStatus: PhotoLibraryPermissionStatus = .notDetermined
-    @Published package private(set) var thumbnails: [Media.ID: Media.Thumbnail] = [:]
+    @Published private(set) var media: [Media] = []
+    @Published private(set) var isLoading = false
+    @Published private(set) var error: MediaError?
+    @Published private(set) var permissionStatus: PhotoLibraryPermissionStatus = .notDetermined
+    @Published private(set) var thumbnails: [Media.ID: Media.Thumbnail] = [:]
 
     // MARK: - Private Properties
 
@@ -22,20 +22,20 @@ package class PhotoLibraryViewModel: ObservableObject {
 
     // MARK: - Computed Properties
 
-    package var hasError: Bool {
+    var hasError: Bool {
         error != nil
     }
 
     // MARK: - Initialization
 
-    package init(mediaLibraryService: any MediaLibraryAppService) {
+    init(mediaLibraryService: any MediaLibraryAppService) {
         self.mediaLibraryService = mediaLibraryService
     }
 
     // MARK: - Public Methods
 
     /// 写真を読み込む
-    package func loadPhotos() async {
+    func loadPhotos() async {
         isLoading = true
         error = nil
 
@@ -56,7 +56,7 @@ package class PhotoLibraryViewModel: ObservableObject {
     /// - Parameters:
     ///   - mediaID: メディアID
     ///   - size: サムネイルサイズ
-    package func loadThumbnail(for mediaID: Media.ID, size: CGSize) {
+    func loadThumbnail(for mediaID: Media.ID, size: CGSize) {
         // すでに読み込み中または読み込み済みの場合はスキップ
         if thumbnails[mediaID] != nil || thumbnailLoadingTasks[mediaID] != nil {
             return
@@ -89,12 +89,12 @@ package class PhotoLibraryViewModel: ObservableObject {
     }
 
     /// エラーをクリアする
-    package func clearError() {
+    func clearError() {
         error = nil
     }
 
     /// すべてのサムネイル読み込みタスクをキャンセルする
-    package func cancelAllThumbnailTasks() {
+    func cancelAllThumbnailTasks() {
         thumbnailLoadingTasks.values.forEach { $0.cancel() }
         thumbnailLoadingTasks.removeAll()
     }
