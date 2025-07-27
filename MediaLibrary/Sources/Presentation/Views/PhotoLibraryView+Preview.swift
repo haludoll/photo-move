@@ -43,11 +43,7 @@ import SwiftUI
     }
 
     #Preview {
-        PhotoLibraryView(
-            viewModel: PhotoLibraryViewModel(
-                mediaLibraryService: MockMediaLibraryAppService()
-            )
-        )
+        PhotoLibraryView()
     }
 
 #endif

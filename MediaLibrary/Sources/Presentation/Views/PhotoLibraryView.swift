@@ -1,9 +1,11 @@
+import Application
 import Domain
+import Infrastructure
 import SwiftUI
 import UIKit
 
 /// 写真ライブラリ画面
-package struct PhotoLibraryView: View {
+public struct PhotoLibraryView: View {
     // MARK: - Properties
 
     @StateObject private var viewModel: PhotoLibraryViewModel
@@ -13,17 +15,23 @@ package struct PhotoLibraryView: View {
 
     // MARK: - Initialization
 
-    package init(viewModel: PhotoLibraryViewModel) {
-        _viewModel = StateObject(wrappedValue: viewModel)
+    public init() {
+        let mediaRepository = MediaRepositoryImpl()
+        let permissionService = PhotoLibraryPermissionServiceImpl()
+        let appService = MediaLibraryAppServiceImpl(
+            mediaRepository: mediaRepository,
+            permissionService: permissionService
+        )
+        _viewModel = StateObject(wrappedValue: PhotoLibraryViewModel(mediaLibraryService: appService))
     }
 
     // MARK: - Body
 
-    package var body: some View {
+    public var body: some View {
         NavigationView {
             Group {
                 if viewModel.isLoading && viewModel.media.isEmpty {
-                    ProgressView(String(localized: "Loading...", bundle: .module))
+                    ProgressView(NSLocalizedString("Loading...", bundle: .module, comment: "Loading indicator text"))
                         .frame(maxWidth: .infinity, maxHeight: .infinity)
                 } else if viewModel.media.isEmpty {
                     emptyView
@@ -31,13 +39,13 @@ package struct PhotoLibraryView: View {
                     photoGridView
                 }
             }
-            .navigationTitle(String(localized: "Photos", bundle: .module))
+            .navigationTitle(NSLocalizedString("Photos", bundle: .module, comment: "Navigation title for photos screen"))
             .navigationBarTitleDisplayMode(.inline)
             .task {
                 await viewModel.loadPhotos()
             }
-            .alert(String(localized: "Error", bundle: .module), isPresented: .constant(viewModel.hasError)) {
-                Button(String(localized: "OK", bundle: .module)) {
+            .alert(NSLocalizedString("Error", bundle: .module, comment: "Error alert title"), isPresented: .constant(viewModel.hasError)) {
+                Button(NSLocalizedString("OK", bundle: .module, comment: "OK button text")) {
                     viewModel.clearError()
                 }
             } message: {
@@ -71,7 +79,7 @@ package struct PhotoLibraryView: View {
             Image(systemName: "photo.on.rectangle.angled")
                 .font(.system(size: 64))
                 .foregroundColor(.gray)
-            Text(String(localized: "No Photos", bundle: .module))
+            Text(NSLocalizedString("No Photos", bundle: .module, comment: "Empty state message"))
                 .font(.headline)
                 .foregroundColor(.gray)
         }
@@ -81,21 +89,21 @@ package struct PhotoLibraryView: View {
     private var errorMessage: String {
         switch viewModel.error {
         case .invalidMediaID:
-            return String(localized: "Invalid media ID", bundle: .module)
+            return NSLocalizedString("Invalid media ID", bundle: .module, comment: "Error message for invalid media ID")
         case .invalidFilePath:
-            return String(localized: "Invalid file path", bundle: .module)
+            return NSLocalizedString("Invalid file path", bundle: .module, comment: "Error message for invalid file path")
         case .invalidThumbnailData:
-            return String(localized: "Invalid thumbnail data", bundle: .module)
+            return NSLocalizedString("Invalid thumbnail data", bundle: .module, comment: "Error message for invalid thumbnail data")
         case .permissionDenied:
-            return String(localized: "Photo library access permission denied. Please allow access in Settings.", bundle: .module)
+            return NSLocalizedString("Photo library access permission denied. Please allow access in Settings.", bundle: .module, comment: "Error message for permission denied")
         case .mediaNotFound:
-            return String(localized: "Photo not found", bundle: .module)
+            return NSLocalizedString("Photo not found", bundle: .module, comment: "Error message for media not found")
         case .unsupportedFormat:
-            return String(localized: "Unsupported file format", bundle: .module)
+            return NSLocalizedString("Unsupported file format", bundle: .module, comment: "Error message for unsupported format")
         case .thumbnailGenerationFailed:
-            return String(localized: "Thumbnail generation failed", bundle: .module)
+            return NSLocalizedString("Thumbnail generation failed", bundle: .module, comment: "Error message for thumbnail generation failure")
         case .mediaLoadFailed:
-            return String(localized: "Photo loading failed", bundle: .module)
+            return NSLocalizedString("Photo loading failed", bundle: .module, comment: "Error message for media load failure")
         case .none:
             return ""
         }

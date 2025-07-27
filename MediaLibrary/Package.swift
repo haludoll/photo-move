@@ -12,7 +12,7 @@ let package = Package(
         .library(name: "MediaLibraryApplication", targets: ["Application"]),
         .library(name: "MediaLibraryDomain", targets: ["Domain"]),
         .library(name: "MediaLibraryInfrastructure", targets: ["Infrastructure"]),
-        .library(name: "MediaLibraryPresentation", targets: ["Presentation"]),
+        .library(name: "MediaLibraryPresentation", targets: ["Presentation", "Infrastructure", "Application", "Domain"]),
         .library(name: "MediaLibraryDependencyInjection", targets: ["DependencyInjection"]),
     ],
     dependencies: [
@@ -29,10 +29,8 @@ let package = Package(
 
         // Domain Layer
         .target(
-            name: "Domain",
-            resources: [
-                .process("Resources")
-            ]),
+            name: "Domain"
+        ),
 
         // Infrastructure Layer
         .target(
@@ -48,6 +46,7 @@ let package = Package(
             dependencies: [
                 "Application",
                 "Domain",
+                "Infrastructure",
             ],
             resources: [
                 .process("Resources")

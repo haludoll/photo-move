@@ -14,21 +14,21 @@ package enum MediaError: Error, LocalizedError {
     package var errorDescription: String? {
         switch self {
         case .invalidMediaID:
-            String(localized: "Invalid media ID", bundle: .module)
+            NSLocalizedString("Invalid media ID", comment: "Error message for invalid media ID")
         case .invalidFilePath:
-            String(localized: "Invalid file path", bundle: .module)
+            NSLocalizedString("Invalid file path", comment: "Error message for invalid file path")
         case .invalidThumbnailData:
-            String(localized: "Invalid thumbnail data", bundle: .module)
+            NSLocalizedString("Invalid thumbnail data", comment: "Error message for invalid thumbnail data")
         case .permissionDenied:
-            String(localized: "Photo library access permission denied. Please allow access in Settings.", bundle: .module)
+            NSLocalizedString("Photo library access permission denied. Please allow access in Settings.", comment: "Error message for permission denied")
         case .mediaNotFound:
-            String(localized: "Photo not found", bundle: .module)
+            NSLocalizedString("Photo not found", comment: "Error message for media not found")
         case .unsupportedFormat:
-            String(localized: "Unsupported file format", bundle: .module)
+            NSLocalizedString("Unsupported file format", comment: "Error message for unsupported format")
         case .thumbnailGenerationFailed:
-            String(localized: "Thumbnail generation failed", bundle: .module)
+            NSLocalizedString("Thumbnail generation failed", comment: "Error message for thumbnail generation failure")
         case .mediaLoadFailed:
-            String(localized: "Photo loading failed", bundle: .module)
+            NSLocalizedString("Photo loading failed", comment: "Error message for media load failure")
         }
     }
 }

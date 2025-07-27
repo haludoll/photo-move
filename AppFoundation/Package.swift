@@ -21,7 +21,7 @@ let package = Package(
         .target(
             name: "AppFoundation",
             dependencies: [
-                .product(name: "MediaLibraryDependencyInjection", package: "MediaLibrary")
+                .product(name: "MediaLibraryPresentation", package: "MediaLibrary")
             ]),
         .testTarget(
             name: "AppFoundationTests",

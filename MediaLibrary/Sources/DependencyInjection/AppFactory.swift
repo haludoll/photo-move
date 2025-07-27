@@ -7,10 +7,10 @@ import SwiftUI
 package typealias App = AppDependencies
 
 /// アプリケーションのメインビューを生成するファクトリ
-package enum AppViewFactory {
+public enum AppViewFactory {
     /// 写真ライブラリビューを生成する
     @MainActor
-    package static func makePhotoLibraryView() -> PhotoLibraryView {
+    public static func makePhotoLibraryView() -> PhotoLibraryView {
         PhotoLibraryView(viewModel: App.photoLibraryViewModel)
     }
 }

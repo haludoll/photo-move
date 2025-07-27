@@ -1,23 +1,76 @@
 {
   "sourceLanguage" : "en",
   "strings" : {
-    "Photos" : {
+    "Error" : {
+      "comment" : "Error alert title",
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Photos"
+            "value" : "Error"
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "写真"
+            "value" : "エラー"
+          }
+        }
+      }
+    },
+    "Invalid file path" : {
+      "comment" : "Error message for invalid file path",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Invalid file path"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "無効なファイルパスです"
+          }
+        }
+      }
+    },
+    "Invalid media ID" : {
+      "comment" : "Error message for invalid media ID",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Invalid media ID"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "無効なメディアIDです"
+          }
+        }
+      }
+    },
+    "Invalid thumbnail data" : {
+      "comment" : "Error message for invalid thumbnail data",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Invalid thumbnail data"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "無効なサムネイルデータです"
           }
         }
       }
     },
     "Loading..." : {
+      "comment" : "Loading indicator text",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -34,6 +87,7 @@
       }
     },
     "No Photos" : {
+      "comment" : "Empty state message",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -49,23 +103,8 @@
         }
       }
     },
-    "Error" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Error"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "エラー"
-          }
-        }
-      }
-    },
     "OK" : {
+      "comment" : "OK button text",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -77,59 +116,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "OK"
-          }
-        }
-      }
-    },
-    "Invalid media ID" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Invalid media ID"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "無効なメディアIDです"
-          }
-        }
-      }
-    },
-    "Invalid file path" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Invalid file path"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "無効なファイルパスです"
-          }
-        }
-      }
-    },
-    "Invalid thumbnail data" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Invalid thumbnail data"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "無効なサムネイルデータです"
           }
         }
       }
     },
     "Photo library access permission denied. Please allow access in Settings." : {
+      "comment" : "Error message for permission denied",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -145,7 +137,25 @@
         }
       }
     },
+    "Photo loading failed" : {
+      "comment" : "Error message for media load failure",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Photo loading failed"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "写真の読み込みに失敗しました"
+          }
+        }
+      }
+    },
     "Photo not found" : {
+      "comment" : "Error message for media not found",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -161,23 +171,25 @@
         }
       }
     },
-    "Unsupported file format" : {
+    "Photos" : {
+      "comment" : "Navigation title for photos screen",
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Unsupported file format"
+            "value" : "Photos"
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "サポートされていないファイル形式です"
+            "value" : "写真"
           }
         }
       }
     },
     "Thumbnail generation failed" : {
+      "comment" : "Error message for thumbnail generation failure",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -193,18 +205,19 @@
         }
       }
     },
-    "Photo loading failed" : {
+    "Unsupported file format" : {
+      "comment" : "Error message for unsupported format",
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Photo loading failed"
+            "value" : "Unsupported file format"
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "写真の読み込みに失敗しました"
+            "value" : "サポートされていないファイル形式です"
           }
         }
       }
