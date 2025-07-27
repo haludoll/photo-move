@@ -45,6 +45,6 @@ struct MediaRepositoryImplTests {
         // 実際のテストはE2Eテストで実施する
         // ここでは基本的な型チェックのみ
 
-        #expect(Bool(true)) // プレースホルダー
+        #expect(Bool(true))  // プレースホルダー
     }
 }

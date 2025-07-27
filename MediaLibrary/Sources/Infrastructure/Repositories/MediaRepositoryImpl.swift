@@ -50,7 +50,7 @@ package struct MediaRepositoryImpl: MediaRepository {
     private func createFetchOptions() -> PHFetchOptions {
         let options = PHFetchOptions()
         options.sortDescriptors = [
-            NSSortDescriptor(key: "creationDate", ascending: false),
+            NSSortDescriptor(key: "creationDate", ascending: false)
         ]
         return options
     }
@@ -66,7 +66,7 @@ package struct MediaRepositoryImpl: MediaRepository {
             id: mediaID,
             type: .photo,
             metadata: metadata,
-            filePath: asset.localIdentifier // PhotoKitではlocalIdentifierをファイルパスとして使用
+            filePath: asset.localIdentifier  // PhotoKitではlocalIdentifierをファイルパスとして使用
         )
     }
 

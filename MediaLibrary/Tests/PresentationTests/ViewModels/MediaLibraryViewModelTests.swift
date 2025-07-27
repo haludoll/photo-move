@@ -114,7 +114,7 @@ struct MediaLibraryViewModelTests {
         viewModel.loadThumbnail(for: firstMedia.id, size: CGSize(width: 100, height: 100))
 
         // 非同期処理の完了を待つ
-        try? await Task.sleep(nanoseconds: 100_000_000) // 0.1秒
+        try? await Task.sleep(nanoseconds: 100_000_000)  // 0.1秒
 
         // Assert
         #expect(viewModel.thumbnails[firstMedia.id] != nil)
@@ -143,7 +143,7 @@ struct MediaLibraryViewModelTests {
         viewModel.loadThumbnail(for: firstMedia.id, size: CGSize(width: 100, height: 100))
 
         // 非同期処理の完了を待つ
-        try? await Task.sleep(nanoseconds: 100_000_000) // 0.1秒
+        try? await Task.sleep(nanoseconds: 100_000_000)  // 0.1秒
 
         // Assert - 重複読み込みされない
         #expect(viewModel.thumbnails[firstMedia.id] != nil)
@@ -195,7 +195,7 @@ struct MediaLibraryViewModelTests {
         viewModel.cancelAllThumbnailTasks()
 
         // Assert - タスクがキャンセルされても例外が発生しないことを確認
-        #expect(true) // テストが完了すれば成功
+        #expect(true)  // テストが完了すれば成功
     }
 }
 

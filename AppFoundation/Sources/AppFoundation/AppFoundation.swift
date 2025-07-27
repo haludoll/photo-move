@@ -1,5 +1,5 @@
-import SwiftUI
 @_exported import Presentation
+import SwiftUI
 
 public struct RootView: View {
     public init() {}

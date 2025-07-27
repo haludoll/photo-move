@@ -15,7 +15,8 @@ public struct MediaLibraryView: View {
     // MARK: - Initialization
 
     public init() {
-        _viewModel = StateObject(wrappedValue: MediaLibraryViewModel(mediaLibraryService: AppDependencies.mediaLibraryAppService))
+        _viewModel = StateObject(
+            wrappedValue: MediaLibraryViewModel(mediaLibraryService: AppDependencies.mediaLibraryAppService))
     }
 
     // MARK: - Body
@@ -88,7 +89,8 @@ public struct MediaLibraryView: View {
         case .invalidThumbnailData:
             return String(localized: "Invalid thumbnail data", bundle: .module)
         case .permissionDenied:
-            return String(localized: "Photo library access permission denied. Please allow access in Settings.", bundle: .module)
+            return String(
+                localized: "Photo library access permission denied. Please allow access in Settings.", bundle: .module)
         case .mediaNotFound:
             return String(localized: "Photo not found", bundle: .module)
         case .unsupportedFormat:
@@ -112,19 +114,23 @@ private struct PhotoThumbnailView: View {
     var body: some View {
         Group {
             if let thumbnail = thumbnail,
-               let uiImage = UIImage(data: thumbnail.imageData)
+                let uiImage = UIImage(data: thumbnail.imageData)
             {
                 Image(uiImage: uiImage)
                     .resizable()
                     .aspectRatio(contentMode: .fill)
-                    .frame(width: size.width / UIScreen.main.scale,
-                           height: size.height / UIScreen.main.scale)
+                    .frame(
+                        width: size.width / UIScreen.main.scale,
+                        height: size.height / UIScreen.main.scale
+                    )
                     .clipped()
             } else {
                 Rectangle()
                     .fill(Color.gray.opacity(0.2))
-                    .frame(width: size.width / UIScreen.main.scale,
-                           height: size.height / UIScreen.main.scale)
+                    .frame(
+                        width: size.width / UIScreen.main.scale,
+                        height: size.height / UIScreen.main.scale
+                    )
                     .overlay(
                         ProgressView()
                             .progressViewStyle(CircularProgressViewStyle(tint: .gray))

@@ -6,24 +6,26 @@ import PackageDescription
 let package = Package(
     name: "MediaLibrary",
     platforms: [
-        .iOS(.v15),
+        .iOS(.v15)
     ],
     products: [
         .library(name: "MediaLibraryApplication", targets: ["Application"]),
         .library(name: "MediaLibraryDomain", targets: ["Domain"]),
         .library(name: "MediaLibraryInfrastructure", targets: ["Infrastructure"]),
-        .library(name: "MediaLibraryPresentation", targets: ["Presentation", "Infrastructure", "Application", "Domain", "DependencyInjection"]),
+        .library(
+            name: "MediaLibraryPresentation",
+            targets: ["Presentation", "Infrastructure", "Application", "Domain", "DependencyInjection"]),
         .library(name: "MediaLibraryDependencyInjection", targets: ["DependencyInjection"]),
     ],
     dependencies: [
-        .package(url: "https://github.com/swiftlang/swift-format", from: "509.0.0"),
+        .package(url: "https://github.com/swiftlang/swift-format", from: "509.0.0")
     ],
     targets: [
         // Application Layer
         .target(
             name: "Application",
             dependencies: [
-                "Domain",
+                "Domain"
             ]
         ),
 
@@ -36,7 +38,7 @@ let package = Package(
         .target(
             name: "Infrastructure",
             dependencies: [
-                "Domain",
+                "Domain"
             ]
         ),
 

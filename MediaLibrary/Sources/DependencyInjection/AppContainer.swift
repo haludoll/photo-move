@@ -12,7 +12,8 @@ package enum AppDependencies {
     package static let mediaRepository: any MediaRepository = MediaRepositoryImpl()
 
     /// PhotoLibraryPermissionService の実装
-    package static let photoLibraryPermissionService: any PhotoLibraryPermissionService = PhotoLibraryPermissionServiceImpl()
+    package static let photoLibraryPermissionService: any PhotoLibraryPermissionService =
+        PhotoLibraryPermissionServiceImpl()
 
     // MARK: - Application Layer
 
@@ -41,7 +42,6 @@ package struct TestDependencies {
             permissionService: photoLibraryPermissionService
         )
     }
-
 
     // MARK: - Initialization
 
