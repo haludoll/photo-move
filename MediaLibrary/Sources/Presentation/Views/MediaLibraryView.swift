@@ -139,25 +139,27 @@ private struct PhotoThumbnailView: View {
     let size: CGSize
 
     var body: some View {
-        Group {
-            if let thumbnail = thumbnail,
-                let uiImage = UIImage(data: thumbnail.imageData)
-            {
-                Image(uiImage: uiImage)
-                    .resizable()
-                    .scaledToFill()
-                    .aspectRatio(1, contentMode: .fill)
-                    .clipped()
-            } else {
-                Rectangle()
-                    .fill(Color.gray.opacity(0.2))
-                    .aspectRatio(1, contentMode: .fill)
-                    .overlay(
-                        ProgressView()
-                            .progressViewStyle(CircularProgressViewStyle(tint: .gray))
-                            .scaleEffect(0.5)
-                    )
-            }
-        }
+        Color.clear
+            .aspectRatio(1, contentMode: .fit)
+            .overlay(
+                Group {
+                    if let thumbnail = thumbnail,
+                        let uiImage = UIImage(data: thumbnail.imageData)
+                    {
+                        Image(uiImage: uiImage)
+                            .resizable()
+                            .scaledToFill()
+                    } else {
+                        Rectangle()
+                            .fill(Color.gray.opacity(0.2))
+                            .overlay(
+                                ProgressView()
+                                    .progressViewStyle(CircularProgressViewStyle(tint: .gray))
+                                    .scaleEffect(0.5)
+                            )
+                    }
+                }
+            )
+            .clipped()
     }
 }
