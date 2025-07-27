@@ -3,11 +3,11 @@ import Domain
 import SwiftUI
 import UIKit
 
-/// 写真ライブラリ画面
-public struct PhotoLibraryView: View {
+/// メディアライブラリ画面
+public struct MediaLibraryView: View {
     // MARK: - Properties
 
-    @StateObject private var viewModel: PhotoLibraryViewModel
+    @StateObject private var viewModel: MediaLibraryViewModel
 
     private let columns = Array(repeating: GridItem(.flexible(), spacing: 2), count: 5)
     private let thumbnailSize = CGSize(width: 200, height: 200)
@@ -15,7 +15,7 @@ public struct PhotoLibraryView: View {
     // MARK: - Initialization
 
     public init() {
-        _viewModel = StateObject(wrappedValue: PhotoLibraryViewModel(mediaLibraryService: AppDependencies.mediaLibraryAppService))
+        _viewModel = StateObject(wrappedValue: MediaLibraryViewModel(mediaLibraryService: AppDependencies.mediaLibraryAppService))
     }
 
     // MARK: - Body

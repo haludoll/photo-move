@@ -43,7 +43,7 @@ import SwiftUI
     }
 
     #Preview {
-        PhotoLibraryView()
+        MediaLibraryView()
     }
 
 #endif

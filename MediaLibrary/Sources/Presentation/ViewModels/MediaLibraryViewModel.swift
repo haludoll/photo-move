@@ -4,9 +4,9 @@ import Domain
 import Foundation
 import SwiftUI
 
-/// 写真ライブラリ画面のViewModel
+/// メディアライブラリ画面のViewModel
 @MainActor
-class PhotoLibraryViewModel: ObservableObject {
+class MediaLibraryViewModel: ObservableObject {
     // MARK: - Published Properties
 
     @Published private(set) var media: [Media] = []

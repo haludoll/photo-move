@@ -14,21 +14,21 @@ package enum MediaError: Error, LocalizedError {
     package var errorDescription: String? {
         switch self {
         case .invalidMediaID:
-            NSLocalizedString("Invalid media ID", comment: "Error message for invalid media ID")
+            "Invalid media ID"
         case .invalidFilePath:
-            NSLocalizedString("Invalid file path", comment: "Error message for invalid file path")
+            "Invalid file path"
         case .invalidThumbnailData:
-            NSLocalizedString("Invalid thumbnail data", comment: "Error message for invalid thumbnail data")
+            "Invalid thumbnail data"
         case .permissionDenied:
-            NSLocalizedString("Photo library access permission denied. Please allow access in Settings.", comment: "Error message for permission denied")
+            "Photo library access permission denied. Please allow access in Settings."
         case .mediaNotFound:
-            NSLocalizedString("Photo not found", comment: "Error message for media not found")
+            "Photo not found"
         case .unsupportedFormat:
-            NSLocalizedString("Unsupported file format", comment: "Error message for unsupported format")
+            "Unsupported file format"
         case .thumbnailGenerationFailed:
-            NSLocalizedString("Thumbnail generation failed", comment: "Error message for thumbnail generation failure")
+            "Thumbnail generation failed"
         case .mediaLoadFailed:
-            NSLocalizedString("Photo loading failed", comment: "Error message for media load failure")
+            "Photo loading failed"
         }
     }
 }
