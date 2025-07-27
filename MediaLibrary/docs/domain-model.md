@@ -174,7 +174,7 @@ Media（メディア集約）
 ### 抽象化されたサービス
 - **MediaRepository**: プロトコルベースの抽象化
 - **PhotoLibraryPermissionService**: プロトコルベースの抽象化
-- **MediaLibraryAppServiceProtocol**: アプリケーションサービスの抽象化
+- **MediaLibraryAppService**: アプリケーションサービスの抽象化
 
 ### 実装の分離
 - **本番環境**: 

@@ -18,7 +18,7 @@ package enum AppDependencies {
     // MARK: - Application Layer
 
     /// MediaLibraryAppService の実装
-    package static let mediaLibraryAppService: any MediaLibraryAppServiceProtocol = MediaLibraryAppService(
+    package static let mediaLibraryAppService: any MediaLibraryAppService = MediaLibraryAppServiceImpl(
         mediaRepository: mediaRepository,
         permissionService: photoLibraryPermissionService
     )
@@ -42,8 +42,8 @@ package struct TestDependencies {
     // MARK: - Computed Properties
 
     /// MediaLibraryAppService のテスト実装
-    package var mediaLibraryAppService: any MediaLibraryAppServiceProtocol {
-        MediaLibraryAppService(
+    package var mediaLibraryAppService: any MediaLibraryAppService {
+        MediaLibraryAppServiceImpl(
             mediaRepository: mediaRepository,
             permissionService: photoLibraryPermissionService
         )

@@ -40,7 +40,7 @@ MediaLibraryContextにおいて、ドメインエキスパートと開発者が�
 - **機能**: 権限状態確認、権限要求
 - **実装**: PhotoLibraryPermissionServiceImpl (struct実装)
 
-#### MediaLibraryAppService (メディアライブラリアプリケーションサービス)
+#### MediaLibraryAppServiceImpl (メディアライブラリアプリケーションサービス)
 - **定義**: メディアライブラリ関連のユースケースを実装するstruct
 - **機能**: メディア一覧取得、サムネイル取得、権限チェック
 - **特徴**: プロトコル準拠、DIでの依存関係管理

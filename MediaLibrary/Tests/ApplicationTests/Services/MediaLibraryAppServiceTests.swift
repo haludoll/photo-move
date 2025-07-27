@@ -17,7 +17,7 @@ struct MediaLibraryAppServiceTests {
 
         let mockRepository = MockSuccessRepository(media: mockMedia)
         let mockPermissionService = MockPermissionService()
-        let service = MediaLibraryAppService(
+        let service = MediaLibraryAppServiceImpl(
             mediaRepository: mockRepository,
             permissionService: mockPermissionService
         )
@@ -35,7 +35,7 @@ struct MediaLibraryAppServiceTests {
     func loadMediaFailure() async throws {
         let mockRepository = MockFailureRepository()
         let mockPermissionService = MockPermissionDeniedService()
-        let service = MediaLibraryAppService(
+        let service = MediaLibraryAppServiceImpl(
             mediaRepository: mockRepository,
             permissionService: mockPermissionService
         )
@@ -59,7 +59,7 @@ struct MediaLibraryAppServiceTests {
 
         let mockRepository = MockSuccessRepository(thumbnail: expectedThumbnail)
         let mockPermissionService = MockPermissionService()
-        let service = MediaLibraryAppService(
+        let service = MediaLibraryAppServiceImpl(
             mediaRepository: mockRepository,
             permissionService: mockPermissionService
         )
@@ -81,7 +81,7 @@ struct MediaLibraryAppServiceTests {
 
         let mockRepository = MockFailureRepository()
         let mockPermissionService = MockPermissionService()
-        let service = MediaLibraryAppService(
+        let service = MediaLibraryAppServiceImpl(
             mediaRepository: mockRepository,
             permissionService: mockPermissionService
         )
