@@ -23,7 +23,7 @@ package struct PhotoLibraryView: View {
         NavigationView {
             Group {
                 if viewModel.isLoading && viewModel.media.isEmpty {
-                    ProgressView("読み込み中...")
+                    ProgressView(String(localized: "Loading...", bundle: .module))
                         .frame(maxWidth: .infinity, maxHeight: .infinity)
                 } else if viewModel.media.isEmpty {
                     emptyView
@@ -31,13 +31,13 @@ package struct PhotoLibraryView: View {
                     photoGridView
                 }
             }
-            .navigationTitle("写真")
+            .navigationTitle(String(localized: "Photos", bundle: .module))
             .navigationBarTitleDisplayMode(.inline)
             .task {
                 await viewModel.loadPhotos()
             }
-            .alert("エラー", isPresented: .constant(viewModel.hasError)) {
-                Button("OK") {
+            .alert(String(localized: "Error", bundle: .module), isPresented: .constant(viewModel.hasError)) {
+                Button(String(localized: "OK", bundle: .module)) {
                     viewModel.clearError()
                 }
             } message: {
@@ -71,7 +71,7 @@ package struct PhotoLibraryView: View {
             Image(systemName: "photo.on.rectangle.angled")
                 .font(.system(size: 64))
                 .foregroundColor(.gray)
-            Text("写真がありません")
+            Text(String(localized: "No Photos", bundle: .module))
                 .font(.headline)
                 .foregroundColor(.gray)
         }
@@ -81,21 +81,21 @@ package struct PhotoLibraryView: View {
     private var errorMessage: String {
         switch viewModel.error {
         case .invalidMediaID:
-            return "無効なメディアIDです。"
+            return String(localized: "Invalid media ID", bundle: .module)
         case .invalidFilePath:
-            return "無効なファイルパスです。"
+            return String(localized: "Invalid file path", bundle: .module)
         case .invalidThumbnailData:
-            return "無効なサムネイルデータです。"
+            return String(localized: "Invalid thumbnail data", bundle: .module)
         case .permissionDenied:
-            return "写真へのアクセスが許可されていません。設定アプリから許可してください。"
+            return String(localized: "Photo library access permission denied. Please allow access in Settings.", bundle: .module)
         case .mediaNotFound:
-            return "写真が見つかりませんでした。"
+            return String(localized: "Photo not found", bundle: .module)
         case .unsupportedFormat:
-            return "サポートされていないファイル形式です。"
+            return String(localized: "Unsupported file format", bundle: .module)
         case .thumbnailGenerationFailed:
-            return "サムネイルの生成に失敗しました。"
+            return String(localized: "Thumbnail generation failed", bundle: .module)
         case .mediaLoadFailed:
-            return "写真の読み込みに失敗しました。"
+            return String(localized: "Photo loading failed", bundle: .module)
         case .none:
             return ""
         }

@@ -3,8 +3,8 @@
 <plist version="1.0">
 <dict>
     <key>NSPhotoLibraryUsageDescription</key>
-    <string>写真を表示・管理するためにフォトライブラリへのアクセスが必要です。</string>
+    <string>This app needs access to your photo library to display and manage photos.</string>
     <key>NSPhotoLibraryAddUsageDescription</key>
-    <string>写真を保存するためにフォトライブラリへのアクセスが必要です。</string>
+    <string>This app needs access to your photo library to save photos.</string>
 </dict>
 </plist>

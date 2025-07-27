@@ -14,21 +14,21 @@ package enum MediaError: Error, LocalizedError {
     package var errorDescription: String? {
         switch self {
         case .invalidMediaID:
-            "Invalid media ID"
+            String(localized: "Invalid media ID", bundle: .module)
         case .invalidFilePath:
-            "Invalid file path"
+            String(localized: "Invalid file path", bundle: .module)
         case .invalidThumbnailData:
-            "Invalid thumbnail data"
+            String(localized: "Invalid thumbnail data", bundle: .module)
         case .permissionDenied:
-            "Photo library access permission denied"
+            String(localized: "Photo library access permission denied. Please allow access in Settings.", bundle: .module)
         case .mediaNotFound:
-            "Media not found"
+            String(localized: "Photo not found", bundle: .module)
         case .unsupportedFormat:
-            "Unsupported file format"
+            String(localized: "Unsupported file format", bundle: .module)
         case .thumbnailGenerationFailed:
-            "Thumbnail generation failed"
+            String(localized: "Thumbnail generation failed", bundle: .module)
         case .mediaLoadFailed:
-            "Media loading failed"
+            String(localized: "Photo loading failed", bundle: .module)
         }
     }
 }

@@ -29,7 +29,10 @@ let package = Package(
 
         // Domain Layer
         .target(
-            name: "Domain"),
+            name: "Domain",
+            resources: [
+                .process("Resources")
+            ]),
 
         // Infrastructure Layer
         .target(
@@ -45,6 +48,9 @@ let package = Package(
             dependencies: [
                 "Application",
                 "Domain",
+            ],
+            resources: [
+                .process("Resources")
             ]
         ),
 
