@@ -2,6 +2,7 @@ import MediaLibraryApplication
 import MediaLibraryDomain
 import Foundation
 import MediaLibraryInfrastructure
+import SwiftUI
 
 /// アプリケーション全体の依存関係を管理する構造体
 /// Composition Rootパターンを実装
@@ -66,9 +67,6 @@ fileprivate struct MockMediaRepository: MediaRepository {
     }
     
     func fetchThumbnail(for mediaID: Media.ID, size: CGSize) async throws -> Media.Thumbnail {
-        #if canImport(UIKit)
-        import UIKit
-        
         let systemImages = ["photo.fill", "camera.fill", "video.fill", "heart.fill", "star.fill"]
         let colors: [UIColor] = [.systemBlue, .systemGreen, .systemOrange, .systemPink, .systemPurple]
         
@@ -85,15 +83,6 @@ fileprivate struct MockMediaRepository: MediaRepository {
             imageData: data,
             size: size
         )
-        #else
-        // macOS等でUIKitが使えない場合のフォールバック
-        let data = Data()
-        return try Media.Thumbnail(
-            mediaID: mediaID,
-            imageData: data,
-            size: size
-        )
-        #endif
     }
 }
 

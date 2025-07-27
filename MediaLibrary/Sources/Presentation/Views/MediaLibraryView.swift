@@ -3,7 +3,7 @@ import MediaLibraryDomain
 import SwiftUI
 import UIKit
 
-/// メディアライブラリ画面
+/// メディアライブラリ画面（Stateful Container）
 public struct MediaLibraryView: View {
     // MARK: - Properties
 
@@ -19,24 +19,47 @@ public struct MediaLibraryView: View {
     // MARK: - Body
 
     public var body: some View {
-        ContentView(viewModel: viewModel)
+        MediaLibraryContentView(
+            media: viewModel.media,
+            isLoading: viewModel.isLoading,
+            error: viewModel.error,
+            hasError: viewModel.hasError,
+            thumbnails: viewModel.thumbnails,
+            onLoadPhotos: { Task { await viewModel.loadPhotos() } },
+            onLoadThumbnail: viewModel.loadThumbnail,
+            onClearError: viewModel.clearError
+        )
+        .task {
+            await viewModel.loadPhotos()
+        }
     }
 }
 
-/// メディアライブラリ画面のコンテンツ
-internal struct ContentView: View {
-    @ObservedObject var viewModel: MediaLibraryViewModel
+/// メディアライブラリ画面のコンテンツ（Stateless Presenter）
+internal struct MediaLibraryContentView: View {
+    // MARK: - Properties
+    
+    let media: [Media]
+    let isLoading: Bool
+    let error: MediaError?
+    let hasError: Bool
+    let thumbnails: [Media.ID: Media.Thumbnail]
+    let onLoadPhotos: () -> Void
+    let onLoadThumbnail: (Media.ID, CGSize) -> Void
+    let onClearError: () -> Void
 
     private let columns = Array(repeating: GridItem(.flexible(), spacing: 2), count: 5)
     private let thumbnailSize = CGSize(width: 200, height: 200)
 
+    // MARK: - Body
+    
     var body: some View {
         NavigationView {
             Group {
-                if viewModel.isLoading && viewModel.media.isEmpty {
+                if isLoading && media.isEmpty {
                     ProgressView(String(localized: "Loading...", bundle: .module))
                         .frame(maxWidth: .infinity, maxHeight: .infinity)
-                } else if viewModel.media.isEmpty {
+                } else if media.isEmpty {
                     emptyView
                 } else {
                     photoGridView
@@ -44,12 +67,9 @@ internal struct ContentView: View {
             }
             .navigationTitle(String(localized: "Photos", bundle: .module))
             .navigationBarTitleDisplayMode(.inline)
-            .task {
-                await viewModel.loadPhotos()
-            }
-            .alert(String(localized: "Error", bundle: .module), isPresented: .constant(viewModel.hasError)) {
+            .alert(String(localized: "Error", bundle: .module), isPresented: .constant(hasError)) {
                 Button(String(localized: "OK", bundle: .module)) {
-                    viewModel.clearError()
+                    onClearError()
                 }
             } message: {
                 Text(errorMessage)
@@ -62,14 +82,14 @@ internal struct ContentView: View {
     private var photoGridView: some View {
         ScrollView {
             LazyVGrid(columns: columns, spacing: 2) {
-                ForEach(viewModel.media) { media in
+                ForEach(media) { mediaItem in
                     PhotoThumbnailView(
-                        media: media,
-                        thumbnail: viewModel.thumbnails[media.id],
+                        media: mediaItem,
+                        thumbnail: thumbnails[mediaItem.id],
                         size: thumbnailSize
                     )
                     .onAppear {
-                        viewModel.loadThumbnail(for: media.id, size: thumbnailSize)
+                        onLoadThumbnail(mediaItem.id, thumbnailSize)
                     }
                 }
             }
@@ -90,7 +110,7 @@ internal struct ContentView: View {
     }
 
     private var errorMessage: String {
-        switch viewModel.error {
+        switch error {
         case .invalidMediaID:
             return String(localized: "Invalid media ID", bundle: .module)
         case .invalidFilePath:
