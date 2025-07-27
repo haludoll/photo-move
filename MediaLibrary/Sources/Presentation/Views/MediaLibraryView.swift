@@ -48,7 +48,7 @@ internal struct MediaLibraryContentView: View {
     let onLoadThumbnail: (Media.ID, CGSize) -> Void
     let onClearError: () -> Void
 
-    private let columns = Array(repeating: GridItem(.flexible(), spacing: 2), count: 5)
+    private let columns = [GridItem(.adaptive(minimum: 80), spacing: 2)]
     private let thumbnailSize = CGSize(width: 200, height: 200)
 
     // MARK: - Body
@@ -145,19 +145,12 @@ private struct PhotoThumbnailView: View {
             {
                 Image(uiImage: uiImage)
                     .resizable()
-                    .aspectRatio(contentMode: .fill)
-                    .frame(
-                        width: size.width / UIScreen.main.scale,
-                        height: size.height / UIScreen.main.scale
-                    )
+                    .aspectRatio(1, contentMode: .fill)
                     .clipped()
             } else {
                 Rectangle()
                     .fill(Color.gray.opacity(0.2))
-                    .frame(
-                        width: size.width / UIScreen.main.scale,
-                        height: size.height / UIScreen.main.scale
-                    )
+                    .aspectRatio(1, contentMode: .fit)
                     .overlay(
                         ProgressView()
                             .progressViewStyle(CircularProgressViewStyle(tint: .gray))
