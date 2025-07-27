@@ -22,8 +22,9 @@ final class media_library_demoUITestsLaunchTests: XCTestCase {
         let app = XCUIApplication()
         app.launch()
 
-        // Insert steps here to perform after app launch but before taking a screenshot,
-        // such as logging into a test account or navigating somewhere in the app
+        // 写真ライブラリ画面が表示されるまで待機
+        let scrollView = app.scrollViews.firstMatch
+        _ = scrollView.waitForExistence(timeout: 10)
 
         let attachment = XCTAttachment(screenshot: app.screenshot())
         attachment.name = "Launch Screen"
