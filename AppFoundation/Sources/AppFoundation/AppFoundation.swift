@@ -1,4 +1,4 @@
-@_exported import Presentation
+import Presentation
 import SwiftUI
 
 public struct RootView: View {
