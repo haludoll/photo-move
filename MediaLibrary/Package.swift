@@ -18,7 +18,8 @@ let package = Package(
         .library(name: "MediaLibraryDependencyInjection", targets: ["MediaLibraryDependencyInjection"]),
     ],
     dependencies: [
-        .package(url: "https://github.com/swiftlang/swift-format", from: "509.0.0")
+        .package(url: "https://github.com/swiftlang/swift-format", from: "509.0.0"),
+        .package(url: "https://github.com/nalexn/ViewInspector", from: "0.9.0")
     ],
     targets: [
         // Application Layer
@@ -85,6 +86,7 @@ let package = Package(
                 "MediaLibraryPresentation",
                 "MediaLibraryApplication",
                 "MediaLibraryDomain",
+                .product(name: "ViewInspector", package: "ViewInspector")
             ]
         ),
 
