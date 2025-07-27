@@ -9,8 +9,8 @@ struct MediaLibraryContentViewTests {
     
     // MARK: - Basic Structure Tests
     
-    @Test("基本構造 - NavigationViewが存在する")
-    func hasNavigationView() throws {
+    @Test("基本構造 - NavigationViewのタイトルが正しい")
+    func hasCorrectNavigationTitle() throws {
         let view = MediaLibraryContentView(
             media: [],
             isLoading: false,
@@ -22,12 +22,12 @@ struct MediaLibraryContentViewTests {
             onClearError: {}
         )
         
-        let navigationView = try view.inspect().navigationView()
-        #expect(navigationView != nil)
+        let title = try view.inspect().navigationView().navigationBarTitle()
+        #expect(title == "Photos")
     }
     
-    @Test("空状態 - 空のメッセージが表示される")
-    func emptyStateShowsEmptyMessage() throws {
+    @Test("空状態 - 空のメッセージが正しく表示される")
+    func emptyStateShowsCorrectMessage() throws {
         let view = MediaLibraryContentView(
             media: [],
             isLoading: false,
@@ -39,16 +39,14 @@ struct MediaLibraryContentViewTests {
             onClearError: {}
         )
         
-        // NavigationViewが存在することを確認
-        let navigationView = try view.inspect().navigationView()
-        
-        // "No Photos"テキストが含まれていることを確認
-        let foundText = try navigationView.find(text: "No Photos")
-        #expect(foundText != nil)
+        // "No Photos"テキストの内容を確認
+        let text = try view.inspect().find(text: "No Photos")
+        let textValue = try text.string()
+        #expect(textValue == "No Photos")
     }
     
-    @Test("ローディング状態 - ProgressViewが表示される")
-    func loadingStateShowsProgressView() throws {
+    @Test("ローディング状態 - ローディングテキストが正しく表示される")
+    func loadingStateShowsCorrectText() throws {
         let view = MediaLibraryContentView(
             media: [],
             isLoading: true,
@@ -60,21 +58,26 @@ struct MediaLibraryContentViewTests {
             onClearError: {}
         )
         
-        let navigationView = try view.inspect().navigationView()
-        
-        // ProgressViewが存在することを確認
-        let progressView = try navigationView.find(ViewType.ProgressView.self)
-        #expect(progressView != nil)
+        // ProgressViewのラベルテキストを確認
+        let progressView = try view.inspect().find(ViewType.ProgressView.self)
+        let labelText = try progressView.labelView().text().string()
+        #expect(labelText.contains("Loading"))
     }
     
-    @Test("メディアあり状態 - ScrollViewが表示される")
-    func contentStateShowsScrollView() throws {
+    @Test("メディアあり状態 - ForEachの要素数が正しい")
+    func contentStateShowsCorrectItemCount() throws {
         let testMedia = try [
             Media(
                 id: Media.ID("1"),
                 type: .photo,
                 metadata: Media.Metadata(format: .jpeg, capturedAt: Date()),
                 filePath: "test1.jpg"
+            ),
+            Media(
+                id: Media.ID("2"),
+                type: .photo,
+                metadata: Media.Metadata(format: .png, capturedAt: Date()),
+                filePath: "test2.png"
             )
         ]
         
@@ -89,15 +92,14 @@ struct MediaLibraryContentViewTests {
             onClearError: {}
         )
         
-        let navigationView = try view.inspect().navigationView()
-        
-        // ScrollViewが存在することを確認
-        let scrollView = try navigationView.find(ViewType.ScrollView.self)
-        #expect(scrollView != nil)
+        // ForEachの要素数を確認
+        let forEach = try view.inspect().find(ViewType.ForEach.self)
+        let itemCount = try forEach.count()
+        #expect(itemCount == 2)
     }
     
-    @Test("エラー状態 - NavigationViewが存在する")
-    func errorStateHasNavigationView() throws {
+    @Test("エラー状態 - 空状態が表示される")
+    func errorStateShowsEmptyState() throws {
         let view = MediaLibraryContentView(
             media: [],
             isLoading: false,
@@ -109,10 +111,9 @@ struct MediaLibraryContentViewTests {
             onClearError: {}
         )
         
-        let navigationView = try view.inspect().navigationView()
-        #expect(navigationView != nil)
-        
-        // エラー状態でも基本構造は維持されることを確認
-        #expect(true) // NavigationViewが見つかった時点で成功
+        // エラー状態でも空状態のメッセージが表示されることを確認
+        let text = try view.inspect().find(text: "No Photos")
+        let textValue = try text.string()
+        #expect(textValue == "No Photos")
     }
 }
