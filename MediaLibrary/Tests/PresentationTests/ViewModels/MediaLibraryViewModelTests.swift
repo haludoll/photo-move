@@ -5,7 +5,7 @@ import Foundation
 import Presentation
 import Testing
 
-struct PhotoLibraryViewModelTests {
+struct MediaLibraryViewModelTests {
     @Test("初期状態のテスト")
     @MainActor
     func initialState() async {
@@ -15,7 +15,7 @@ struct PhotoLibraryViewModelTests {
             mediaRepository: mockRepository,
             permissionService: mockPermissionService
         )
-        let viewModel = PhotoLibraryViewModel(mediaLibraryService: mockAppService)
+        let viewModel = MediaLibraryViewModel(mediaLibraryService: mockAppService)
 
         #expect(viewModel.media.count == 0)
         #expect(viewModel.isLoading == false)
@@ -38,7 +38,7 @@ struct PhotoLibraryViewModelTests {
             mediaRepository: mockRepository,
             permissionService: mockPermissionService
         )
-        let viewModel = PhotoLibraryViewModel(mediaLibraryService: mockAppService)
+        let viewModel = MediaLibraryViewModel(mediaLibraryService: mockAppService)
 
         // Act
         await viewModel.loadPhotos()
@@ -59,7 +59,7 @@ struct PhotoLibraryViewModelTests {
             mediaRepository: mockRepository,
             permissionService: mockPermissionService
         )
-        let viewModel = PhotoLibraryViewModel(mediaLibraryService: mockAppService)
+        let viewModel = MediaLibraryViewModel(mediaLibraryService: mockAppService)
 
         // Act
         await viewModel.loadPhotos()
@@ -80,7 +80,7 @@ struct PhotoLibraryViewModelTests {
             mediaRepository: mockRepository,
             permissionService: mockPermissionService
         )
-        let viewModel = PhotoLibraryViewModel(mediaLibraryService: mockAppService)
+        let viewModel = MediaLibraryViewModel(mediaLibraryService: mockAppService)
 
         // Act
         await viewModel.loadPhotos()
@@ -102,7 +102,7 @@ struct PhotoLibraryViewModelTests {
             mediaRepository: mockRepository,
             permissionService: mockPermissionService
         )
-        let viewModel = PhotoLibraryViewModel(mediaLibraryService: mockAppService)
+        let viewModel = MediaLibraryViewModel(mediaLibraryService: mockAppService)
 
         await viewModel.loadPhotos()
         guard let firstMedia = viewModel.media.first else {
@@ -130,7 +130,7 @@ struct PhotoLibraryViewModelTests {
             mediaRepository: mockRepository,
             permissionService: mockPermissionService
         )
-        let viewModel = PhotoLibraryViewModel(mediaLibraryService: mockAppService)
+        let viewModel = MediaLibraryViewModel(mediaLibraryService: mockAppService)
 
         await viewModel.loadPhotos()
         guard let firstMedia = viewModel.media.first else {
@@ -158,7 +158,7 @@ struct PhotoLibraryViewModelTests {
             mediaRepository: mockRepository,
             permissionService: mockPermissionService
         )
-        let viewModel = PhotoLibraryViewModel(mediaLibraryService: mockAppService)
+        let viewModel = MediaLibraryViewModel(mediaLibraryService: mockAppService)
 
         await viewModel.loadPhotos()
         #expect(viewModel.hasError == true)
@@ -181,7 +181,7 @@ struct PhotoLibraryViewModelTests {
             mediaRepository: mockRepository,
             permissionService: mockPermissionService
         )
-        let viewModel = PhotoLibraryViewModel(mediaLibraryService: mockAppService)
+        let viewModel = MediaLibraryViewModel(mediaLibraryService: mockAppService)
 
         await viewModel.loadPhotos()
         guard let firstMedia = viewModel.media.first else {
