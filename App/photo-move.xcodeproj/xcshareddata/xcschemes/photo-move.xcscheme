@@ -36,6 +36,9 @@
          <TestPlanReference
             reference = "container:../MediaLibrary/MediaLibrary.xctestplan">
          </TestPlanReference>
+         <TestPlanReference
+            reference = "container:photo-move.xctestplan">
+         </TestPlanReference>
       </TestPlans>
       <Testables>
          <TestableReference

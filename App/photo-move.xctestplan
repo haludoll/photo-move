@@ -1,0 +1,59 @@
+{
+  "configurations" : [
+    {
+      "id" : "20B5B99F-5360-40B3-A8CC-0241D3A6200C",
+      "name" : "Configuration 1",
+      "options" : {
+
+      }
+    }
+  ],
+  "defaultOptions" : {
+    "testTimeoutsEnabled" : true
+  },
+  "testTargets" : [
+    {
+      "target" : {
+        "containerPath" : "container:..\/AppFoundation",
+        "identifier" : "AppFoundationTests",
+        "name" : "AppFoundationTests"
+      }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:..\/MediaLibrary",
+        "identifier" : "ApplicationTests",
+        "name" : "ApplicationTests"
+      }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:..\/MediaLibrary",
+        "identifier" : "PresentationTests",
+        "name" : "PresentationTests"
+      }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:photo-move.xcodeproj",
+        "identifier" : "0CA29E5B2E21080100401494",
+        "name" : "photo-moveTests"
+      }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:..\/MediaLibrary",
+        "identifier" : "InfrastructureTests",
+        "name" : "InfrastructureTests"
+      }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:..\/MediaLibrary",
+        "identifier" : "DomainTests",
+        "name" : "DomainTests"
+      }
+    }
+  ],
+  "version" : 1
+}

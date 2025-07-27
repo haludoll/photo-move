@@ -1,9 +1,9 @@
-import MediaLibraryApplication
 import CoreGraphics
 import MediaLibraryDomain
 import Foundation
-import MediaLibraryPresentation
+import MediaLibraryApplication
 import Testing
+@testable import MediaLibraryPresentation
 
 struct MediaLibraryViewModelTests {
     @Test("初期状態のテスト")

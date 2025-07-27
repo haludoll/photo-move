@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		0C4409EC2E210A3B00FA56F2 /* AppFoundation in Frameworks */ = {isa = PBXBuildFile; productRef = 0C4409EB2E210A3B00FA56F2 /* AppFoundation */; };
+		0CD310C92E35EEDA002D46EF /* photo-move.xctestplan in Resources */ = {isa = PBXBuildFile; fileRef = 0CD310C82E35EEDA002D46EF /* photo-move.xctestplan */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -31,6 +32,7 @@
 		0CA29E4F2E2107FF00401494 /* photo-move.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "photo-move.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		0CA29E5C2E21080100401494 /* photo-moveTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "photo-moveTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		0CA29E662E21080100401494 /* photo-moveUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "photo-moveUITests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
+		0CD310C82E35EEDA002D46EF /* photo-move.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = "photo-move.xctestplan"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -80,6 +82,7 @@
 		0CA29E462E2107FF00401494 = {
 			isa = PBXGroup;
 			children = (
+				0CD310C82E35EEDA002D46EF /* photo-move.xctestplan */,
 				0CA29E512E2107FF00401494 /* photo-move */,
 				0CA29E5F2E21080100401494 /* photo-moveTests */,
 				0CA29E692E21080100401494 /* photo-moveUITests */,
@@ -222,6 +225,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				0CD310C92E35EEDA002D46EF /* photo-move.xctestplan in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

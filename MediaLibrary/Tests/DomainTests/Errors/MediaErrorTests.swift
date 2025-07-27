@@ -8,11 +8,11 @@ func mediaErrorLocalizedDescription() async throws {
         (.invalidMediaID, "Invalid media ID"),
         (.invalidFilePath, "Invalid file path"),
         (.invalidThumbnailData, "Invalid thumbnail data"),
-        (.permissionDenied, "Photo library access permission denied"),
-        (.mediaNotFound, "Media not found"),
+        (.permissionDenied, "Photo library access permission denied. Please allow access in Settings."),
+        (.mediaNotFound, "Photo not found"),
         (.unsupportedFormat, "Unsupported file format"),
         (.thumbnailGenerationFailed, "Thumbnail generation failed"),
-        (.mediaLoadFailed, "Media loading failed"),
+        (.mediaLoadFailed, "Photo loading failed"),
     ]
 
     for (error, expectedMessage) in errors {
