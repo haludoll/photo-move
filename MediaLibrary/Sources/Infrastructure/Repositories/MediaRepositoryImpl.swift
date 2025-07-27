@@ -1,4 +1,4 @@
-import Domain
+import MediaLibraryDomain
 import Foundation
 import Photos
 import UIKit

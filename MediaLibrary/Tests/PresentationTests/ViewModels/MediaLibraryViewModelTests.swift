@@ -1,8 +1,8 @@
-import Application
+import MediaLibraryApplication
 import CoreGraphics
-import Domain
+import MediaLibraryDomain
 import Foundation
-import Presentation
+import MediaLibraryPresentation
 import Testing
 
 struct MediaLibraryViewModelTests {

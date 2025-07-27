@@ -1,6 +1,6 @@
-import Application
+import MediaLibraryApplication
 import Combine
-import Domain
+import MediaLibraryDomain
 import Foundation
 import SwiftUI
 

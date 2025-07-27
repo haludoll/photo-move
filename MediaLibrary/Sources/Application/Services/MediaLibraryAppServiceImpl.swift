@@ -1,4 +1,4 @@
-import Domain
+import MediaLibraryDomain
 import Foundation
 
 /// フォトライブラリの操作を提供するApplicationサービス実装

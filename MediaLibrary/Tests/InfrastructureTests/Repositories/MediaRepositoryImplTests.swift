@@ -1,8 +1,8 @@
 import Photos
 import Testing
 
-@testable import Domain
-@testable import Infrastructure
+@testable import MediaLibraryDomain
+@testable import MediaLibraryInfrastructure
 
 /// MediaRepositoryImplのテスト
 struct MediaRepositoryImplTests {

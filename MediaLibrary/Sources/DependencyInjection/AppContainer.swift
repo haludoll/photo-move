@@ -1,7 +1,7 @@
-import Application
-import Domain
+import MediaLibraryApplication
+import MediaLibraryDomain
 import Foundation
-import Infrastructure
+import MediaLibraryInfrastructure
 
 /// アプリケーション全体の依存関係を管理する構造体
 /// Composition Rootパターンを実装

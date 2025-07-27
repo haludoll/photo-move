@@ -1,5 +1,5 @@
-import DependencyInjection
-import Domain
+import MediaLibraryDependencyInjection
+import MediaLibraryDomain
 import SwiftUI
 import UIKit
 

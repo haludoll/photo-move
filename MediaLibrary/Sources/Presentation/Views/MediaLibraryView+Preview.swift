@@ -1,5 +1,5 @@
-import Application
-import Domain
+import MediaLibraryApplication
+import MediaLibraryDomain
 import SwiftUI
 
 #if DEBUG

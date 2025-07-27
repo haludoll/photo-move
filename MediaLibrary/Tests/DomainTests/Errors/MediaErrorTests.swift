@@ -1,6 +1,6 @@
 import Testing
 
-@testable import Domain
+@testable import MediaLibraryDomain
 
 @Test("MediaError - エラーメッセージが正しく設定されている")
 func mediaErrorLocalizedDescription() async throws {

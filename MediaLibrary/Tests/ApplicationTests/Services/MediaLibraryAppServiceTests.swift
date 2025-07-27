@@ -2,8 +2,8 @@ import CoreGraphics
 import Foundation
 import Testing
 
-@testable import Application
-@testable import Domain
+@testable import MediaLibraryApplication
+@testable import MediaLibraryDomain
 
 /// MediaLibraryAppServiceのテスト
 struct MediaLibraryAppServiceTests {

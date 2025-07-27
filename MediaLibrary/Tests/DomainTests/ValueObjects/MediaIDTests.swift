@@ -1,6 +1,6 @@
 import Testing
 
-@testable import Domain
+@testable import MediaLibraryDomain
 
 @Test("Media.ID - 正常な値で初期化できる")
 func mediaIDInitializationWithValidValue() async throws {

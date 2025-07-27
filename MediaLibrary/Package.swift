@@ -9,13 +9,13 @@ let package = Package(
         .iOS(.v15)
     ],
     products: [
-        .library(name: "MediaLibraryApplication", targets: ["Application"]),
-        .library(name: "MediaLibraryDomain", targets: ["Domain"]),
-        .library(name: "MediaLibraryInfrastructure", targets: ["Infrastructure"]),
+        .library(name: "MediaLibraryApplication", targets: ["MediaLibraryApplication"]),
+        .library(name: "MediaLibraryDomain", targets: ["MediaLibraryDomain"]),
+        .library(name: "MediaLibraryInfrastructure", targets: ["MediaLibraryInfrastructure"]),
         .library(
             name: "MediaLibraryPresentation",
-            targets: ["Presentation", "Infrastructure", "Application", "Domain", "DependencyInjection"]),
-        .library(name: "MediaLibraryDependencyInjection", targets: ["DependencyInjection"]),
+            targets: ["MediaLibraryPresentation", "MediaLibraryInfrastructure", "MediaLibraryApplication", "MediaLibraryDomain", "MediaLibraryDependencyInjection"]),
+        .library(name: "MediaLibraryDependencyInjection", targets: ["MediaLibraryDependencyInjection"]),
     ],
     dependencies: [
         .package(url: "https://github.com/swiftlang/swift-format", from: "509.0.0")
@@ -23,33 +23,37 @@ let package = Package(
     targets: [
         // Application Layer
         .target(
-            name: "Application",
+            name: "MediaLibraryApplication",
             dependencies: [
-                "Domain"
-            ]
+                "MediaLibraryDomain"
+            ],
+            path: "Sources/Application"
         ),
 
         // Domain Layer
         .target(
-            name: "Domain"
+            name: "MediaLibraryDomain",
+            path: "Sources/Domain"
         ),
 
         // Infrastructure Layer
         .target(
-            name: "Infrastructure",
+            name: "MediaLibraryInfrastructure",
             dependencies: [
-                "Domain"
-            ]
+                "MediaLibraryDomain"
+            ],
+            path: "Sources/Infrastructure"
         ),
 
         // Presentation Layer
         .target(
-            name: "Presentation",
+            name: "MediaLibraryPresentation",
             dependencies: [
-                "Application",
-                "Domain",
-                "DependencyInjection",
+                "MediaLibraryApplication",
+                "MediaLibraryDomain",
+                "MediaLibraryDependencyInjection",
             ],
+            path: "Sources/Presentation",
             resources: [
                 .process("Resources")
             ]
@@ -58,40 +62,41 @@ let package = Package(
         // Tests
         .testTarget(
             name: "DomainTests",
-            dependencies: ["Domain"]
+            dependencies: ["MediaLibraryDomain"]
         ),
         .testTarget(
             name: "ApplicationTests",
             dependencies: [
-                "Application",
-                "Domain",
-                "Infrastructure",
+                "MediaLibraryApplication",
+                "MediaLibraryDomain",
+                "MediaLibraryInfrastructure",
             ]
         ),
         .testTarget(
             name: "InfrastructureTests",
             dependencies: [
-                "Infrastructure",
-                "Domain",
+                "MediaLibraryInfrastructure",
+                "MediaLibraryDomain",
             ]
         ),
         .testTarget(
             name: "PresentationTests",
             dependencies: [
-                "Presentation",
-                "Application",
-                "Domain",
+                "MediaLibraryPresentation",
+                "MediaLibraryApplication",
+                "MediaLibraryDomain",
             ]
         ),
 
         // DependencyInjection Layer
         .target(
-            name: "DependencyInjection",
+            name: "MediaLibraryDependencyInjection",
             dependencies: [
-                "Domain",
-                "Application",
-                "Infrastructure",
-            ]
+                "MediaLibraryDomain",
+                "MediaLibraryApplication",
+                "MediaLibraryInfrastructure",
+            ],
+            path: "Sources/DependencyInjection"
         ),
     ]
 )
