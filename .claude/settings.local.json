@@ -24,7 +24,8 @@
       "WebFetch(domain:github.com)",
       "Bash(find:*)",
       "Bash(xcodebuild test:*)",
-      "Bash(xcrun xcodebuild test:*)"
+      "Bash(xcrun xcodebuild test:*)",
+      "WebFetch(domain:developer.apple.com)"
     ],
     "deny": []
   }

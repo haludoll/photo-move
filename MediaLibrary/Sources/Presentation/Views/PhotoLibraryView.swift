@@ -24,7 +24,7 @@ public struct PhotoLibraryView: View {
         NavigationView {
             Group {
                 if viewModel.isLoading && viewModel.media.isEmpty {
-                    ProgressView(NSLocalizedString("Loading...", bundle: .module, comment: "Loading indicator text"))
+                    ProgressView(String(localized: "Loading...", bundle: .module))
                         .frame(maxWidth: .infinity, maxHeight: .infinity)
                 } else if viewModel.media.isEmpty {
                     emptyView
@@ -32,13 +32,13 @@ public struct PhotoLibraryView: View {
                     photoGridView
                 }
             }
-            .navigationTitle(NSLocalizedString("Photos", bundle: .module, comment: "Navigation title for photos screen"))
+            .navigationTitle(String(localized: "Photos", bundle: .module))
             .navigationBarTitleDisplayMode(.inline)
             .task {
                 await viewModel.loadPhotos()
             }
-            .alert(NSLocalizedString("Error", bundle: .module, comment: "Error alert title"), isPresented: .constant(viewModel.hasError)) {
-                Button(NSLocalizedString("OK", bundle: .module, comment: "OK button text")) {
+            .alert(String(localized: "Error", bundle: .module), isPresented: .constant(viewModel.hasError)) {
+                Button(String(localized: "OK", bundle: .module)) {
                     viewModel.clearError()
                 }
             } message: {
@@ -72,7 +72,7 @@ public struct PhotoLibraryView: View {
             Image(systemName: "photo.on.rectangle.angled")
                 .font(.system(size: 64))
                 .foregroundColor(.gray)
-            Text(NSLocalizedString("No Photos", bundle: .module, comment: "Empty state message"))
+            Text(String(localized: "No Photos", bundle: .module))
                 .font(.headline)
                 .foregroundColor(.gray)
         }
@@ -82,21 +82,21 @@ public struct PhotoLibraryView: View {
     private var errorMessage: String {
         switch viewModel.error {
         case .invalidMediaID:
-            return NSLocalizedString("Invalid media ID", bundle: .module, comment: "Error message for invalid media ID")
+            return String(localized: "Invalid media ID", bundle: .module)
         case .invalidFilePath:
-            return NSLocalizedString("Invalid file path", bundle: .module, comment: "Error message for invalid file path")
+            return String(localized: "Invalid file path", bundle: .module)
         case .invalidThumbnailData:
-            return NSLocalizedString("Invalid thumbnail data", bundle: .module, comment: "Error message for invalid thumbnail data")
+            return String(localized: "Invalid thumbnail data", bundle: .module)
         case .permissionDenied:
-            return NSLocalizedString("Photo library access permission denied. Please allow access in Settings.", bundle: .module, comment: "Error message for permission denied")
+            return String(localized: "Photo library access permission denied. Please allow access in Settings.", bundle: .module)
         case .mediaNotFound:
-            return NSLocalizedString("Photo not found", bundle: .module, comment: "Error message for media not found")
+            return String(localized: "Photo not found", bundle: .module)
         case .unsupportedFormat:
-            return NSLocalizedString("Unsupported file format", bundle: .module, comment: "Error message for unsupported format")
+            return String(localized: "Unsupported file format", bundle: .module)
         case .thumbnailGenerationFailed:
-            return NSLocalizedString("Thumbnail generation failed", bundle: .module, comment: "Error message for thumbnail generation failure")
+            return String(localized: "Thumbnail generation failed", bundle: .module)
         case .mediaLoadFailed:
-            return NSLocalizedString("Photo loading failed", bundle: .module, comment: "Error message for media load failure")
+            return String(localized: "Photo loading failed", bundle: .module)
         case .none:
             return ""
         }
