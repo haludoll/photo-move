@@ -1,12 +1,13 @@
 import MediaLibraryApplication
 import MediaLibraryDomain
+import MediaLibraryDependencyInjection
 import SwiftUI
 
 #if DEBUG
 
-    /// プレビュー用のモックサービス
-    private struct MockMediaLibraryAppService: MediaLibraryAppService {
-        func loadMedia() async throws -> [Media] {
+    /// プレビュー用のモックリポジトリ
+    private struct MockMediaRepository: MediaRepository {
+        func fetchMedia() async throws -> [Media] {
             // プレビュー用のダミーデータを返す
             return try [
                 Media(
@@ -29,8 +30,8 @@ import SwiftUI
                 ),
             ]
         }
-
-        func loadThumbnail(for mediaID: Media.ID, size: CGSize) async throws -> Media.Thumbnail {
+        
+        func fetchThumbnail(for mediaID: Media.ID, size: CGSize) async throws -> Media.Thumbnail {
             // プレビュー用の多様なダミー画像データを生成
             let systemImages = ["photo.fill", "camera.fill", "video.fill", "heart.fill", "star.fill"]
             let colors: [UIColor] = [.systemBlue, .systemGreen, .systemOrange, .systemPink, .systemPurple]
@@ -51,8 +52,29 @@ import SwiftUI
         }
     }
 
+    /// プレビュー用のモック権限サービス
+    private struct MockPhotoLibraryPermissionService: PhotoLibraryPermissionService {
+        func checkPermissionStatus() -> PhotoLibraryPermissionStatus {
+            return .authorized
+        }
+        
+        func requestPermission() async -> PhotoLibraryPermissionStatus {
+            return .authorized
+        }
+    }
+
+    /// プレビュー用のDIコンテナ
+    private enum PreviewDependencies {
+        static let mediaRepository: any MediaRepository = MockMediaRepository()
+        static let photoLibraryPermissionService: any PhotoLibraryPermissionService = MockPhotoLibraryPermissionService()
+        static let mediaLibraryAppService: any MediaLibraryAppService = MediaLibraryAppServiceImpl(
+            mediaRepository: mediaRepository,
+            permissionService: photoLibraryPermissionService
+        )
+    }
+
     #Preview {
-        MediaLibraryView(viewModel: MediaLibraryViewModel(mediaLibraryService: MockMediaLibraryAppService()))
+        MediaLibraryView(viewModel: MediaLibraryViewModel(mediaLibraryService: PreviewDependencies.mediaLibraryAppService))
     }
 
 #endif

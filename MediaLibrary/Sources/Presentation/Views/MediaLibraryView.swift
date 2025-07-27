@@ -16,7 +16,7 @@ public struct MediaLibraryView: View {
             wrappedValue: MediaLibraryViewModel(mediaLibraryService: AppDependencies.mediaLibraryAppService))
     }
     
-    /// プレビュー用のイニシャライザ
+    /// テスト・プレビュー用のイニシャライザ
     internal init(viewModel: MediaLibraryViewModel) {
         _viewModel = StateObject(wrappedValue: viewModel)
     }
@@ -30,8 +30,8 @@ public struct MediaLibraryView: View {
 
 /// メディアライブラリ画面のコンテンツ
 internal struct ContentView: View {
-    @ObservedObject let viewModel: MediaLibraryViewModel
-    
+    @ObservedObject var viewModel: MediaLibraryViewModel
+
     private let columns = Array(repeating: GridItem(.flexible(), spacing: 2), count: 5)
     private let thumbnailSize = CGSize(width: 200, height: 200)
 
