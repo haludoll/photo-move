@@ -15,11 +15,6 @@ public struct MediaLibraryView: View {
         _viewModel = StateObject(
             wrappedValue: MediaLibraryViewModel(mediaLibraryService: AppDependencies.mediaLibraryAppService))
     }
-    
-    /// テスト・プレビュー用のイニシャライザ
-    internal init(viewModel: MediaLibraryViewModel) {
-        _viewModel = StateObject(wrappedValue: viewModel)
-    }
 
     // MARK: - Body
 
