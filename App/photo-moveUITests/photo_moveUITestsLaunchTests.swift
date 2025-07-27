@@ -8,7 +8,6 @@
 import XCTest
 
 final class photo_moveUITestsLaunchTests: XCTestCase {
-
     override class var runsForEachTargetApplicationUIConfiguration: Bool {
         true
     }

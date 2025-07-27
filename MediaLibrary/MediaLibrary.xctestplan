@@ -1,0 +1,49 @@
+{
+  "configurations" : [
+    {
+      "id" : "E1B2C3D4-5F6A-7B8C-9D0E-1F2A3B4C5D6E",
+      "name" : "Configuration 1",
+      "options" : {
+
+      }
+    }
+  ],
+  "defaultOptions" : {
+    "targetForVariableExpansion" : {
+      "containerPath" : "container:",
+      "identifier" : "MediaLibrary",
+      "name" : "MediaLibrary"
+    }
+  },
+  "testTargets" : [
+    {
+      "target" : {
+        "containerPath" : "container:..\/MediaLibrary",
+        "identifier" : "InfrastructureTests",
+        "name" : "InfrastructureTests"
+      }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:..\/MediaLibrary",
+        "identifier" : "ApplicationTests",
+        "name" : "ApplicationTests"
+      }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:..\/MediaLibrary",
+        "identifier" : "PresentationTests",
+        "name" : "PresentationTests"
+      }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:..\/MediaLibrary",
+        "identifier" : "DomainTests",
+        "name" : "DomainTests"
+      }
+    }
+  ],
+  "version" : 1
+}
