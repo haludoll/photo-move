@@ -1,4 +1,4 @@
-import MediaLibraryPresentation
+import Presentation
 import SwiftUI
 
 public struct RootView: View {
