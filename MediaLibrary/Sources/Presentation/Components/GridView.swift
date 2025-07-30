@@ -103,7 +103,7 @@ struct GridView<Item: Identifiable, Content: View>: UIViewRepresentable {
 // MARK: - Coordinator
 
 extension GridView {
-    class Coordinator: NSObject, UICollectionViewDataSource, UICollectionViewDelegate, UICollectionViewDelegateFlowLayout {
+    class Coordinator: NSObject, UICollectionViewDataSource, UICollectionViewDelegate, UICollectionViewDelegateFlowLayout, UIGestureRecognizerDelegate {
         var items: [Item]
         var selectedIDs: Set<Item.ID>?
         let content: (Item, Bool) -> Content
@@ -319,15 +319,13 @@ extension GridView {
                 }
             }
         }
-    }
-}
-
-// MARK: - UIGestureRecognizerDelegate
-
-extension GridView.Coordinator: UIGestureRecognizerDelegate {
-    func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer) -> Bool {
-        // スクロールビューのジェスチャーと同時に認識
-        return true
+        
+        // MARK: - UIGestureRecognizerDelegate
+        
+        func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer) -> Bool {
+            // スクロールビューのジェスチャーと同時に認識
+            return true
+        }
     }
 }
 

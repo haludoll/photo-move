@@ -98,7 +98,7 @@ internal struct MediaLibraryContentView: View {
             items: media,
             columns: 5,
             spacing: 2,
-            selectedIDs: selectedMediaIDs
+            selectedIDs: $selectedMediaIDs
         ) { mediaItem, isSelected in
             PhotoThumbnailView(
                 media: mediaItem,

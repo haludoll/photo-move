@@ -1,7 +1,9 @@
 import Foundation
 import MediaLibraryDomain
 import Photos
+#if canImport(UIKit)
 import UIKit
+#endif
 
 /// PhotoKitを使用したMediaRepositoryの実装
 package struct MediaRepositoryImpl: MediaRepository {
