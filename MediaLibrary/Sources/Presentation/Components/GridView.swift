@@ -3,33 +3,33 @@ import UIKit
 
 /// 汎用的なグリッドビュー
 /// UICollectionViewをSwiftUIで使用するためのラッパー
-public struct GridView<Item: Identifiable, Content: View>: UIViewRepresentable {
+struct GridView<Item: Identifiable, Content: View>: UIViewRepresentable {
     // MARK: - Properties
     
     /// 表示するアイテム
-    public let items: [Item]
+    let items: [Item]
     
     /// グリッドの列数
-    public let columns: Int
+    let columns: Int
     
     /// セル間のスペーシング
-    public let spacing: CGFloat
+    let spacing: CGFloat
     
     /// 選択されているアイテムのID（nilの場合は選択不可）
-    @Binding public var selectedIDs: Set<Item.ID>?
+    @Binding var selectedIDs: Set<Item.ID>?
     
     /// 各アイテムのコンテンツを生成するクロージャ
-    public let content: (Item, Bool) -> Content
+    let content: (Item, Bool) -> Content
     
     /// アイテムが表示された時のコールバック
-    public let onItemAppear: ((Item) -> Void)?
+    let onItemAppear: ((Item) -> Void)?
     
     /// アイテムがタップされた時のコールバック
-    public let onItemTap: ((Item) -> Void)?
+    let onItemTap: ((Item) -> Void)?
     
     // MARK: - Initialization
     
-    public init(
+    init(
         items: [Item],
         columns: Int,
         spacing: CGFloat = 2,
@@ -49,7 +49,7 @@ public struct GridView<Item: Identifiable, Content: View>: UIViewRepresentable {
     
     // MARK: - UIViewRepresentable
     
-    public func makeUIView(context: Context) -> UICollectionView {
+    func makeUIView(context: Context) -> UICollectionView {
         let layout = UICollectionViewFlowLayout()
         layout.minimumInteritemSpacing = spacing
         layout.minimumLineSpacing = spacing
@@ -71,7 +71,7 @@ public struct GridView<Item: Identifiable, Content: View>: UIViewRepresentable {
         return collectionView
     }
     
-    public func updateUIView(_ uiView: UICollectionView, context: Context) {
+    func updateUIView(_ uiView: UICollectionView, context: Context) {
         guard let collectionView = uiView as? SelectableCollectionView<Item> else { return }
         
         context.coordinator.items = items
@@ -88,7 +88,7 @@ public struct GridView<Item: Identifiable, Content: View>: UIViewRepresentable {
         }
     }
     
-    public func makeCoordinator() -> Coordinator {
+    func makeCoordinator() -> Coordinator {
         Coordinator(
             items: items,
             selectedIDs: selectedIDs,
@@ -103,7 +103,7 @@ public struct GridView<Item: Identifiable, Content: View>: UIViewRepresentable {
 // MARK: - Coordinator
 
 extension GridView {
-    public class Coordinator: NSObject, UICollectionViewDataSource, UICollectionViewDelegate, UICollectionViewDelegateFlowLayout {
+    class Coordinator: NSObject, UICollectionViewDataSource, UICollectionViewDelegate, UICollectionViewDelegateFlowLayout {
         var items: [Item]
         var selectedIDs: Set<Item.ID>?
         let content: (Item, Bool) -> Content
@@ -146,11 +146,11 @@ extension GridView {
         
         // MARK: - UICollectionViewDataSource
         
-        func numberOfSections(in collectionView: UICollectionView) -> Int {
+        public func numberOfSections(in collectionView: UICollectionView) -> Int {
             return 1
         }
         
-        func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        public func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
             return items.count
         }
         
@@ -325,7 +325,7 @@ extension GridView {
 // MARK: - UIGestureRecognizerDelegate
 
 extension GridView.Coordinator: UIGestureRecognizerDelegate {
-    public func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer) -> Bool {
+    func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer) -> Bool {
         // スクロールビューのジェスチャーと同時に認識
         return true
     }
