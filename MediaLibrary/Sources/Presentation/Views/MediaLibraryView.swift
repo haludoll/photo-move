@@ -113,6 +113,7 @@ internal struct MediaLibraryContentView: View {
             print("📱 [MediaLibraryView] onItemAppear: \(mediaItem.id.value)")
             onLoadThumbnail(mediaItem.id, thumbnailSize)
         }
+        .id(thumbnails.count) // thumbnailsが更新されたらGridViewを再構築
     }
 
     private var emptyView: some View {

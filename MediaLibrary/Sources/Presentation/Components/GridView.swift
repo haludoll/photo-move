@@ -84,9 +84,7 @@ struct GridView<Item: Identifiable, Content: View>: UIViewRepresentable {
             collectionView.reloadData()
         } else {
             // アイテム数が同じ場合は表示されているセルのみ更新
-            if let visibleIndexPaths = collectionView.indexPathsForVisibleItems {
-                collectionView.reloadItems(at: visibleIndexPaths)
-            }
+            collectionView.reloadItems(at: collectionView.indexPathsForVisibleItems)
         }
         
         // レイアウトの更新
