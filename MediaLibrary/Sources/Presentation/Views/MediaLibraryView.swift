@@ -165,10 +165,12 @@ private struct PhotoThumbnailView: View {
                     if let thumbnail = thumbnail,
                         let uiImage = UIImage(data: thumbnail.imageData)
                     {
+                        let _ = print("🖼️ [PhotoThumbnailView] 画像表示: \(media.id.value)")
                         Image(uiImage: uiImage)
                             .resizable()
                             .scaledToFill()
                     } else {
+                        let _ = print("🖼️ [PhotoThumbnailView] プログレス表示: \(media.id.value), サムネイル: \(thumbnail != nil ? "あり" : "なし")")
                         Rectangle()
                             .fill(Color.gray.opacity(0.2))
                             .overlay(

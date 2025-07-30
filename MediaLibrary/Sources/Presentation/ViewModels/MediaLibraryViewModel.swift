@@ -82,7 +82,12 @@ class MediaLibraryViewModel: ObservableObject {
                 if let thumbnail = thumbnail {
                     print("🖼️ [MediaLibraryViewModel] サムネイル読み込み成功: \(mediaID.value)")
                     await MainActor.run {
-                        self?.thumbnails[mediaID] = thumbnail
+                        guard let self = self else {
+                            print("🖼️ [MediaLibraryViewModel] self is nil: \(mediaID.value)")
+                            return
+                        }
+                        self.thumbnails[mediaID] = thumbnail
+                        print("🖼️ [MediaLibraryViewModel] UI更新完了: \(mediaID.value), 現在のサムネイル数: \(self.thumbnails.count)")
                     }
                 } else {
                     print("🖼️ [MediaLibraryViewModel] サムネイルがnil: \(mediaID.value)")

@@ -159,6 +159,7 @@ extension GridView {
             
             let item = items[indexPath.item]
             let isSelected = selectedIDs?.contains(item.id) ?? false
+            print("📱 [GridView] セル作成: \(item.id), 選択状態: \(isSelected)")
             let contentView = content(item, isSelected)
             
             cell.configure(with: contentView)
@@ -170,6 +171,7 @@ extension GridView {
         
         func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
             let item = items[indexPath.item]
+            print("📱 [GridView] セル表示: \(item.id), インデックス: \(indexPath.item)")
             onItemAppear?(item)
         }
         
