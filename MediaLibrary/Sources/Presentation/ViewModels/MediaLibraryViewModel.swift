@@ -14,6 +14,8 @@ class MediaLibraryViewModel: ObservableObject {
     @Published private(set) var error: MediaError?
     @Published private(set) var permissionStatus: PhotoLibraryPermissionStatus = .notDetermined
     @Published private(set) var thumbnails: [Media.ID: Media.Thumbnail] = [:]
+    @Published private(set) var isSelectionMode = false
+    @Published var selectedMediaIDs: Set<Media.ID>? = nil
 
     // MARK: - Private Properties
 
@@ -91,6 +93,18 @@ class MediaLibraryViewModel: ObservableObject {
     /// エラーをクリアする
     func clearError() {
         error = nil
+    }
+    
+    /// 選択モードの切り替え
+    func toggleSelectionMode() {
+        isSelectionMode.toggle()
+        if isSelectionMode {
+            // 選択モードに入る時は空のSetを作成
+            selectedMediaIDs = Set<Media.ID>()
+        } else {
+            // 選択モードを終了する時はnilに
+            selectedMediaIDs = nil
+        }
     }
 
     /// すべてのサムネイル読み込みタスクをキャンセルする

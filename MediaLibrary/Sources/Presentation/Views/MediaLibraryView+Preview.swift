@@ -67,9 +67,12 @@ private func createSampleThumbnails() -> [Media.ID: Media.Thumbnail] {
         error: nil,
         hasError: false,
         thumbnails: [:],
+        isSelectionMode: false,
+        selectedMediaIDs: .constant(nil),
         onLoadPhotos: {},
         onLoadThumbnail: { _, _ in },
-        onClearError: {}
+        onClearError: {},
+        onToggleSelectionMode: {}
     )
 }
 
@@ -80,9 +83,12 @@ private func createSampleThumbnails() -> [Media.ID: Media.Thumbnail] {
         error: nil,
         hasError: false,
         thumbnails: [:],
+        isSelectionMode: false,
+        selectedMediaIDs: .constant(nil),
         onLoadPhotos: {},
         onLoadThumbnail: { _, _ in },
-        onClearError: {}
+        onClearError: {},
+        onToggleSelectionMode: {}
     )
 }
 
@@ -93,9 +99,12 @@ private func createSampleThumbnails() -> [Media.ID: Media.Thumbnail] {
         error: nil,
         hasError: false,
         thumbnails: createSampleThumbnails(),
+        isSelectionMode: false,
+        selectedMediaIDs: .constant(nil),
         onLoadPhotos: {},
         onLoadThumbnail: { _, _ in },
-        onClearError: {}
+        onClearError: {},
+        onToggleSelectionMode: {}
     )
 }
 
@@ -106,9 +115,12 @@ private func createSampleThumbnails() -> [Media.ID: Media.Thumbnail] {
         error: .permissionDenied,
         hasError: true,
         thumbnails: [:],
+        isSelectionMode: false,
+        selectedMediaIDs: .constant(nil),
         onLoadPhotos: {},
         onLoadThumbnail: { _, _ in },
-        onClearError: {}
+        onClearError: {},
+        onToggleSelectionMode: {}
     )
 }
 
@@ -119,9 +131,12 @@ private func createSampleThumbnails() -> [Media.ID: Media.Thumbnail] {
         error: .mediaLoadFailed,
         hasError: true,
         thumbnails: [:],
+        isSelectionMode: false,
+        selectedMediaIDs: .constant(nil),
         onLoadPhotos: {},
         onLoadThumbnail: { _, _ in },
-        onClearError: {}
+        onClearError: {},
+        onToggleSelectionMode: {}
     )
 }
 
@@ -132,9 +147,12 @@ private func createSampleThumbnails() -> [Media.ID: Media.Thumbnail] {
         error: nil,
         hasError: false,
         thumbnails: createSampleThumbnails(),
+        isSelectionMode: false,
+        selectedMediaIDs: .constant(nil),
         onLoadPhotos: {},
         onLoadThumbnail: { _, _ in },
-        onClearError: {}
+        onClearError: {},
+        onToggleSelectionMode: {}
     )
 }
 
