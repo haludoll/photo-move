@@ -38,15 +38,19 @@ class MediaLibraryViewModel: ObservableObject {
 
     /// 写真を読み込む
     func loadPhotos() async {
+        print("📸 [MediaLibraryViewModel] loadPhotos開始")
         isLoading = true
         error = nil
 
         do {
             media = try await mediaLibraryService.loadMedia()
+            print("📸 [MediaLibraryViewModel] \(media.count)件の写真を読み込み完了")
         } catch let mediaError as MediaError {
+            print("📸 [MediaLibraryViewModel] MediaErrorが発生: \(mediaError)")
             error = mediaError
             media = []
         } catch {
+            print("📸 [MediaLibraryViewModel] 予期しないエラーが発生: \(error)")
             self.error = .mediaLoadFailed
             media = []
         }
@@ -61,8 +65,11 @@ class MediaLibraryViewModel: ObservableObject {
     func loadThumbnail(for mediaID: Media.ID, size: CGSize) {
         // すでに読み込み中または読み込み済みの場合はスキップ
         if thumbnails[mediaID] != nil || thumbnailLoadingTasks[mediaID] != nil {
+            print("🖼️ [MediaLibraryViewModel] サムネイル読み込みスキップ: \(mediaID.value)")
             return
         }
+
+        print("🖼️ [MediaLibraryViewModel] サムネイル読み込み開始: \(mediaID.value)")
 
         // サムネイル読み込みタスクを開始
         let task = Task { [weak self] in
@@ -73,13 +80,16 @@ class MediaLibraryViewModel: ObservableObject {
                 )
 
                 if let thumbnail = thumbnail {
+                    print("🖼️ [MediaLibraryViewModel] サムネイル読み込み成功: \(mediaID.value)")
                     await MainActor.run {
                         self?.thumbnails[mediaID] = thumbnail
                     }
+                } else {
+                    print("🖼️ [MediaLibraryViewModel] サムネイルがnil: \(mediaID.value)")
                 }
             } catch {
                 // サムネイル読み込みエラーは個別に処理せず、デフォルト画像を表示
-                print("Failed to load thumbnail for \(mediaID.value): \(error)")
+                print("🖼️ [MediaLibraryViewModel] サムネイル読み込みエラー \(mediaID.value): \(error)")
             }
 
             await MainActor.run {
