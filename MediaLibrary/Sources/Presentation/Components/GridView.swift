@@ -74,12 +74,20 @@ struct GridView<Item: Identifiable, Content: View>: UIViewRepresentable {
     func updateUIView(_ uiView: UICollectionView, context: Context) {
         guard let collectionView = uiView as? SelectableCollectionView<Item> else { return }
         
+        let previousItemsCount = context.coordinator.items.count
         context.coordinator.items = items
         context.coordinator.selectedIDs = selectedIDs
         collectionView.columns = columns
         
-        // データの更新
-        collectionView.reloadData()
+        // データの更新 - アイテム数が変わった場合のみ完全再読み込み
+        if previousItemsCount != items.count {
+            collectionView.reloadData()
+        } else {
+            // アイテム数が同じ場合は表示されているセルのみ更新
+            if let visibleIndexPaths = collectionView.indexPathsForVisibleItems {
+                collectionView.reloadItems(at: visibleIndexPaths)
+            }
+        }
         
         // レイアウトの更新
         if let layout = collectionView.collectionViewLayout as? UICollectionViewFlowLayout {

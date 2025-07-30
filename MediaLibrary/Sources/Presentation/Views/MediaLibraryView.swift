@@ -100,14 +100,17 @@ internal struct MediaLibraryContentView: View {
             spacing: 2,
             selectedIDs: $selectedMediaIDs
         ) { mediaItem, isSelected in
-            PhotoThumbnailView(
+            let thumbnail = thumbnails[mediaItem.id]
+            print("📱 [MediaLibraryView] セル描画: \(mediaItem.id.value), サムネイル: \(thumbnail != nil ? "あり" : "なし")")
+            return PhotoThumbnailView(
                 media: mediaItem,
-                thumbnail: thumbnails[mediaItem.id],
+                thumbnail: thumbnail,
                 size: thumbnailSize,
                 isSelected: isSelected,
                 isSelectionMode: isSelectionMode
             )
         } onItemAppear: { mediaItem in
+            print("📱 [MediaLibraryView] onItemAppear: \(mediaItem.id.value)")
             onLoadThumbnail(mediaItem.id, thumbnailSize)
         }
     }
