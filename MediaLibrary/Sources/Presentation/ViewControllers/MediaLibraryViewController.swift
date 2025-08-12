@@ -1,4 +1,5 @@
 import MediaLibraryApplication
+import MediaLibraryDependencyInjection
 import MediaLibraryDomain
 import SwiftUI
 import UIKit
@@ -13,8 +14,8 @@ final class MediaLibraryViewController: UIViewController {
 
     // MARK: - Initialization
 
-    init(viewModel: MediaLibraryViewModel) {
-        self.viewModel = viewModel
+    init() {
+        viewModel = MediaLibraryViewModel(mediaLibraryService: AppDependencies.mediaLibraryAppService)
         super.init(nibName: nil, bundle: nil)
     }
 
