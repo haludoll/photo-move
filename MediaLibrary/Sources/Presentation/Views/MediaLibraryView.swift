@@ -1,8 +1,8 @@
+import Combine
 import MediaLibraryDependencyInjection
 import MediaLibraryDomain
 import SwiftUI
 import UIKit
-import Combine
 
 /// メディアライブラリ画面（Stateful Container）
 public struct MediaLibraryView: View {
@@ -40,9 +40,9 @@ public struct MediaLibraryView: View {
 }
 
 /// メディアライブラリ画面のコンテンツ（Stateless Presenter）
-internal struct MediaLibraryContentView: View {
+struct MediaLibraryContentView: View {
     // MARK: - Properties
-    
+
     let media: [Media]
     let isLoading: Bool
     let error: MediaError?
@@ -59,7 +59,7 @@ internal struct MediaLibraryContentView: View {
     private let thumbnailSize = CGSize(width: 200, height: 200)
 
     // MARK: - Body
-    
+
     var body: some View {
         NavigationView {
             Group {
@@ -101,7 +101,6 @@ internal struct MediaLibraryContentView: View {
             selectedIDs: $selectedMediaIDs
         ) { mediaItem, isSelected in
             let thumbnail = thumbnails[mediaItem.id]
-            print("📱 [MediaLibraryView] セル描画: \(mediaItem.id.value), サムネイル: \(thumbnail != nil ? "あり" : "なし")")
             return PhotoThumbnailView(
                 media: mediaItem,
                 thumbnail: thumbnail,
@@ -110,7 +109,6 @@ internal struct MediaLibraryContentView: View {
                 isSelectionMode: isSelectionMode
             )
         } onItemAppear: { mediaItem in
-            print("📱 [MediaLibraryView] onItemAppear: \(mediaItem.id.value)")
             onLoadThumbnail(mediaItem.id, thumbnailSize)
         }
         .id(thumbnails.count) // thumbnailsが更新されたらGridViewを再構築
@@ -138,7 +136,8 @@ internal struct MediaLibraryContentView: View {
             String(localized: "Invalid thumbnail data", bundle: .module)
         case .permissionDenied:
             String(
-                localized: "Photo library access permission denied. Please allow access in Settings.", bundle: .module)
+                localized: "Photo library access permission denied. Please allow access in Settings.", bundle: .module
+            )
         case .mediaNotFound:
             String(localized: "Photo not found", bundle: .module)
         case .unsupportedFormat:
@@ -167,14 +166,12 @@ private struct PhotoThumbnailView: View {
             .overlay(
                 Group {
                     if let thumbnail = thumbnail,
-                        let uiImage = UIImage(data: thumbnail.imageData)
+                       let uiImage = UIImage(data: thumbnail.imageData)
                     {
-                        let _ = print("🖼️ [PhotoThumbnailView] 画像表示: \(media.id.value)")
                         Image(uiImage: uiImage)
                             .resizable()
                             .scaledToFill()
                     } else {
-                        let _ = print("🖼️ [PhotoThumbnailView] プログレス表示: \(media.id.value), サムネイル: \(thumbnail != nil ? "あり" : "なし")")
                         Rectangle()
                             .fill(Color.gray.opacity(0.2))
                             .overlay(

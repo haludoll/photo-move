@@ -2,7 +2,7 @@ import Foundation
 import MediaLibraryDomain
 import Photos
 #if canImport(UIKit)
-import UIKit
+    import UIKit
 #endif
 
 /// PhotoKitを使用したMediaRepositoryの実装
@@ -14,11 +14,8 @@ package struct MediaRepositoryImpl: MediaRepository {
     // MARK: - Public Methods
 
     package func fetchMedia() async throws -> [Media] {
-        print("📱 [MediaRepositoryImpl] fetchMedia開始")
-        
         // PHAssetを取得
         let fetchResult = PHAsset.fetchAssets(with: .image, options: createFetchOptions())
-        print("📱 [MediaRepositoryImpl] PHAsset取得完了: \(fetchResult.count)件")
 
         var media: [Media] = []
         fetchResult.enumerateObjects { asset, _, _ in
@@ -27,37 +24,28 @@ package struct MediaRepositoryImpl: MediaRepository {
                 media.append(mediaItem)
             } catch {
                 // 個別のアセット変換エラーはログに記録するが、全体の処理は継続
-                print("📱 [MediaRepositoryImpl] アセット変換エラー: \(error)")
             }
         }
 
-        print("📱 [MediaRepositoryImpl] Media変換完了: \(media.count)件")
         return media
     }
 
     package func fetchThumbnail(for mediaID: Media.ID, size: CGSize) async throws -> Media.Thumbnail {
-        print("🖼️ [MediaRepositoryImpl] サムネイル取得開始: \(mediaID.value)")
-        
         // PHAssetを取得
         guard let asset = await findAsset(by: mediaID) else {
-            print("🖼️ [MediaRepositoryImpl] PHAssetが見つからない: \(mediaID.value)")
             throw MediaError.mediaNotFound
         }
-
-        print("🖼️ [MediaRepositoryImpl] PHAsset取得成功: \(mediaID.value)")
 
         // サムネイル生成
         do {
             let imageData = try await generateThumbnail(from: asset, size: size)
-            print("🖼️ [MediaRepositoryImpl] サムネイル生成成功: \(mediaID.value), データサイズ: \(imageData.count)bytes")
-            
+
             return try Media.Thumbnail(
                 mediaID: mediaID,
                 imageData: imageData,
                 size: size
             )
         } catch {
-            print("🖼️ [MediaRepositoryImpl] サムネイル生成エラー: \(mediaID.value), エラー: \(error)")
             throw error
         }
     }
