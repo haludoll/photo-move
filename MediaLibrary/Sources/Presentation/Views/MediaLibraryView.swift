@@ -36,9 +36,9 @@ public struct MediaLibraryView: View {
 }
 
 /// メディアライブラリ画面のコンテンツ（Stateless Presenter）
-internal struct MediaLibraryContentView: View {
+struct MediaLibraryContentView: View {
     // MARK: - Properties
-    
+
     let media: [Media]
     let isLoading: Bool
     let error: MediaError?
@@ -48,11 +48,10 @@ internal struct MediaLibraryContentView: View {
     let onLoadThumbnail: (Media.ID, CGSize) -> Void
     let onClearError: () -> Void
 
-    private let columns = Array(repeating: GridItem(.flexible(), spacing: 2), count: 5)
     private let thumbnailSize = CGSize(width: 200, height: 200)
 
     // MARK: - Body
-    
+
     var body: some View {
         NavigationView {
             Group {
@@ -78,20 +77,18 @@ internal struct MediaLibraryContentView: View {
     // MARK: - Private Views
 
     private var photoGridView: some View {
-        ScrollView {
-            LazyVGrid(columns: columns, spacing: 2) {
-                ForEach(media) { mediaItem in
-                    PhotoThumbnailView(
-                        media: mediaItem,
-                        thumbnail: thumbnails[mediaItem.id],
-                        size: thumbnailSize
-                    )
-                    .onAppear {
-                        onLoadThumbnail(mediaItem.id, thumbnailSize)
-                    }
-                }
-            }
-            .padding(.horizontal, 2)
+        GridView(
+            items: media,
+            columns: 5,
+            spacing: 2
+        ) { mediaItem in
+            PhotoThumbnailView(
+                media: mediaItem,
+                thumbnail: thumbnails[mediaItem.id],
+                size: thumbnailSize
+            )
+        } onItemAppear: { mediaItem in
+            onLoadThumbnail(mediaItem.id, thumbnailSize)
         }
     }
 
@@ -117,7 +114,8 @@ internal struct MediaLibraryContentView: View {
             String(localized: "Invalid thumbnail data", bundle: .module)
         case .permissionDenied:
             String(
-                localized: "Photo library access permission denied. Please allow access in Settings.", bundle: .module)
+                localized: "Photo library access permission denied. Please allow access in Settings.", bundle: .module
+            )
         case .mediaNotFound:
             String(localized: "Photo not found", bundle: .module)
         case .unsupportedFormat:
@@ -144,7 +142,7 @@ private struct PhotoThumbnailView: View {
             .overlay(
                 Group {
                     if let thumbnail = thumbnail,
-                        let uiImage = UIImage(data: thumbnail.imageData)
+                       let uiImage = UIImage(data: thumbnail.imageData)
                     {
                         Image(uiImage: uiImage)
                             .resizable()
