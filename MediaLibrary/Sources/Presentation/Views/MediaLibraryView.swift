@@ -1,3 +1,4 @@
+import Combine
 import MediaLibraryDependencyInjection
 import MediaLibraryDomain
 import SwiftUI
@@ -25,9 +26,12 @@ public struct MediaLibraryView: View {
             error: viewModel.error,
             hasError: viewModel.hasError,
             thumbnails: viewModel.thumbnails,
+            isSelectionMode: viewModel.isSelectionMode,
+            selectedMediaIDs: $viewModel.selectedMediaIDs,
             onLoadPhotos: { Task { await viewModel.loadPhotos() } },
             onLoadThumbnail: viewModel.loadThumbnail,
-            onClearError: viewModel.clearError
+            onClearError: viewModel.clearError,
+            onToggleSelectionMode: viewModel.toggleSelectionMode
         )
         .task {
             await viewModel.loadPhotos()
@@ -36,23 +40,26 @@ public struct MediaLibraryView: View {
 }
 
 /// メディアライブラリ画面のコンテンツ（Stateless Presenter）
-internal struct MediaLibraryContentView: View {
+struct MediaLibraryContentView: View {
     // MARK: - Properties
-    
+
     let media: [Media]
     let isLoading: Bool
     let error: MediaError?
     let hasError: Bool
     let thumbnails: [Media.ID: Media.Thumbnail]
+    let isSelectionMode: Bool
+    @Binding var selectedMediaIDs: Set<Media.ID>?
     let onLoadPhotos: () -> Void
     let onLoadThumbnail: (Media.ID, CGSize) -> Void
     let onClearError: () -> Void
+    let onToggleSelectionMode: () -> Void
 
     private let columns = Array(repeating: GridItem(.flexible(), spacing: 2), count: 5)
     private let thumbnailSize = CGSize(width: 200, height: 200)
 
     // MARK: - Body
-    
+
     var body: some View {
         NavigationView {
             Group {
@@ -63,6 +70,15 @@ internal struct MediaLibraryContentView: View {
                     emptyView
                 } else {
                     photoGridView
+                }
+            }
+            .navigationBarTitleDisplayMode(.large)
+            .navigationTitle(String(localized: "Photos", bundle: .module))
+            .toolbar {
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    Button(isSelectionMode ? String(localized: "Done", bundle: .module) : String(localized: "Select", bundle: .module)) {
+                        onToggleSelectionMode()
+                    }
                 }
             }
             .alert(String(localized: "Error", bundle: .module), isPresented: .constant(hasError)) {
@@ -78,21 +94,24 @@ internal struct MediaLibraryContentView: View {
     // MARK: - Private Views
 
     private var photoGridView: some View {
-        ScrollView {
-            LazyVGrid(columns: columns, spacing: 2) {
-                ForEach(media) { mediaItem in
-                    PhotoThumbnailView(
-                        media: mediaItem,
-                        thumbnail: thumbnails[mediaItem.id],
-                        size: thumbnailSize
-                    )
-                    .onAppear {
-                        onLoadThumbnail(mediaItem.id, thumbnailSize)
-                    }
-                }
-            }
-            .padding(.horizontal, 2)
+        GridView(
+            items: media,
+            columns: 5,
+            spacing: 2,
+            selectedIDs: $selectedMediaIDs
+        ) { mediaItem, isSelected in
+            let thumbnail = thumbnails[mediaItem.id]
+            return PhotoThumbnailView(
+                media: mediaItem,
+                thumbnail: thumbnail,
+                size: thumbnailSize,
+                isSelected: isSelected,
+                isSelectionMode: isSelectionMode
+            )
+        } onItemAppear: { mediaItem in
+            onLoadThumbnail(mediaItem.id, thumbnailSize)
         }
+        .id(thumbnails.count) // thumbnailsが更新されたらGridViewを再構築
     }
 
     private var emptyView: some View {
@@ -117,7 +136,8 @@ internal struct MediaLibraryContentView: View {
             String(localized: "Invalid thumbnail data", bundle: .module)
         case .permissionDenied:
             String(
-                localized: "Photo library access permission denied. Please allow access in Settings.", bundle: .module)
+                localized: "Photo library access permission denied. Please allow access in Settings.", bundle: .module
+            )
         case .mediaNotFound:
             String(localized: "Photo not found", bundle: .module)
         case .unsupportedFormat:
@@ -137,6 +157,8 @@ private struct PhotoThumbnailView: View {
     let media: Media
     let thumbnail: Media.Thumbnail?
     let size: CGSize
+    let isSelected: Bool
+    let isSelectionMode: Bool
 
     var body: some View {
         Color.clear
@@ -144,7 +166,7 @@ private struct PhotoThumbnailView: View {
             .overlay(
                 Group {
                     if let thumbnail = thumbnail,
-                        let uiImage = UIImage(data: thumbnail.imageData)
+                       let uiImage = UIImage(data: thumbnail.imageData)
                     {
                         Image(uiImage: uiImage)
                             .resizable()
@@ -157,6 +179,30 @@ private struct PhotoThumbnailView: View {
                                     .progressViewStyle(CircularProgressViewStyle(tint: .gray))
                                     .scaleEffect(0.5)
                             )
+                    }
+                }
+            )
+            .overlay(
+                Group {
+                    if isSelectionMode {
+                        VStack {
+                            HStack {
+                                Spacer()
+                                if isSelected {
+                                    Image(systemName: "checkmark.circle.fill")
+                                        .foregroundColor(.blue)
+                                        .background(Color.white.clipShape(Circle()))
+                                        .font(.title2)
+                                } else {
+                                    Circle()
+                                        .stroke(Color.white, lineWidth: 2)
+                                        .frame(width: 24, height: 24)
+                                        .background(Color.black.opacity(0.3).clipShape(Circle()))
+                                }
+                            }
+                            Spacer()
+                        }
+                        .padding(8)
                     }
                 }
             )

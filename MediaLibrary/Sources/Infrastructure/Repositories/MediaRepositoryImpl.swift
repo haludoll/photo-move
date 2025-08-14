@@ -1,7 +1,9 @@
 import Foundation
 import MediaLibraryDomain
 import Photos
-import UIKit
+#if canImport(UIKit)
+    import UIKit
+#endif
 
 /// PhotoKitを使用したMediaRepositoryの実装
 package struct MediaRepositoryImpl: MediaRepository {
@@ -22,7 +24,6 @@ package struct MediaRepositoryImpl: MediaRepository {
                 media.append(mediaItem)
             } catch {
                 // 個別のアセット変換エラーはログに記録するが、全体の処理は継続
-                print("Failed to convert asset to media: \(error)")
             }
         }
 
@@ -36,13 +37,17 @@ package struct MediaRepositoryImpl: MediaRepository {
         }
 
         // サムネイル生成
-        let imageData = try await generateThumbnail(from: asset, size: size)
+        do {
+            let imageData = try await generateThumbnail(from: asset, size: size)
 
-        return try Media.Thumbnail(
-            mediaID: mediaID,
-            imageData: imageData,
-            size: size
-        )
+            return try Media.Thumbnail(
+                mediaID: mediaID,
+                imageData: imageData,
+                size: size
+            )
+        } catch {
+            throw error
+        }
     }
 
     // MARK: - Private Methods
