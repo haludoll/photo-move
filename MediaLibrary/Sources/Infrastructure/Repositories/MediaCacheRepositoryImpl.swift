@@ -17,25 +17,25 @@ package final class MediaCacheRepositoryImpl: MediaCacheRepository, @unchecked S
 
     package func startCaching(for media: [Media], size: CGSize) {
         let assets = fetchPHAssets(for: media)
-        let options = createImageRequestOptions()
 
+        // Appleサンプル準拠：キャッシュもデフォルト設定で高速化
         imageManager.startCachingImages(
             for: assets,
             targetSize: size,
             contentMode: .aspectFill,
-            options: options
+            options: nil
         )
     }
 
     package func stopCaching(for media: [Media], size: CGSize) {
         let assets = fetchPHAssets(for: media)
-        let options = createImageRequestOptions()
 
+        // Appleサンプル準拠：キャッシュもデフォルト設定で高速化
         imageManager.stopCachingImages(
             for: assets,
             targetSize: size,
             contentMode: .aspectFill,
-            options: options
+            options: nil
         )
     }
 
@@ -61,14 +61,5 @@ package final class MediaCacheRepositoryImpl: MediaCacheRepository, @unchecked S
             assets.append(asset)
         }
         return assets
-    }
-
-    private func createImageRequestOptions() -> PHImageRequestOptions {
-        let options = PHImageRequestOptions()
-        options.isSynchronous = false
-        options.deliveryMode = .opportunistic
-        options.resizeMode = .fast
-        options.isNetworkAccessAllowed = false
-        return options
     }
 }
