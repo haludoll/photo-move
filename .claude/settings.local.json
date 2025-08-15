@@ -29,6 +29,7 @@
       "Bash(swift package:*)",
       "Bash(y)"
     ],
-    "deny": []
+    "deny": [],
+    "defaultMode": "acceptEdits"
   }
 }

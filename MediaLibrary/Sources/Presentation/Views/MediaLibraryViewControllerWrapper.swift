@@ -5,7 +5,10 @@ import UIKit
 /// MediaLibraryViewControllerをSwiftUIでラップする内部実装
 struct MediaLibraryViewControllerWrapper: UIViewControllerRepresentable {
     func makeUIViewController(context _: Context) -> MediaLibraryViewController {
-        return MediaLibraryViewController()
+        let viewController = MediaLibraryViewController()
+        viewController.extendedLayoutIncludesOpaqueBars = true
+        viewController.edgesForExtendedLayout = .all
+        return viewController
     }
 
     func updateUIViewController(_: MediaLibraryViewController, context _: Context) {
