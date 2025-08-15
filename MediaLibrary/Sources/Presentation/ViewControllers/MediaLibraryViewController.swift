@@ -181,7 +181,7 @@ final class MediaLibraryViewController: UIViewController {
 
     /// 実際のセルサイズに基づいてサムネイルサイズを更新
     private func updateThumbnailSize() {
-        let columns: CGFloat = 5
+        let columns: CGFloat = 4
         let spacing: CGFloat = 2
         let width = collectionView.bounds.width
         let totalSpacing = spacing * (columns - 1)
@@ -340,7 +340,7 @@ extension MediaLibraryViewController: UIScrollViewDelegate {
 
 extension MediaLibraryViewController: UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, layout _: UICollectionViewLayout, sizeForItemAt _: IndexPath) -> CGSize {
-        let columns: CGFloat = 5
+        let columns: CGFloat = 4
         let spacing: CGFloat = 2
         let width = collectionView.bounds.width
         let totalSpacing = spacing * (columns - 1)
