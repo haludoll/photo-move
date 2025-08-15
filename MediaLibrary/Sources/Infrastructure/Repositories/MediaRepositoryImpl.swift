@@ -102,8 +102,8 @@ package struct MediaRepositoryImpl: MediaRepository {
 
             let options = PHImageRequestOptions()
             options.isSynchronous = false
-            options.deliveryMode = .opportunistic
-            options.resizeMode = .fast
+            options.deliveryMode = .highQualityFormat
+            options.resizeMode = .exact
             options.isNetworkAccessAllowed = false
 
             // continuationが複数回呼ばれることを防ぐためのフラグ
@@ -134,7 +134,7 @@ package struct MediaRepositoryImpl: MediaRepository {
 
                 // アルファチャンネルを除去してUIImageをData形式に変換
                 let processedImage = removeAlphaChannel(from: image)
-                guard let imageData = processedImage.jpegData(compressionQuality: 0.8) else {
+                guard let imageData = processedImage.jpegData(compressionQuality: 0.9) else {
                     isResumed = true
                     continuation.resume(throwing: MediaError.thumbnailGenerationFailed)
                     return

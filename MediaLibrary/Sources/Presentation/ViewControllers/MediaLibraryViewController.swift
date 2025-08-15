@@ -33,10 +33,8 @@ final class MediaLibraryViewController: UIViewController {
         setupUI()
         setupBindings()
 
-        // サムネイルサイズを設定
-        let scale = UIScreen.main.scale
-        let cellSize = CGSize(width: 80, height: 80) // 仮のセルサイズ
-        thumbnailSize = CGSize(width: cellSize.width * scale, height: cellSize.height * scale)
+        // 動的なサムネイルサイズの計算は後で行う
+        thumbnailSize = CGSize(width: 200, height: 200) // 初期値
 
         Task {
             await viewModel.loadPhotos()
@@ -47,6 +45,9 @@ final class MediaLibraryViewController: UIViewController {
 
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
+
+        // レイアウト確定後にサムネイルサイズを計算
+        updateThumbnailSize()
         updateCachedAssets()
     }
 
@@ -174,6 +175,22 @@ final class MediaLibraryViewController: UIViewController {
             let media = viewModel.media[index]
             viewModel.loadThumbnail(for: media.id, size: thumbnailSize)
         }
+    }
+
+    // MARK: - Thumbnail Size Management
+
+    /// 実際のセルサイズに基づいてサムネイルサイズを更新
+    private func updateThumbnailSize() {
+        let columns: CGFloat = 5
+        let spacing: CGFloat = 2
+        let width = collectionView.bounds.width
+        let totalSpacing = spacing * (columns - 1)
+        let itemWidth = (width - totalSpacing) / columns
+
+        // 高解像度対応：実際のセルサイズの2倍でサムネイル生成
+        let scale = UIScreen.main.scale
+        let targetSize = itemWidth * 2 * scale
+        thumbnailSize = CGSize(width: targetSize, height: targetSize)
     }
 
     // MARK: - Cache Management (Apple Sample準拠)
@@ -337,8 +354,6 @@ extension MediaLibraryViewController: UICollectionViewDelegateFlowLayout {
 
 extension MediaLibraryViewController: UICollectionViewDataSourcePrefetching {
     func collectionView(_: UICollectionView, prefetchItemsAt indexPaths: [IndexPath]) {
-        let thumbnailSize = CGSize(width: 200, height: 200)
-
         for indexPath in indexPaths {
             guard indexPath.item < viewModel.media.count else { continue }
             let media = viewModel.media[indexPath.item]
