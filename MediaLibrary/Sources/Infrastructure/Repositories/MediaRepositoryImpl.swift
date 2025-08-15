@@ -132,8 +132,9 @@ package struct MediaRepositoryImpl: MediaRepository {
                     return
                 }
 
-                // UIImageをData形式に変換
-                guard let imageData = image.jpegData(compressionQuality: 0.8) else {
+                // アルファチャンネルを除去してUIImageをData形式に変換
+                let processedImage = removeAlphaChannel(from: image)
+                guard let imageData = processedImage.jpegData(compressionQuality: 0.8) else {
                     isResumed = true
                     continuation.resume(throwing: MediaError.thumbnailGenerationFailed)
                     return
@@ -143,5 +144,27 @@ package struct MediaRepositoryImpl: MediaRepository {
                 continuation.resume(returning: imageData)
             }
         }
+    }
+
+    // MARK: - Private Methods
+
+    /// アルファチャンネルを除去して不透明な画像に変換
+    private func removeAlphaChannel(from image: UIImage) -> UIImage {
+        let size = image.size
+        let scale = image.scale
+
+        // RGB形式のコンテキストを作成（アルファチャンネルなし）
+        UIGraphicsBeginImageContextWithOptions(size, true, scale)
+        defer { UIGraphicsEndImageContext() }
+
+        // 白背景で描画
+        UIColor.white.setFill()
+        UIRectFill(CGRect(origin: .zero, size: size))
+
+        // 元画像を描画
+        image.draw(in: CGRect(origin: .zero, size: size))
+
+        // 新しい画像を生成
+        return UIGraphicsGetImageFromCurrentImageContext() ?? image
     }
 }
