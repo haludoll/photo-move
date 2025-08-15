@@ -73,6 +73,8 @@ class MediaLibraryViewModel: ObservableObject {
                 if let thumbnail = thumbnail {
                     await MainActor.run {
                         self?.thumbnails[mediaID] = thumbnail
+                        // 個別のサムネイル更新を通知
+                        self?.objectWillChange.send()
                     }
                 }
             } catch {

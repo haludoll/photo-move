@@ -33,6 +33,8 @@ final class MediaLibraryViewController: UIViewController {
 
         Task {
             await viewModel.loadPhotos()
+            // 初期表示アイテムのサムネイルを読み込み
+            loadInitialThumbnails()
         }
     }
 
@@ -100,8 +102,26 @@ final class MediaLibraryViewController: UIViewController {
             showError(viewModel.error)
         }
 
-        // CollectionViewの更新
-        collectionView.reloadData()
+        // CollectionViewの更新（パフォーマンス改善）
+        if collectionView.numberOfItems(inSection: 0) != viewModel.media.count {
+            // アイテム数が変わった場合のみreloadData
+            collectionView.reloadData()
+        } else {
+            // 表示中のセルのみ更新
+            updateVisibleCells()
+        }
+    }
+
+    private func updateVisibleCells() {
+        for cell in collectionView.visibleCells {
+            guard let indexPath = collectionView.indexPath(for: cell),
+                  let thumbnailCell = cell as? MediaThumbnailCell,
+                  indexPath.item < viewModel.media.count else { continue }
+
+            let media = viewModel.media[indexPath.item]
+            let thumbnail = viewModel.thumbnails[media.id]
+            thumbnailCell.configure(with: media, thumbnail: thumbnail)
+        }
     }
 
     private func showLoadingState() {
@@ -133,6 +153,16 @@ final class MediaLibraryViewController: UIViewController {
         })
 
         present(alert, animated: true)
+    }
+
+    private func loadInitialThumbnails() {
+        let thumbnailSize = CGSize(width: 200, height: 200)
+        let visibleItemsCount = min(20, viewModel.media.count) // 最初の20アイテム
+
+        for index in 0 ..< visibleItemsCount {
+            let media = viewModel.media[index]
+            viewModel.loadThumbnail(for: media.id, size: thumbnailSize)
+        }
     }
 
     private func errorMessage(for error: MediaError) -> String {

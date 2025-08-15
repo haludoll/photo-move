@@ -86,51 +86,68 @@ package struct MediaRepositoryImpl: MediaRepository {
 
     private func generateThumbnail(from asset: PHAsset, size: CGSize) async throws -> Data {
         return try await withCheckedThrowingContinuation { continuation in
-            let options = PHImageRequestOptions()
-            options.isSynchronous = false
-            options.deliveryMode = .highQualityFormat // .opportunisticから変更
-            options.resizeMode = .fast
+            // バックグラウンドキューでPhotoKit操作を実行
+            DispatchQueue.global(qos: .userInitiated).async {
+                let options = PHImageRequestOptions()
+                options.isSynchronous = false
+                options.deliveryMode = .opportunistic // スピード重視に変更
+                options.resizeMode = .fast
+                options.isNetworkAccessAllowed = false // ネットワーク経由の取得を無効化
 
-            // continuationが複数回呼ばれることを防ぐためのフラグ
-            var isResumed = false
+                // continuationが複数回呼ばれることを防ぐためのフラグ
+                var isResumed = false
+                let lock = NSLock()
 
-            PHImageManager.default().requestImage(
-                for: asset,
-                targetSize: size,
-                contentMode: .aspectFill,
-                options: options
-            ) { image, info in
-                // 既にresumeされている場合は何もしない
-                guard !isResumed else { return }
+                PHImageManager.default().requestImage(
+                    for: asset,
+                    targetSize: size,
+                    contentMode: .aspectFill,
+                    options: options
+                ) { image, info in
+                    lock.lock()
+                    defer { lock.unlock() }
 
-                // degraded画像の場合はスキップ（高品質画像を待つ）
-                if let isDegraded = info?[PHImageResultIsDegradedKey] as? Bool, isDegraded {
-                    return
+                    // 既にresumeされている場合は何もしない
+                    guard !isResumed else { return }
+
+                    // degraded画像でも受け入れる（パフォーマンス重視）
+                    let isDegraded = info?[PHImageResultIsDegradedKey] as? Bool ?? false
+
+                    // エラーチェック
+                    if info?[PHImageErrorKey] != nil {
+                        isResumed = true
+                        continuation.resume(throwing: MediaError.thumbnailGenerationFailed)
+                        return
+                    }
+
+                    // 画像チェック
+                    guard let image = image else {
+                        // degraded画像でない場合のみエラーとする
+                        if !isDegraded {
+                            isResumed = true
+                            continuation.resume(throwing: MediaError.thumbnailGenerationFailed)
+                        }
+                        return
+                    }
+
+                    // バックグラウンドキューで画像変換を実行
+                    DispatchQueue.global(qos: .userInitiated).async {
+                        lock.lock()
+                        defer { lock.unlock() }
+
+                        guard !isResumed else { return }
+
+                        // UIImageをData形式に変換（圧縮率を下げてパフォーマンス向上）
+                        guard let imageData = image.jpegData(compressionQuality: 0.6) else {
+                            isResumed = true
+                            continuation.resume(throwing: MediaError.thumbnailGenerationFailed)
+                            return
+                        }
+
+                        isResumed = true
+                        continuation.resume(returning: imageData)
+                    }
                 }
-
-                // エラーチェック
-                if info?[PHImageErrorKey] != nil {
-                    isResumed = true
-                    continuation.resume(throwing: MediaError.thumbnailGenerationFailed)
-                    return
-                }
-
-                // 画像チェック
-                guard let image = image else {
-                    isResumed = true
-                    continuation.resume(throwing: MediaError.thumbnailGenerationFailed)
-                    return
-                }
-
-                // UIImageをData形式に変換
-                guard let imageData = image.jpegData(compressionQuality: 0.8) else {
-                    isResumed = true
-                    continuation.resume(throwing: MediaError.thumbnailGenerationFailed)
-                    return
-                }
-
-                isResumed = true
-                continuation.resume(returning: imageData)
             }
         }
     }
