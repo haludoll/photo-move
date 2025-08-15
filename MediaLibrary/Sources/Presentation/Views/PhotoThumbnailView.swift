@@ -4,7 +4,7 @@ import UIKit
 
 /// 写真サムネイルビュー（SwiftUI）
 struct PhotoThumbnailView: View {
-    let media: Media
+    let media: Media?
     let thumbnail: Media.Thumbnail?
     let size: CGSize
 

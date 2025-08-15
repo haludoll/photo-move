@@ -50,4 +50,28 @@ package struct MediaLibraryAppServiceImpl: MediaLibraryAppService {
     package func loadThumbnail(for mediaID: Media.ID, size: CGSize) async throws -> Media.Thumbnail {
         return try await mediaRepository.fetchThumbnail(for: mediaID, size: size)
     }
+
+    /// 指定されたメディア配列のキャッシュを開始する
+    /// - Parameters:
+    ///   - media: キャッシュ対象のメディア配列
+    ///   - size: サムネイルサイズ
+    /// - Throws: MediaError
+    package func startCaching(for media: [Media], size: CGSize) async throws {
+        mediaRepository.cacheRepository.startCaching(for: media, size: size)
+    }
+
+    /// 指定されたメディア配列のキャッシュを停止する
+    /// - Parameters:
+    ///   - media: キャッシュ停止対象のメディア配列
+    ///   - size: サムネイルサイズ
+    /// - Throws: MediaError
+    package func stopCaching(for media: [Media], size: CGSize) async throws {
+        mediaRepository.cacheRepository.stopCaching(for: media, size: size)
+    }
+
+    /// すべてのキャッシュをリセットする
+    /// - Throws: MediaError
+    package func resetCache() async throws {
+        mediaRepository.cacheRepository.resetCache()
+    }
 }

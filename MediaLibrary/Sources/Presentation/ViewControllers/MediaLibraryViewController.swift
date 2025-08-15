@@ -11,6 +11,8 @@ final class MediaLibraryViewController: UIViewController {
 
     private let viewModel: MediaLibraryViewModel
     private var collectionView: UICollectionView!
+    private var thumbnailSize: CGSize!
+    private var previousPreheatRect = CGRect.zero
 
     // MARK: - Initialization
 
@@ -31,11 +33,21 @@ final class MediaLibraryViewController: UIViewController {
         setupUI()
         setupBindings()
 
+        // サムネイルサイズを設定
+        let scale = UIScreen.main.scale
+        let cellSize = CGSize(width: 80, height: 80) // 仮のセルサイズ
+        thumbnailSize = CGSize(width: cellSize.width * scale, height: cellSize.height * scale)
+
         Task {
             await viewModel.loadPhotos()
             // 初期表示アイテムのサムネイルを読み込み
             loadInitialThumbnails()
         }
+    }
+
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        updateCachedAssets()
     }
 
     // MARK: - Setup
@@ -156,12 +168,84 @@ final class MediaLibraryViewController: UIViewController {
     }
 
     private func loadInitialThumbnails() {
-        let thumbnailSize = CGSize(width: 200, height: 200)
         let visibleItemsCount = min(20, viewModel.media.count) // 最初の20アイテム
 
         for index in 0 ..< visibleItemsCount {
             let media = viewModel.media[index]
             viewModel.loadThumbnail(for: media.id, size: thumbnailSize)
+        }
+    }
+
+    // MARK: - Cache Management (Apple Sample準拠)
+
+    private func resetCachedAssets() {
+        viewModel.resetCache()
+        previousPreheatRect = .zero
+    }
+
+    private func updateCachedAssets() {
+        // Update only if the view is visible.
+        guard isViewLoaded && view.window != nil else { return }
+
+        // The window you prepare ahead of time is twice the height of the visible rect.
+        let visibleRect = CGRect(origin: collectionView.contentOffset, size: collectionView.bounds.size)
+        let preheatRect = visibleRect.insetBy(dx: 0, dy: -0.5 * visibleRect.height)
+
+        // Update only if the visible area is significantly different from the last preheated area.
+        let delta = abs(preheatRect.midY - previousPreheatRect.midY)
+        guard delta > view.bounds.height / 3 else { return }
+
+        // Compute the assets to start and stop caching.
+        let (addedRects, removedRects) = differencesBetweenRects(previousPreheatRect, preheatRect)
+        let addedMedia = addedRects
+            .flatMap { rect in indexPathsForElements(in: rect) }
+            .compactMap { indexPath in
+                indexPath.item < viewModel.media.count ? viewModel.media[indexPath.item] : nil
+            }
+        let removedMedia = removedRects
+            .flatMap { rect in indexPathsForElements(in: rect) }
+            .compactMap { indexPath in
+                indexPath.item < viewModel.media.count ? viewModel.media[indexPath.item] : nil
+            }
+
+        // Update the assets the PHCachingImageManager is caching.
+        viewModel.startCaching(for: addedMedia, size: thumbnailSize)
+        viewModel.stopCaching(for: removedMedia, size: thumbnailSize)
+
+        // Store the computed rectangle for future comparison.
+        previousPreheatRect = preheatRect
+    }
+
+    private func indexPathsForElements(in rect: CGRect) -> [IndexPath] {
+        guard let layoutAttributes = collectionView.collectionViewLayout.layoutAttributesForElements(in: rect) else {
+            return []
+        }
+        return layoutAttributes.map { $0.indexPath }
+    }
+
+    private func differencesBetweenRects(_ old: CGRect, _ new: CGRect) -> (added: [CGRect], removed: [CGRect]) {
+        if old.intersects(new) {
+            var added = [CGRect]()
+            if new.maxY > old.maxY {
+                added += [CGRect(x: new.origin.x, y: old.maxY,
+                                 width: new.width, height: new.maxY - old.maxY)]
+            }
+            if old.minY > new.minY {
+                added += [CGRect(x: new.origin.x, y: new.minY,
+                                 width: new.width, height: old.minY - new.minY)]
+            }
+            var removed = [CGRect]()
+            if new.maxY < old.maxY {
+                removed += [CGRect(x: new.origin.x, y: new.maxY,
+                                   width: new.width, height: old.maxY - new.maxY)]
+            }
+            if old.minY < new.minY {
+                removed += [CGRect(x: new.origin.x, y: old.minY,
+                                   width: new.width, height: new.minY - old.minY)]
+            }
+            return (added, removed)
+        } else {
+            return ([new], [old])
         }
     }
 
@@ -207,7 +291,15 @@ extension MediaLibraryViewController: UICollectionViewDataSource {
         let media = viewModel.media[indexPath.item]
         let thumbnail = viewModel.thumbnails[media.id]
 
+        // Appleサンプル準拠：representedAssetIdentifierを先に設定
+        cell.representedAssetIdentifier = media.id.value
+
         cell.configure(with: media, thumbnail: thumbnail)
+
+        // Appleサンプル準拠：サムネイルが未取得の場合のみloadThumbnailを実行
+        if thumbnail == nil {
+            viewModel.loadThumbnail(for: media.id, size: thumbnailSize)
+        }
 
         return cell
     }
@@ -217,6 +309,14 @@ extension MediaLibraryViewController: UICollectionViewDataSource {
 
 extension MediaLibraryViewController: UICollectionViewDelegate {
     // willDisplayでのサムネイル読み込みは削除（prefetchで実行）
+}
+
+// MARK: - UIScrollViewDelegate
+
+extension MediaLibraryViewController: UIScrollViewDelegate {
+    func scrollViewDidScroll(_: UIScrollView) {
+        updateCachedAssets()
+    }
 }
 
 // MARK: - UICollectionViewDelegateFlowLayout

@@ -10,6 +10,9 @@ final class MediaThumbnailCell: UICollectionViewCell {
 
     private var hostingController: UIHostingController<PhotoThumbnailView>?
 
+    /// Appleサンプル準拠：セル再利用時の問題を防ぐため
+    var representedAssetIdentifier: String!
+
     // MARK: - Initialization
 
     override init(frame: CGRect) {
@@ -31,18 +34,34 @@ final class MediaThumbnailCell: UICollectionViewCell {
     // MARK: - Configuration
 
     func configure(with media: Media, thumbnail: Media.Thumbnail?) {
-        // 既存のhostingControllerをクリア
-        hostingController?.view.removeFromSuperview()
+        // Appleサンプル準拠：representedAssetIdentifierを設定
+        representedAssetIdentifier = media.id.value
 
-        // SwiftUIビューを作成
+        // UIHostingControllerの再利用を最適化
+        if hostingController == nil {
+            setupHostingController()
+        }
+
+        // SwiftUIビューを作成（軽量化）
         let thumbnailView = PhotoThumbnailView(
             media: media,
             thumbnail: thumbnail,
             size: CGSize(width: 200, height: 200)
         )
 
-        // UIHostingControllerでSwiftUIビューを埋め込み
-        let hostingController = UIHostingController(rootView: thumbnailView)
+        // ビューの更新のみ行う（再作成を避ける）
+        hostingController?.rootView = thumbnailView
+    }
+
+    private func setupHostingController() {
+        // 初回のみUIHostingControllerを作成
+        let initialView = PhotoThumbnailView(
+            media: nil,
+            thumbnail: nil,
+            size: CGSize(width: 200, height: 200)
+        )
+
+        let hostingController = UIHostingController(rootView: initialView)
         hostingController.view.backgroundColor = .clear
         hostingController.view.translatesAutoresizingMaskIntoConstraints = false
 
@@ -50,7 +69,7 @@ final class MediaThumbnailCell: UICollectionViewCell {
 
         contentView.addSubview(hostingController.view)
 
-        // レイアウト制約を設定
+        // レイアウト制約を設定（一度のみ）
         NSLayoutConstraint.activate([
             hostingController.view.topAnchor.constraint(equalTo: contentView.topAnchor),
             hostingController.view.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
@@ -64,8 +83,8 @@ final class MediaThumbnailCell: UICollectionViewCell {
     override func prepareForReuse() {
         super.prepareForReuse()
 
-        // HostingControllerをクリア
-        hostingController?.view.removeFromSuperview()
-        hostingController = nil
+        // Appleサンプル準拠：軽量化のため削除処理は行わない
+        // UIHostingControllerは再利用し、新しいビューの設定のみ行う
+        representedAssetIdentifier = nil
     }
 }

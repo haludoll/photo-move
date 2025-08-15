@@ -108,6 +108,45 @@ class MediaLibraryViewModel: ObservableObject {
         thumbnailLoadingTasks.removeAll()
     }
 
+    /// 指定されたメディア配列のプリキャッシュを開始する（Appleサンプル準拠）
+    /// - Parameters:
+    ///   - media: キャッシュ対象のメディア配列
+    ///   - size: サムネイルサイズ
+    func startCaching(for media: [Media], size: CGSize) {
+        Task {
+            do {
+                try await mediaLibraryService.startCaching(for: media, size: size)
+            } catch {
+                print("Failed to start caching: \(error)")
+            }
+        }
+    }
+
+    /// 指定されたメディア配列のキャッシュを停止する（Appleサンプル準拠）
+    /// - Parameters:
+    ///   - media: キャッシュ停止対象のメディア配列
+    ///   - size: サムネイルサイズ
+    func stopCaching(for media: [Media], size: CGSize) {
+        Task {
+            do {
+                try await mediaLibraryService.stopCaching(for: media, size: size)
+            } catch {
+                print("Failed to stop caching: \(error)")
+            }
+        }
+    }
+
+    /// すべてのキャッシュをリセットする（Appleサンプル準拠）
+    func resetCache() {
+        Task {
+            do {
+                try await mediaLibraryService.resetCache()
+            } catch {
+                print("Failed to reset cache: \(error)")
+            }
+        }
+    }
+
     // MARK: - Private Methods
 
     deinit {
