@@ -4,7 +4,7 @@ import Photos
 import UIKit
 
 /// PHCachingImageManagerを使用したメディアキャッシュリポジトリの実装
-package final class MediaCacheRepositoryImpl: MediaCacheRepository {
+package final class MediaCacheRepositoryImpl: MediaCacheRepository, @unchecked Sendable {
     // MARK: - Properties
 
     private let imageManager = PHCachingImageManager()

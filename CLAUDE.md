@@ -165,3 +165,8 @@ Issue取り組み時の標準的な開発フロー：
 1. コード変更を伴うタスクの完了
 2. swift-formatによる自動フォーマット実行
 3. フォーマット後のコードをgit commitに含める
+
+### ビルド検証手順
+- **ビルド確認**: コード変更後の動作確認時は、必ずxcodebuildでiOSシミュレータ向けにビルドして確認する
+- **ビルドコマンド**: `xcodebuild -workspace photo-move.xcworkspace -scheme photo-move -destination 'platform=iOS Simulator,name=iPhone 16' build`
+- **対象プラットフォーム**: iOS専用プロジェクトのため、macOSはサポート対象外
