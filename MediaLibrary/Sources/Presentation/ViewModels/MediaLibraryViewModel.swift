@@ -93,6 +93,13 @@ class MediaLibraryViewModel: ObservableObject {
         error = nil
     }
 
+    /// 特定のメディアIDのサムネイル読み込みタスクをキャンセルする
+    /// - Parameter mediaID: キャンセルするメディアID
+    func cancelThumbnailLoading(for mediaID: Media.ID) {
+        thumbnailLoadingTasks[mediaID]?.cancel()
+        thumbnailLoadingTasks[mediaID] = nil
+    }
+
     /// すべてのサムネイル読み込みタスクをキャンセルする
     func cancelAllThumbnailTasks() {
         thumbnailLoadingTasks.values.forEach { $0.cancel() }

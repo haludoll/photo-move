@@ -54,6 +54,7 @@ final class MediaLibraryViewController: UIViewController {
         collectionView.backgroundColor = .systemBackground
         collectionView.delegate = self
         collectionView.dataSource = self
+        collectionView.prefetchDataSource = self
         collectionView.translatesAutoresizingMaskIntoConstraints = false
 
         // セル登録
@@ -185,13 +186,7 @@ extension MediaLibraryViewController: UICollectionViewDataSource {
 // MARK: - UICollectionViewDelegate
 
 extension MediaLibraryViewController: UICollectionViewDelegate {
-    func collectionView(_: UICollectionView, willDisplay _: UICollectionViewCell, forItemAt indexPath: IndexPath) {
-        let media = viewModel.media[indexPath.item]
-        let thumbnailSize = CGSize(width: 200, height: 200)
-
-        // サムネイル読み込みを開始
-        viewModel.loadThumbnail(for: media.id, size: thumbnailSize)
-    }
+    // willDisplayでのサムネイル読み込みは削除（prefetchで実行）
 }
 
 // MARK: - UICollectionViewDelegateFlowLayout
@@ -205,6 +200,28 @@ extension MediaLibraryViewController: UICollectionViewDelegateFlowLayout {
         let itemWidth = (width - totalSpacing) / columns
 
         return CGSize(width: itemWidth, height: itemWidth)
+    }
+}
+
+// MARK: - UICollectionViewDataSourcePrefetching
+
+extension MediaLibraryViewController: UICollectionViewDataSourcePrefetching {
+    func collectionView(_: UICollectionView, prefetchItemsAt indexPaths: [IndexPath]) {
+        let thumbnailSize = CGSize(width: 200, height: 200)
+
+        for indexPath in indexPaths {
+            guard indexPath.item < viewModel.media.count else { continue }
+            let media = viewModel.media[indexPath.item]
+            viewModel.loadThumbnail(for: media.id, size: thumbnailSize)
+        }
+    }
+
+    func collectionView(_: UICollectionView, cancelPrefetchingForItemsAt indexPaths: [IndexPath]) {
+        for indexPath in indexPaths {
+            guard indexPath.item < viewModel.media.count else { continue }
+            let media = viewModel.media[indexPath.item]
+            viewModel.cancelThumbnailLoading(for: media.id)
+        }
     }
 }
 

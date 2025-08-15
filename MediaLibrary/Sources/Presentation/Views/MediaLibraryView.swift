@@ -6,5 +6,6 @@ public struct MediaLibraryView: View {
 
     public var body: some View {
         MediaLibraryViewControllerWrapper()
+            .ignoresSafeArea()
     }
 }
