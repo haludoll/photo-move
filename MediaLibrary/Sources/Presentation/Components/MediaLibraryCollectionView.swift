@@ -1,4 +1,5 @@
 import MediaLibraryApplication
+import MediaLibraryDomain
 import UIKit
 
 /// 写真ライブラリ用のCollectionView
@@ -120,15 +121,16 @@ final class MediaLibraryCollectionView: UIView {
     /// - グリッドは4列、スペーシ2pxで固定
     /// - サムネイルはセルサイズの2倍×スクリーン倍率で高解像度対応
     private func updateThumbnailSize() {
-        let columns: CGFloat = 4
-        let spacing: CGFloat = 2
-        let width = collectionView.bounds.width
-        let totalSpacing = spacing * (columns - 1)
-        let itemWidth = (width - totalSpacing) / columns
+        let itemSize = GridLayoutCalculator.calculateItemSize(
+            containerWidth: collectionView.bounds.width,
+            columns: 4,
+            spacing: 2
+        )
 
-        let scale = UIScreen.main.scale
-        let targetSize = itemWidth * 2 * scale
-        thumbnailSize = CGSize(width: targetSize, height: targetSize)
+        thumbnailSize = GridLayoutCalculator.calculateThumbnailSize(
+            itemSize: itemSize,
+            scale: UIScreen.main.scale
+        )
     }
 
     private func resetCachedAssets() {
@@ -145,23 +147,30 @@ final class MediaLibraryCollectionView: UIView {
 
         // 現在の表示範囲を取得
         let visibleRect = CGRect(origin: collectionView.contentOffset, size: collectionView.bounds.size)
-        // プリロード範囲を表示範囲の上下0.5倍に拡張
-        let preheatRect = visibleRect.insetBy(dx: 0, dy: -0.5 * visibleRect.height)
+        // プリロード範囲を作成
+        let preheatRect = RectangleDifferenceCalculator.createPreheatRect(from: visibleRect)
 
         // 前回との差分が小さい場合は処理をスキップ
-        let delta = abs(preheatRect.midY - previousPreheatRect.midY)
-        guard delta > bounds.height / 3 else { return }
+        let threshold = bounds.height / 3
+        guard RectangleDifferenceCalculator.shouldUpdateCache(
+            currentRect: preheatRect,
+            previousRect: previousPreheatRect,
+            threshold: threshold
+        ) else { return }
 
         // 新しいキャッシュ範囲と前回の差分を計算
-        let (addedRects, removedRects) = differencesBetweenRects(previousPreheatRect, preheatRect)
+        let differences = RectangleDifferenceCalculator.calculateDifferences(
+            between: previousPreheatRect,
+            and: preheatRect
+        )
         // 新しくキャッシュするメディアを取得
-        let addedMedia = addedRects
+        let addedMedia = differences.added
             .flatMap { rect in indexPathsForElements(in: rect) }
             .compactMap { indexPath in
                 indexPath.item < viewModel.media.count ? viewModel.media[indexPath.item] : nil
             }
         // キャッシュから除去するメディアを取得
-        let removedMedia = removedRects
+        let removedMedia = differences.removed
             .flatMap { rect in indexPathsForElements(in: rect) }
             .compactMap { indexPath in
                 indexPath.item < viewModel.media.count ? viewModel.media[indexPath.item] : nil
@@ -180,39 +189,6 @@ final class MediaLibraryCollectionView: UIView {
             return []
         }
         return layoutAttributes.map { $0.indexPath }
-    }
-
-    /// 2つの矩形の差分を計算し、追加・削除すべき範囲を返す
-    /// - 交差している場合: 新しい部分と古い部分を細かく計算
-    /// - 交差していない場合: 新しい範囲を全て追加、古い範囲を全て削除
-    private func differencesBetweenRects(_ old: CGRect, _ new: CGRect) -> (added: [CGRect], removed: [CGRect]) {
-        if old.intersects(new) {
-            var added = [CGRect]()
-            // 下方向に拡張した部分
-            if new.maxY > old.maxY {
-                added += [CGRect(x: new.origin.x, y: old.maxY,
-                                 width: new.width, height: new.maxY - old.maxY)]
-            }
-            // 上方向に拡張した部分
-            if old.minY > new.minY {
-                added += [CGRect(x: new.origin.x, y: new.minY,
-                                 width: new.width, height: old.minY - new.minY)]
-            }
-            var removed = [CGRect]()
-            // 下方向に縮小した部分
-            if new.maxY < old.maxY {
-                removed += [CGRect(x: new.origin.x, y: new.maxY,
-                                   width: new.width, height: old.maxY - new.maxY)]
-            }
-            // 上方向に縮小した部分
-            if old.minY < new.minY {
-                removed += [CGRect(x: new.origin.x, y: old.minY,
-                                   width: new.width, height: new.minY - old.minY)]
-            }
-            return (added, removed)
-        } else {
-            return ([new], [old])
-        }
     }
 }
 
@@ -271,7 +247,11 @@ extension MediaLibraryCollectionView: UIScrollViewDelegate {
 
 extension MediaLibraryCollectionView: UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, layout _: UICollectionViewLayout, sizeForItemAt _: IndexPath) -> CGSize {
-        return Self.calculateItemSize(for: collectionView.bounds.width)
+        return GridLayoutCalculator.calculateItemSize(
+            containerWidth: collectionView.bounds.width,
+            columns: 4,
+            spacing: 2
+        )
     }
 }
 
@@ -298,19 +278,5 @@ extension MediaLibraryCollectionView: UICollectionViewDataSourcePrefetching {
             let media = viewModel.media[indexPath.item]
             viewModel.cancelThumbnailLoading(for: media.id)
         }
-    }
-}
-
-// MARK: - Layout Calculation
-
-extension MediaLibraryCollectionView {
-    /// グリッドアイテムのサイズを計算
-    static func calculateItemSize(for collectionViewWidth: CGFloat) -> CGSize {
-        let columns: CGFloat = 4
-        let spacing: CGFloat = 2
-        let totalSpacing = spacing * (columns - 1)
-        let itemWidth = (collectionViewWidth - totalSpacing) / columns
-
-        return CGSize(width: itemWidth, height: itemWidth)
     }
 }
