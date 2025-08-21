@@ -1,7 +1,7 @@
-import MediaLibraryApplication
 import Combine
-import MediaLibraryDomain
 import Foundation
+import MediaLibraryApplication
+import MediaLibraryDomain
 import SwiftUI
 
 /// メディアライブラリ画面のViewModel
@@ -73,6 +73,8 @@ class MediaLibraryViewModel: ObservableObject {
                 if let thumbnail = thumbnail {
                     await MainActor.run {
                         self?.thumbnails[mediaID] = thumbnail
+                        // 個別のサムネイル更新を通知
+                        self?.objectWillChange.send()
                     }
                 }
             } catch {
@@ -93,10 +95,56 @@ class MediaLibraryViewModel: ObservableObject {
         error = nil
     }
 
+    /// 特定のメディアIDのサムネイル読み込みタスクをキャンセルする
+    /// - Parameter mediaID: キャンセルするメディアID
+    func cancelThumbnailLoading(for mediaID: Media.ID) {
+        thumbnailLoadingTasks[mediaID]?.cancel()
+        thumbnailLoadingTasks[mediaID] = nil
+    }
+
     /// すべてのサムネイル読み込みタスクをキャンセルする
     func cancelAllThumbnailTasks() {
         thumbnailLoadingTasks.values.forEach { $0.cancel() }
         thumbnailLoadingTasks.removeAll()
+    }
+
+    /// 指定されたメディア配列のプリキャッシュを開始する（Appleサンプル準拠）
+    /// - Parameters:
+    ///   - media: キャッシュ対象のメディア配列
+    ///   - size: サムネイルサイズ
+    func startCaching(for media: [Media], size: CGSize) {
+        Task {
+            do {
+                try await mediaLibraryService.startCaching(for: media, size: size)
+            } catch {
+                print("Failed to start caching: \(error)")
+            }
+        }
+    }
+
+    /// 指定されたメディア配列のキャッシュを停止する（Appleサンプル準拠）
+    /// - Parameters:
+    ///   - media: キャッシュ停止対象のメディア配列
+    ///   - size: サムネイルサイズ
+    func stopCaching(for media: [Media], size: CGSize) {
+        Task {
+            do {
+                try await mediaLibraryService.stopCaching(for: media, size: size)
+            } catch {
+                print("Failed to stop caching: \(error)")
+            }
+        }
+    }
+
+    /// すべてのキャッシュをリセットする（Appleサンプル準拠）
+    func resetCache() {
+        Task {
+            do {
+                try await mediaLibraryService.resetCache()
+            } catch {
+                print("Failed to reset cache: \(error)")
+            }
+        }
     }
 
     // MARK: - Private Methods

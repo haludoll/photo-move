@@ -14,4 +14,7 @@ package protocol MediaRepository: Sendable {
     /// - Returns: サムネイル画像データ
     /// - Throws: MediaError 取得に失敗した場合
     func fetchThumbnail(for mediaID: Media.ID, size: CGSize) async throws -> Media.Thumbnail
+
+    /// キャッシュリポジトリへの参照を取得する
+    var cacheRepository: MediaCacheRepository { get }
 }

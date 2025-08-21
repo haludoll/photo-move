@@ -9,6 +9,9 @@ import SwiftUI
 package enum AppDependencies {
     // MARK: - Infrastructure Layer
 
+    /// MediaCacheRepository の実装
+    package static let mediaCacheRepository: any MediaCacheRepository = MediaCacheRepositoryImpl()
+
     /// MediaRepository の実装
     package static let mediaRepository: any MediaRepository = {
         #if DEBUG
@@ -16,7 +19,7 @@ package enum AppDependencies {
                 return PreviewDependencies.mediaRepository
             }
         #endif
-        return MediaRepositoryImpl()
+        return MediaRepositoryImpl(cacheRepository: mediaCacheRepository)
     }()
 
     /// PhotoLibraryPermissionService の実装
@@ -41,8 +44,16 @@ package enum AppDependencies {
 // MARK: - Preview Support
 
 #if DEBUG
+    /// プレビュー用のモックキャッシュリポジトリ
+    fileprivate struct MockMediaCacheRepository: MediaCacheRepository {
+        func startCaching(for _: [Media], size _: CGSize) {}
+        func stopCaching(for _: [Media], size _: CGSize) {}
+        func resetCache() {}
+    }
+
     /// プレビュー用のモックリポジトリ
     fileprivate struct MockMediaRepository: MediaRepository {
+        let cacheRepository: MediaCacheRepository = MockMediaCacheRepository()
         func fetchMedia() async throws -> [Media] {
             return try [
                 Media(
