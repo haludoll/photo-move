@@ -10,9 +10,15 @@ final class MediaLibraryViewController: UIViewController {
     // MARK: - Properties
 
     private let viewModel: MediaLibraryViewModel
-    private var collectionView: UICollectionView!
+    private var mediaLibraryCollectionView: MediaLibraryCollectionView!
     private var thumbnailSize: CGSize!
     private var previousPreheatRect = CGRect.zero
+    private var cancellables = Set<AnyCancellable>()
+
+    /// CollectionViewへのアクセス用プロパティ
+    private var collectionView: UICollectionView {
+        return mediaLibraryCollectionView.collectionViewInstance
+    }
 
     // MARK: - Initialization
 
@@ -61,31 +67,18 @@ final class MediaLibraryViewController: UIViewController {
         navigationController?.navigationBar.prefersLargeTitles = true
 
         // CollectionView設定
-        let layout = UICollectionViewFlowLayout()
-        layout.minimumInteritemSpacing = 2
-        layout.minimumLineSpacing = 2
+        mediaLibraryCollectionView = MediaLibraryCollectionView()
+        mediaLibraryCollectionView.translatesAutoresizingMaskIntoConstraints = false
+        mediaLibraryCollectionView.configure(delegate: self, viewModel: viewModel)
 
-        collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
-        collectionView.backgroundColor = .systemBackground
-        collectionView.delegate = self
-        collectionView.dataSource = self
-        collectionView.prefetchDataSource = self
-        collectionView.translatesAutoresizingMaskIntoConstraints = false
-
-        // セル登録
-        collectionView.register(
-            MediaThumbnailCell.self,
-            forCellWithReuseIdentifier: MediaThumbnailCell.identifier
-        )
-
-        view.addSubview(collectionView)
+        view.addSubview(mediaLibraryCollectionView)
 
         // レイアウト設定
         NSLayoutConstraint.activate([
-            collectionView.topAnchor.constraint(equalTo: view.topAnchor),
-            collectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            collectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            collectionView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+            mediaLibraryCollectionView.topAnchor.constraint(equalTo: view.topAnchor),
+            mediaLibraryCollectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            mediaLibraryCollectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            mediaLibraryCollectionView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
         ])
     }
 
@@ -97,8 +90,6 @@ final class MediaLibraryViewController: UIViewController {
             }
         }.store(in: &cancellables)
     }
-
-    private var cancellables = Set<AnyCancellable>()
 
     private func updateUI() {
         // ローディング状態の処理
@@ -121,19 +112,7 @@ final class MediaLibraryViewController: UIViewController {
             collectionView.reloadData()
         } else {
             // 表示中のセルのみ更新
-            updateVisibleCells()
-        }
-    }
-
-    private func updateVisibleCells() {
-        for cell in collectionView.visibleCells {
-            guard let indexPath = collectionView.indexPath(for: cell),
-                  let thumbnailCell = cell as? MediaThumbnailCell,
-                  indexPath.item < viewModel.media.count else { continue }
-
-            let media = viewModel.media[indexPath.item]
-            let thumbnail = viewModel.thumbnails[media.id]
-            thumbnailCell.configure(with: media, thumbnail: thumbnail)
+            mediaLibraryCollectionView.updateVisibleCells()
         }
     }
 
@@ -340,13 +319,7 @@ extension MediaLibraryViewController: UIScrollViewDelegate {
 
 extension MediaLibraryViewController: UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, layout _: UICollectionViewLayout, sizeForItemAt _: IndexPath) -> CGSize {
-        let columns: CGFloat = 4
-        let spacing: CGFloat = 2
-        let width = collectionView.bounds.width
-        let totalSpacing = spacing * (columns - 1)
-        let itemWidth = (width - totalSpacing) / columns
-
-        return CGSize(width: itemWidth, height: itemWidth)
+        return MediaLibraryCollectionView.calculateItemSize(for: collectionView.bounds.width)
     }
 }
 

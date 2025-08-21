@@ -6,6 +6,7 @@ import UIKit
 struct MediaLibraryViewControllerWrapper: UIViewControllerRepresentable {
     func makeUIViewController(context _: Context) -> MediaLibraryViewController {
         let viewController = MediaLibraryViewController()
+        // 写真グリッドを全画面に表示して没入感のあるビューアー体験を提供
         viewController.extendedLayoutIncludesOpaqueBars = true
         viewController.edgesForExtendedLayout = .all
         return viewController
