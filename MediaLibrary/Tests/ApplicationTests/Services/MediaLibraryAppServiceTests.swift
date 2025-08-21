@@ -184,7 +184,7 @@ private struct MockPermissionDeniedService: PhotoLibraryPermissionService, Senda
 
 /// MediaCacheRepositoryのモック実装
 private struct MockMediaCacheRepository: MediaCacheRepository, Sendable {
-    func startCaching(for mediaIDs: [Media.ID], size: CGSize) {}
-    func stopCaching(for mediaIDs: [Media.ID], size: CGSize) {}
+    func startCaching(for media: [MediaLibraryDomain.Media], size: CGSize) {}
+    func stopCaching(for media: [MediaLibraryDomain.Media], size: CGSize) {}
     func resetCache() {}
 }
