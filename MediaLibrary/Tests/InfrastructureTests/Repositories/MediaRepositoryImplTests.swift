@@ -12,7 +12,7 @@ struct MediaRepositoryImplTests {
         // PhotoKitのテストは実機でのみ可能
         // 単体テストレベルでは動作確認のみ実施
         let repository = MediaRepositoryImpl()
-        #expect(repository != nil)
+        #expect(type(of: repository) == MediaRepositoryImpl.self)
     }
 
     @Test("MediaRepositoryImpl - 無効なメディアIDの場合はエラーを投げる")
@@ -36,7 +36,7 @@ struct MediaRepositoryImplTests {
     func repositoryInitializationSuccess() {
         // Given & When & Then
         let repository = MediaRepositoryImpl()
-        #expect(repository != nil)
+        #expect(type(of: repository) == MediaRepositoryImpl.self)
     }
 
     @Test("MediaRepositoryImpl - PHAssetからMediaへの変換をテストする")
