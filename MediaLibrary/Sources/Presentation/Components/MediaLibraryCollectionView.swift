@@ -7,6 +7,8 @@ final class MediaLibraryCollectionView: UIView {
 
     private let collectionView: UICollectionView
     private weak var viewModel: MediaLibraryViewModel?
+    private var thumbnailSize: CGSize = .init(width: 200, height: 200) // 初期値
+    private var previousPreheatRect = CGRect.zero
 
     /// CollectionViewへのアクセス用プロパティ
     var collectionViewInstance: UICollectionView {
@@ -60,11 +62,11 @@ final class MediaLibraryCollectionView: UIView {
 
     // MARK: - Public Methods
 
-    /// Delegate、DataSource、PrefetchDataSourceとViewModelを設定
-    func configure(delegate: UICollectionViewDelegate & UICollectionViewDataSource & UICollectionViewDataSourcePrefetching, viewModel: MediaLibraryViewModel) {
-        collectionView.delegate = delegate
-        collectionView.dataSource = delegate
-        collectionView.prefetchDataSource = delegate
+    /// ViewModelを設定してCollectionViewを初期化
+    func configure(viewModel: MediaLibraryViewModel) {
+        collectionView.delegate = self
+        collectionView.dataSource = self
+        collectionView.prefetchDataSource = self
         self.viewModel = viewModel
     }
 
@@ -80,6 +82,195 @@ final class MediaLibraryCollectionView: UIView {
             let media = viewModel.media[indexPath.item]
             let thumbnail = viewModel.thumbnails[media.id]
             thumbnailCell.configure(with: media, thumbnail: thumbnail)
+        }
+    }
+
+    /// レイアウト確定後の初期化処理
+    func viewDidAppear() {
+        updateThumbnailSize()
+        loadInitialThumbnails()
+        updateCachedAssets()
+    }
+
+    /// CollectionViewデータを更新
+    func updateData() {
+        guard let viewModel = viewModel else { return }
+
+        if collectionView.numberOfItems(inSection: 0) != viewModel.media.count {
+            collectionView.reloadData()
+        } else {
+            updateVisibleCells()
+        }
+    }
+
+    // MARK: - Private Methods
+
+    private func loadInitialThumbnails() {
+        guard let viewModel = viewModel else { return }
+        let visibleItemsCount = min(20, viewModel.media.count)
+
+        for index in 0 ..< visibleItemsCount {
+            let media = viewModel.media[index]
+            viewModel.loadThumbnail(for: media.id, size: thumbnailSize)
+        }
+    }
+
+    private func updateThumbnailSize() {
+        let columns: CGFloat = 4
+        let spacing: CGFloat = 2
+        let width = collectionView.bounds.width
+        let totalSpacing = spacing * (columns - 1)
+        let itemWidth = (width - totalSpacing) / columns
+
+        let scale = UIScreen.main.scale
+        let targetSize = itemWidth * 2 * scale
+        thumbnailSize = CGSize(width: targetSize, height: targetSize)
+    }
+
+    private func resetCachedAssets() {
+        viewModel?.resetCache()
+        previousPreheatRect = .zero
+    }
+
+    private func updateCachedAssets() {
+        guard let viewModel = viewModel,
+              bounds.width > 0 else { return }
+
+        let visibleRect = CGRect(origin: collectionView.contentOffset, size: collectionView.bounds.size)
+        let preheatRect = visibleRect.insetBy(dx: 0, dy: -0.5 * visibleRect.height)
+
+        let delta = abs(preheatRect.midY - previousPreheatRect.midY)
+        guard delta > bounds.height / 3 else { return }
+
+        let (addedRects, removedRects) = differencesBetweenRects(previousPreheatRect, preheatRect)
+        let addedMedia = addedRects
+            .flatMap { rect in indexPathsForElements(in: rect) }
+            .compactMap { indexPath in
+                indexPath.item < viewModel.media.count ? viewModel.media[indexPath.item] : nil
+            }
+        let removedMedia = removedRects
+            .flatMap { rect in indexPathsForElements(in: rect) }
+            .compactMap { indexPath in
+                indexPath.item < viewModel.media.count ? viewModel.media[indexPath.item] : nil
+            }
+
+        viewModel.startCaching(for: addedMedia, size: thumbnailSize)
+        viewModel.stopCaching(for: removedMedia, size: thumbnailSize)
+
+        previousPreheatRect = preheatRect
+    }
+
+    private func indexPathsForElements(in rect: CGRect) -> [IndexPath] {
+        guard let layoutAttributes = collectionView.collectionViewLayout.layoutAttributesForElements(in: rect) else {
+            return []
+        }
+        return layoutAttributes.map { $0.indexPath }
+    }
+
+    private func differencesBetweenRects(_ old: CGRect, _ new: CGRect) -> (added: [CGRect], removed: [CGRect]) {
+        if old.intersects(new) {
+            var added = [CGRect]()
+            if new.maxY > old.maxY {
+                added += [CGRect(x: new.origin.x, y: old.maxY,
+                                 width: new.width, height: new.maxY - old.maxY)]
+            }
+            if old.minY > new.minY {
+                added += [CGRect(x: new.origin.x, y: new.minY,
+                                 width: new.width, height: old.minY - new.minY)]
+            }
+            var removed = [CGRect]()
+            if new.maxY < old.maxY {
+                removed += [CGRect(x: new.origin.x, y: new.maxY,
+                                   width: new.width, height: old.maxY - new.maxY)]
+            }
+            if old.minY < new.minY {
+                removed += [CGRect(x: new.origin.x, y: old.minY,
+                                   width: new.width, height: new.minY - old.minY)]
+            }
+            return (added, removed)
+        } else {
+            return ([new], [old])
+        }
+    }
+}
+
+// MARK: - UICollectionViewDataSource
+
+extension MediaLibraryCollectionView: UICollectionViewDataSource {
+    func numberOfSections(in _: UICollectionView) -> Int {
+        return 1
+    }
+
+    func collectionView(_: UICollectionView, numberOfItemsInSection _: Int) -> Int {
+        return viewModel?.media.count ?? 0
+    }
+
+    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        let cell = collectionView.dequeueReusableCell(
+            withReuseIdentifier: MediaThumbnailCell.identifier,
+            for: indexPath
+        ) as! MediaThumbnailCell
+
+        guard let viewModel = viewModel,
+              indexPath.item < viewModel.media.count
+        else {
+            return cell
+        }
+
+        let media = viewModel.media[indexPath.item]
+        let thumbnail = viewModel.thumbnails[media.id]
+
+        cell.representedAssetIdentifier = media.id.value
+        cell.configure(with: media, thumbnail: thumbnail)
+
+        if thumbnail == nil {
+            viewModel.loadThumbnail(for: media.id, size: thumbnailSize)
+        }
+
+        return cell
+    }
+}
+
+// MARK: - UICollectionViewDelegate
+
+extension MediaLibraryCollectionView: UICollectionViewDelegate {}
+
+// MARK: - UIScrollViewDelegate
+
+extension MediaLibraryCollectionView: UIScrollViewDelegate {
+    func scrollViewDidScroll(_: UIScrollView) {
+        updateCachedAssets()
+    }
+}
+
+// MARK: - UICollectionViewDelegateFlowLayout
+
+extension MediaLibraryCollectionView: UICollectionViewDelegateFlowLayout {
+    func collectionView(_ collectionView: UICollectionView, layout _: UICollectionViewLayout, sizeForItemAt _: IndexPath) -> CGSize {
+        return Self.calculateItemSize(for: collectionView.bounds.width)
+    }
+}
+
+// MARK: - UICollectionViewDataSourcePrefetching
+
+extension MediaLibraryCollectionView: UICollectionViewDataSourcePrefetching {
+    func collectionView(_: UICollectionView, prefetchItemsAt indexPaths: [IndexPath]) {
+        guard let viewModel = viewModel else { return }
+
+        for indexPath in indexPaths {
+            guard indexPath.item < viewModel.media.count else { continue }
+            let media = viewModel.media[indexPath.item]
+            viewModel.loadThumbnail(for: media.id, size: thumbnailSize)
+        }
+    }
+
+    func collectionView(_: UICollectionView, cancelPrefetchingForItemsAt indexPaths: [IndexPath]) {
+        guard let viewModel = viewModel else { return }
+
+        for indexPath in indexPaths {
+            guard indexPath.item < viewModel.media.count else { continue }
+            let media = viewModel.media[indexPath.item]
+            viewModel.cancelThumbnailLoading(for: media.id)
         }
     }
 }
