@@ -3,6 +3,7 @@ import MediaLibraryDependencyInjection
 import MediaLibraryDomain
 import SwiftUI
 import UIKit
+import Combine
 
 /// UIKitベースのメディアライブラリ画面
 @MainActor
@@ -152,7 +153,3 @@ final class MediaLibraryViewController: UIViewController {
         }
     }
 }
-
-// MARK: - Combine Import
-
-import Combine

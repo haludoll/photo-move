@@ -105,6 +105,7 @@ final class MediaLibraryCollectionView: UIView {
 
     // MARK: - Private Methods
 
+    /// 初期表示用サムネイルを読み込み（最初の20件を先行読み込み）
     private func loadInitialThumbnails() {
         guard let viewModel = viewModel else { return }
         let visibleItemsCount = min(20, viewModel.media.count)
@@ -115,6 +116,9 @@ final class MediaLibraryCollectionView: UIView {
         }
     }
 
+    /// 実際のセルサイズから高解像度サムネイルサイズを動的計算
+    /// - グリッドは4列、スペーシ2pxで固定
+    /// - サムネイルはセルサイズの2倍×スクリーン倍率で高解像度対応
     private func updateThumbnailSize() {
         let columns: CGFloat = 4
         let spacing: CGFloat = 2
@@ -132,34 +136,45 @@ final class MediaLibraryCollectionView: UIView {
         previousPreheatRect = .zero
     }
 
+    /// Apple Sample準拠のプリロードキャッシュ管理
+    /// - 現在の表示範囲の上下0.5倍の範囲をキャッシュ対象とする
+    /// - スクロール量が1/3以上変化した場合のみキャッシュ更新を実行
     private func updateCachedAssets() {
         guard let viewModel = viewModel,
               bounds.width > 0 else { return }
 
+        // 現在の表示範囲を取得
         let visibleRect = CGRect(origin: collectionView.contentOffset, size: collectionView.bounds.size)
+        // プリロード範囲を表示範囲の上下0.5倍に拡張
         let preheatRect = visibleRect.insetBy(dx: 0, dy: -0.5 * visibleRect.height)
 
+        // 前回との差分が小さい場合は処理をスキップ
         let delta = abs(preheatRect.midY - previousPreheatRect.midY)
         guard delta > bounds.height / 3 else { return }
 
+        // 新しいキャッシュ範囲と前回の差分を計算
         let (addedRects, removedRects) = differencesBetweenRects(previousPreheatRect, preheatRect)
+        // 新しくキャッシュするメディアを取得
         let addedMedia = addedRects
             .flatMap { rect in indexPathsForElements(in: rect) }
             .compactMap { indexPath in
                 indexPath.item < viewModel.media.count ? viewModel.media[indexPath.item] : nil
             }
+        // キャッシュから除去するメディアを取得
         let removedMedia = removedRects
             .flatMap { rect in indexPathsForElements(in: rect) }
             .compactMap { indexPath in
                 indexPath.item < viewModel.media.count ? viewModel.media[indexPath.item] : nil
             }
 
+        // キャッシュを更新（追加・削除）
         viewModel.startCaching(for: addedMedia, size: thumbnailSize)
         viewModel.stopCaching(for: removedMedia, size: thumbnailSize)
 
         previousPreheatRect = preheatRect
     }
 
+    /// 指定した矩形範囲内に含まれるセルのIndexPathを取得
     private func indexPathsForElements(in rect: CGRect) -> [IndexPath] {
         guard let layoutAttributes = collectionView.collectionViewLayout.layoutAttributesForElements(in: rect) else {
             return []
@@ -167,22 +182,29 @@ final class MediaLibraryCollectionView: UIView {
         return layoutAttributes.map { $0.indexPath }
     }
 
+    /// 2つの矩形の差分を計算し、追加・削除すべき範囲を返す
+    /// - 交差している場合: 新しい部分と古い部分を細かく計算
+    /// - 交差していない場合: 新しい範囲を全て追加、古い範囲を全て削除
     private func differencesBetweenRects(_ old: CGRect, _ new: CGRect) -> (added: [CGRect], removed: [CGRect]) {
         if old.intersects(new) {
             var added = [CGRect]()
+            // 下方向に拡張した部分
             if new.maxY > old.maxY {
                 added += [CGRect(x: new.origin.x, y: old.maxY,
                                  width: new.width, height: new.maxY - old.maxY)]
             }
+            // 上方向に拡張した部分
             if old.minY > new.minY {
                 added += [CGRect(x: new.origin.x, y: new.minY,
                                  width: new.width, height: old.minY - new.minY)]
             }
             var removed = [CGRect]()
+            // 下方向に縮小した部分
             if new.maxY < old.maxY {
                 removed += [CGRect(x: new.origin.x, y: new.maxY,
                                    width: new.width, height: old.maxY - new.maxY)]
             }
+            // 上方向に縮小した部分
             if old.minY < new.minY {
                 removed += [CGRect(x: new.origin.x, y: old.minY,
                                    width: new.width, height: new.minY - old.minY)]
@@ -220,9 +242,11 @@ extension MediaLibraryCollectionView: UICollectionViewDataSource {
         let media = viewModel.media[indexPath.item]
         let thumbnail = viewModel.thumbnails[media.id]
 
+        // Apple Sample準拠: セルの再利用時の混乱を防ぐためIDを先に設定
         cell.representedAssetIdentifier = media.id.value
         cell.configure(with: media, thumbnail: thumbnail)
 
+        // サムネイルが未取得の場合のみ読み込みを実行（重複読み込み防止）
         if thumbnail == nil {
             viewModel.loadThumbnail(for: media.id, size: thumbnailSize)
         }
@@ -254,6 +278,7 @@ extension MediaLibraryCollectionView: UICollectionViewDelegateFlowLayout {
 // MARK: - UICollectionViewDataSourcePrefetching
 
 extension MediaLibraryCollectionView: UICollectionViewDataSourcePrefetching {
+    /// 表示予定セルのサムネイルを先行読み込み（スムーズなスクロールを実現）
     func collectionView(_: UICollectionView, prefetchItemsAt indexPaths: [IndexPath]) {
         guard let viewModel = viewModel else { return }
 
@@ -264,6 +289,7 @@ extension MediaLibraryCollectionView: UICollectionViewDataSourcePrefetching {
         }
     }
 
+    /// 表示予定がキャンセルされたセルのサムネイル読み込みを中止
     func collectionView(_: UICollectionView, cancelPrefetchingForItemsAt indexPaths: [IndexPath]) {
         guard let viewModel = viewModel else { return }
 
