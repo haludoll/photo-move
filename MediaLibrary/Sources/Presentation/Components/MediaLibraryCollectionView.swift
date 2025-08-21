@@ -1,5 +1,4 @@
 import MediaLibraryApplication
-import MediaLibraryDomain
 import UIKit
 
 /// 写真ライブラリ用のCollectionView
