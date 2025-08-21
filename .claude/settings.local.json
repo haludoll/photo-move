@@ -27,7 +27,8 @@
       "Bash(xcrun xcodebuild test:*)",
       "WebFetch(domain:developer.apple.com)",
       "Bash(swift package:*)",
-      "Bash(y)"
+      "Bash(y)",
+      "Bash(xcodebuild:*)"
     ],
     "deny": [],
     "defaultMode": "acceptEdits"

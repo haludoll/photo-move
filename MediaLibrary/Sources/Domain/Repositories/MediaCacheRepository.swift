@@ -1,9 +1,8 @@
 import CoreGraphics
 import Foundation
-import MediaLibraryDomain
 
 /// メディアキャッシュ管理を行うリポジトリプロトコル
-package protocol MediaCacheRepository {
+package protocol MediaCacheRepository: Sendable {
     /// 指定されたメディアのプリキャッシュを開始する
     /// - Parameters:
     ///   - media: キャッシュ対象のメディア配列
