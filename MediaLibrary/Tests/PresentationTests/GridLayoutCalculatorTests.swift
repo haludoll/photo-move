@@ -117,8 +117,8 @@ final class GridLayoutCalculatorTests: XCTestCase {
             scale: 2.0
         )
 
-        // デフォルト倍率2.0での期待値: 60 * 2.0 * 2.0 = 240
-        XCTAssertEqual(thumbnailSize.width, 240, accuracy: 0.001)
-        XCTAssertEqual(thumbnailSize.height, 240, accuracy: 0.001)
+        // デフォルト倍率3.0での期待値: 60 * 3.0 * 2.0 = 360
+        XCTAssertEqual(thumbnailSize.width, 360, accuracy: 0.001)
+        XCTAssertEqual(thumbnailSize.height, 360, accuracy: 0.001)
     }
 }
