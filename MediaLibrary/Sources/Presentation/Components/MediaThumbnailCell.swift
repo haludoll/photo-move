@@ -9,6 +9,7 @@ final class MediaThumbnailCell: UICollectionViewCell {
     static let identifier = "MediaThumbnailCell"
 
     private var hostingController: UIHostingController<PhotoThumbnailView>?
+    private var imageView: UIImageView?
 
     /// Appleサンプル準拠：セル再利用時の問題を防ぐため
     var representedAssetIdentifier: String!
@@ -37,20 +38,34 @@ final class MediaThumbnailCell: UICollectionViewCell {
         // Appleサンプル準拠：representedAssetIdentifierを設定
         representedAssetIdentifier = media.id.value
 
-        // UIHostingControllerの再利用を最適化
-        if hostingController == nil {
-            setupHostingController()
+        // TEST: 純粋なUIImageViewでテスト
+        if imageView == nil {
+            setupImageView()
         }
 
-        // SwiftUIビューを作成（軽量化）
-        let thumbnailView = PhotoThumbnailView(
-            media: media,
-            thumbnail: thumbnail,
-            size: CGSize(width: 200, height: 200)
-        )
+        if let thumbnail = thumbnail {
+            imageView?.image = thumbnail.image
+        } else {
+            imageView?.image = nil
+        }
+    }
 
-        // ビューの更新のみ行う（再作成を避ける）
-        hostingController?.rootView = thumbnailView
+    private func setupImageView() {
+        // TEST: Appleサンプルと同じUIImageViewを使用
+        let imageView = UIImageView()
+        imageView.contentMode = .scaleAspectFill
+        imageView.clipsToBounds = true
+        imageView.translatesAutoresizingMaskIntoConstraints = false
+
+        self.imageView = imageView
+        contentView.addSubview(imageView)
+
+        NSLayoutConstraint.activate([
+            imageView.topAnchor.constraint(equalTo: contentView.topAnchor),
+            imageView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
+            imageView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
+            imageView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
+        ])
     }
 
     private func setupHostingController() {
@@ -83,8 +98,8 @@ final class MediaThumbnailCell: UICollectionViewCell {
     override func prepareForReuse() {
         super.prepareForReuse()
 
-        // Appleサンプル準拠：軽量化のため削除処理は行わない
-        // UIHostingControllerは再利用し、新しいビューの設定のみ行う
+        // TEST: UIImageViewのクリア
+        imageView?.image = nil
         representedAssetIdentifier = nil
     }
 }
