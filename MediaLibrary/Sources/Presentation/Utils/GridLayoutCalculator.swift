@@ -22,12 +22,12 @@ public enum GridLayoutCalculator {
     /// - Parameters:
     ///   - itemSize: セルのサイズ
     ///   - scale: スクリーン倍率
-    ///   - qualityMultiplier: 品質倍率（通常3.0で高解像度）
+    ///   - qualityMultiplier: 品質倍率（通常2.0で高解像度）
     /// - Returns: サムネイルサイズ
     public static func calculateThumbnailSize(
         itemSize: CGSize,
         scale: CGFloat,
-        qualityMultiplier: CGFloat = 3.0
+        qualityMultiplier: CGFloat = 2.0
     ) -> CGSize {
         let targetSize = itemSize.width * qualityMultiplier * scale
         return CGSize(width: targetSize, height: targetSize)

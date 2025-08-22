@@ -100,8 +100,11 @@ package struct MediaRepositoryImpl: MediaRepository {
                 imageManager = PHCachingImageManager()
             }
 
-            // Appleサンプル準拠：サムネイルはデフォルト設定で高速化
-            let options: PHImageRequestOptions? = nil
+            // 高品質サムネイル用のオプション設定
+            let options = PHImageRequestOptions()
+            options.deliveryMode = .highQualityFormat
+            options.isNetworkAccessAllowed = false
+            options.isSynchronous = false
 
             // continuationが複数回呼ばれることを防ぐためのフラグ
             var isResumed = false
@@ -131,7 +134,7 @@ package struct MediaRepositoryImpl: MediaRepository {
 
                 // アルファチャンネルを除去してUIImageをData形式に変換
                 let processedImage = removeAlphaChannel(from: image)
-                guard let imageData = processedImage.jpegData(compressionQuality: 0.8) else {
+                guard let imageData = processedImage.jpegData(compressionQuality: 1.0) else {
                     isResumed = true
                     continuation.resume(throwing: MediaError.thumbnailGenerationFailed)
                     return

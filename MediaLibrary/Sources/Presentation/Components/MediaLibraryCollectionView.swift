@@ -118,7 +118,7 @@ final class MediaLibraryCollectionView: UIView {
 
     /// 実際のセルサイズから高解像度サムネイルサイズを動的計算
     /// - グリッドは4列、スペーシ2pxで固定
-    /// - サムネイルはセルサイズの3倍×スクリーン倍率で高解像度対応
+    /// - サムネイルはセルサイズの2倍×スクリーン倍率で高解像度対応
     private func updateThumbnailSize() {
         let itemSize = GridLayoutCalculator.calculateItemSize(
             containerWidth: collectionView.bounds.width,
