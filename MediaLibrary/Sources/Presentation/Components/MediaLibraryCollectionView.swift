@@ -129,6 +129,9 @@ final class MediaLibraryCollectionView: UIView {
         // Appleサンプル準拠：シンプルにscaleのみ適用
         let scale = UIScreen.main.scale
         thumbnailSize = CGSize(width: itemSize.width * scale, height: itemSize.height * scale)
+        
+        // DEBUG: 実際のサイズを出力
+        print("📱 Our App - Cell size: \(itemSize), Scale: \(scale), Thumbnail size: \(thumbnailSize)")
     }
 
     private func resetCachedAssets() {

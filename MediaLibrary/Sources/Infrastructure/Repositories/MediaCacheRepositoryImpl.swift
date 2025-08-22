@@ -18,24 +18,34 @@ package final class MediaCacheRepositoryImpl: MediaCacheRepository, @unchecked S
     package func startCaching(for media: [Media], size: CGSize) {
         let assets = fetchPHAssets(for: media)
 
-        // Appleサンプル準拠：キャッシュもデフォルト設定で高速化
+        // 高品質キャッシュのためのオプション設定
+        let options = PHImageRequestOptions()
+        options.deliveryMode = .highQualityFormat
+        options.isNetworkAccessAllowed = true
+        options.isSynchronous = false
+
         imageManager.startCachingImages(
             for: assets,
             targetSize: size,
             contentMode: .aspectFill,
-            options: nil
+            options: options
         )
     }
 
     package func stopCaching(for media: [Media], size: CGSize) {
         let assets = fetchPHAssets(for: media)
 
-        // Appleサンプル準拠：キャッシュもデフォルト設定で高速化
+        // 高品質キャッシュのためのオプション設定
+        let options = PHImageRequestOptions()
+        options.deliveryMode = .highQualityFormat
+        options.isNetworkAccessAllowed = true
+        options.isSynchronous = false
+
         imageManager.stopCachingImages(
             for: assets,
             targetSize: size,
             contentMode: .aspectFill,
-            options: nil
+            options: options
         )
     }
 

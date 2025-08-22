@@ -100,8 +100,11 @@ package struct MediaRepositoryImpl: MediaRepository {
                 imageManager = PHCachingImageManager()
             }
 
-            // Appleサンプル準拠：サムネイル表示はoptions: nilで高速化
-            let options: PHImageRequestOptions? = nil
+            // 高品質サムネイル取得のためのオプション設定
+            let options = PHImageRequestOptions()
+            options.deliveryMode = .highQualityFormat
+            options.isNetworkAccessAllowed = true
+            options.isSynchronous = false
 
             // continuationが複数回呼ばれることを防ぐためのフラグ
             var isResumed = false
@@ -128,6 +131,9 @@ package struct MediaRepositoryImpl: MediaRepository {
                     continuation.resume(throwing: MediaError.thumbnailGenerationFailed)
                     return
                 }
+
+                // DEBUG: 実際の画像サイズを出力
+                print("📱 Our App - Requested: \(size), Got: \(image.size), Scale: \(image.scale)")
 
                 // Appleサンプル準拠：UIImageをそのまま返す
                 isResumed = true
