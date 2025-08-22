@@ -100,11 +100,8 @@ package struct MediaRepositoryImpl: MediaRepository {
                 imageManager = PHCachingImageManager()
             }
 
-            // 高品質サムネイル用のオプション設定
-            let options = PHImageRequestOptions()
-            options.deliveryMode = .highQualityFormat
-            options.isNetworkAccessAllowed = false
-            options.isSynchronous = false
+            // Appleサンプル準拠：オプションなしでデフォルトの最適化された動作
+            let options: PHImageRequestOptions? = nil
 
             // continuationが複数回呼ばれることを防ぐためのフラグ
             var isResumed = false
@@ -132,9 +129,8 @@ package struct MediaRepositoryImpl: MediaRepository {
                     return
                 }
 
-                // アルファチャンネルを除去してUIImageをData形式に変換
-                let processedImage = removeAlphaChannel(from: image)
-                guard let imageData = processedImage.jpegData(compressionQuality: 1.0) else {
+                // Appleサンプル準拠：UIImageを直接Data形式に変換（高速化のため）
+                guard let imageData = image.pngData() else {
                     isResumed = true
                     continuation.resume(throwing: MediaError.thumbnailGenerationFailed)
                     return
@@ -144,27 +140,5 @@ package struct MediaRepositoryImpl: MediaRepository {
                 continuation.resume(returning: imageData)
             }
         }
-    }
-
-    // MARK: - Private Methods
-
-    /// アルファチャンネルを除去して不透明な画像に変換
-    private func removeAlphaChannel(from image: UIImage) -> UIImage {
-        let size = image.size
-        let scale = image.scale
-
-        // RGB形式のコンテキストを作成（アルファチャンネルなし）
-        UIGraphicsBeginImageContextWithOptions(size, true, scale)
-        defer { UIGraphicsEndImageContext() }
-
-        // 白背景で描画
-        UIColor.white.setFill()
-        UIRectFill(CGRect(origin: .zero, size: size))
-
-        // 元画像を描画
-        image.draw(in: CGRect(origin: .zero, size: size))
-
-        // 新しい画像を生成
-        return UIGraphicsGetImageFromCurrentImageContext() ?? image
     }
 }
