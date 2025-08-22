@@ -13,10 +13,8 @@ struct PhotoThumbnailView: View {
             .aspectRatio(1, contentMode: .fit)
             .overlay(
                 Group {
-                    if let thumbnail = thumbnail,
-                       let uiImage = UIImage(data: thumbnail.imageData)
-                    {
-                        Image(uiImage: uiImage)
+                    if let thumbnail = thumbnail {
+                        Image(uiImage: thumbnail.image)
                             .resizable()
                             .scaledToFill()
                     } else {

@@ -42,11 +42,11 @@ package struct MediaRepositoryImpl: MediaRepository {
         }
 
         // サムネイル生成
-        let imageData = try await generateThumbnail(from: asset, size: size)
+        let image = try await generateThumbnail(from: asset, size: size)
 
-        return try Media.Thumbnail(
+        return Media.Thumbnail(
             mediaID: mediaID,
-            imageData: imageData,
+            image: image,
             size: size
         )
     }
@@ -90,7 +90,10 @@ package struct MediaRepositoryImpl: MediaRepository {
         return fetchResult.firstObject
     }
 
-    private func generateThumbnail(from asset: PHAsset, size: CGSize) async throws -> Data {
+    private func generateThumbnail(from asset: PHAsset, size: CGSize) async throws -> UIImage {
+        // デバッグ用：要求されるサムネイルサイズをログ出力
+        print("🔍 Requesting thumbnail size: \(size)")
+
         return try await withCheckedThrowingContinuation { continuation in
             // PHCachingImageManagerの参照を取得
             let imageManager: PHCachingImageManager
@@ -100,7 +103,7 @@ package struct MediaRepositoryImpl: MediaRepository {
                 imageManager = PHCachingImageManager()
             }
 
-            // Appleサンプル準拠：オプションなしでデフォルトの最適化された動作
+            // Appleサンプル準拠：サムネイル表示はoptions: nilで高速化
             let options: PHImageRequestOptions? = nil
 
             // continuationが複数回呼ばれることを防ぐためのフラグ
@@ -129,15 +132,9 @@ package struct MediaRepositoryImpl: MediaRepository {
                     return
                 }
 
-                // Appleサンプル準拠：UIImageを直接Data形式に変換（高速化のため）
-                guard let imageData = image.pngData() else {
-                    isResumed = true
-                    continuation.resume(throwing: MediaError.thumbnailGenerationFailed)
-                    return
-                }
-
+                // Appleサンプル準拠：UIImageをそのまま返す
                 isResumed = true
-                continuation.resume(returning: imageData)
+                continuation.resume(returning: image)
             }
         }
     }

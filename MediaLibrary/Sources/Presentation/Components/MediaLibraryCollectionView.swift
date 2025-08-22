@@ -130,6 +130,12 @@ final class MediaLibraryCollectionView: UIView {
             itemSize: itemSize,
             scale: UIScreen.main.scale
         )
+        
+        // デバッグ用：計算されたサイズをログ出力
+        print("🔍 Container width: \(collectionView.bounds.width)")
+        print("🔍 Item size: \(itemSize)")
+        print("🔍 Thumbnail size: \(thumbnailSize)")
+        print("🔍 Screen scale: \(UIScreen.main.scale)")
     }
 
     private func resetCachedAssets() {

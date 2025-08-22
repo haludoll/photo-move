@@ -39,13 +39,12 @@ import UIKit
 
                 let config = UIImage.SymbolConfiguration(pointSize: 40, weight: .medium)
                 let image = UIImage(systemName: "photo.fill", withConfiguration: config)?.withTintColor(color, renderingMode: .alwaysOriginal)
-                let data = image?.jpegData(compressionQuality: 0.8) ?? Data()
 
-                guard let thumbnail = try? Media.Thumbnail(
+                let thumbnail = Media.Thumbnail(
                     mediaID: mediaItem.id,
-                    imageData: data,
+                    image: image ?? UIImage(),
                     size: CGSize(width: 80, height: 80)
-                ) else { return nil }
+                )
 
                 return (mediaItem.id, thumbnail)
             })

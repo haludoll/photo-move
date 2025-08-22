@@ -1,4 +1,5 @@
 import Foundation
+import UIKit
 
 /// メディア（写真）エンティティ
 package struct Media: Identifiable {
@@ -29,16 +30,12 @@ package struct Media: Identifiable {
     /// サムネイル画像の値オブジェクト
     package struct Thumbnail {
         package let mediaID: ID
-        package let imageData: Data
+        package let image: UIImage
         package let size: CGSize
 
-        package init(mediaID: ID, imageData: Data, size: CGSize) throws {
-            guard !imageData.isEmpty else {
-                throw MediaError.invalidThumbnailData
-            }
-
+        package init(mediaID: ID, image: UIImage, size: CGSize) {
             self.mediaID = mediaID
-            self.imageData = imageData
+            self.image = image
             self.size = size
         }
     }
