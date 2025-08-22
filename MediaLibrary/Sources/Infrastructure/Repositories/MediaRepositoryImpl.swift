@@ -91,9 +91,6 @@ package struct MediaRepositoryImpl: MediaRepository {
     }
 
     private func generateThumbnail(from asset: PHAsset, size: CGSize) async throws -> UIImage {
-        // デバッグ用：要求されるサムネイルサイズをログ出力
-        print("🔍 Requesting thumbnail size: \(size)")
-
         return try await withCheckedThrowingContinuation { continuation in
             // PHCachingImageManagerの参照を取得
             let imageManager: PHCachingImageManager

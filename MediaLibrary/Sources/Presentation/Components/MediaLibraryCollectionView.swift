@@ -126,16 +126,9 @@ final class MediaLibraryCollectionView: UIView {
             spacing: 2
         )
 
-        thumbnailSize = GridLayoutCalculator.calculateThumbnailSize(
-            itemSize: itemSize,
-            scale: UIScreen.main.scale
-        )
-        
-        // デバッグ用：計算されたサイズをログ出力
-        print("🔍 Container width: \(collectionView.bounds.width)")
-        print("🔍 Item size: \(itemSize)")
-        print("🔍 Thumbnail size: \(thumbnailSize)")
-        print("🔍 Screen scale: \(UIScreen.main.scale)")
+        // Appleサンプル準拠：シンプルにscaleのみ適用
+        let scale = UIScreen.main.scale
+        thumbnailSize = CGSize(width: itemSize.width * scale, height: itemSize.height * scale)
     }
 
     private func resetCachedAssets() {
