@@ -132,9 +132,6 @@ package struct MediaRepositoryImpl: MediaRepository {
                     return
                 }
 
-                // DEBUG: 実際の画像サイズを出力
-                print("📱 Our App - Requested: \(size), Got: \(image.size), Scale: \(image.scale)")
-
                 // Appleサンプル準拠：UIImageをそのまま返す
                 isResumed = true
                 continuation.resume(returning: image)
