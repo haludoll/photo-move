@@ -1,9 +1,9 @@
+import Combine
 import MediaLibraryApplication
 import MediaLibraryDependencyInjection
 import MediaLibraryDomain
 import SwiftUI
 import UIKit
-import Combine
 
 /// UIKitベースのメディアライブラリ画面
 @MainActor
@@ -13,6 +13,9 @@ final class MediaLibraryViewController: UIViewController {
     private let viewModel: MediaLibraryViewModel
     private var mediaLibraryCollectionView: MediaLibraryCollectionView!
     private var cancellables = Set<AnyCancellable>()
+
+    private var loadingView: UIActivityIndicatorView?
+    private var emptyStateView: UIView?
 
     /// CollectionViewへのアクセス用プロパティ
     private var collectionView: UICollectionView {
@@ -102,15 +105,97 @@ final class MediaLibraryViewController: UIViewController {
     }
 
     private func showLoadingState() {
-        // TODO: ローディングビューの表示
+        // 既存のビューを隠す
+        removeLoadingAndEmptyViews()
+
+        // ローディングビューの作成と表示
+        let loadingView = UIActivityIndicatorView(style: .large)
+        loadingView.translatesAutoresizingMaskIntoConstraints = false
+        loadingView.hidesWhenStopped = true
+
+        view.addSubview(loadingView)
+
+        NSLayoutConstraint.activate([
+            loadingView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            loadingView.centerYAnchor.constraint(equalTo: view.centerYAnchor),
+        ])
+
+        loadingView.startAnimating()
+        self.loadingView = loadingView
     }
 
     private func showEmptyState() {
-        // TODO: 空状態ビューの表示
+        // 既存のビューを隠す
+        removeLoadingAndEmptyViews()
+
+        // 空状態ビューの作成
+        let emptyStateView = UIView()
+        emptyStateView.translatesAutoresizingMaskIntoConstraints = false
+
+        // アイコン
+        let imageView = UIImageView(image: UIImage(systemName: "photo.on.rectangle"))
+        imageView.translatesAutoresizingMaskIntoConstraints = false
+        imageView.tintColor = .systemGray3
+        imageView.preferredSymbolConfiguration = UIImage.SymbolConfiguration(pointSize: 64)
+
+        // メッセージラベル
+        let messageLabel = UILabel()
+        messageLabel.text = NSLocalizedString("No Photos", bundle: .module, comment: "")
+        messageLabel.textColor = .systemGray
+        messageLabel.font = .systemFont(ofSize: 18, weight: .medium)
+        messageLabel.textAlignment = .center
+        messageLabel.translatesAutoresizingMaskIntoConstraints = false
+
+        // サブメッセージラベル
+        let subMessageLabel = UILabel()
+        subMessageLabel.text = NSLocalizedString("Your photo library appears to be empty.", bundle: .module, comment: "")
+        subMessageLabel.textColor = .systemGray2
+        subMessageLabel.font = .systemFont(ofSize: 14)
+        subMessageLabel.textAlignment = .center
+        subMessageLabel.numberOfLines = 0
+        subMessageLabel.translatesAutoresizingMaskIntoConstraints = false
+
+        // ビューの構成
+        emptyStateView.addSubview(imageView)
+        emptyStateView.addSubview(messageLabel)
+        emptyStateView.addSubview(subMessageLabel)
+
+        view.addSubview(emptyStateView)
+
+        // レイアウト設定
+        NSLayoutConstraint.activate([
+            emptyStateView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            emptyStateView.centerYAnchor.constraint(equalTo: view.centerYAnchor),
+            emptyStateView.leadingAnchor.constraint(greaterThanOrEqualTo: view.leadingAnchor, constant: 40),
+            emptyStateView.trailingAnchor.constraint(lessThanOrEqualTo: view.trailingAnchor, constant: -40),
+
+            imageView.topAnchor.constraint(equalTo: emptyStateView.topAnchor),
+            imageView.centerXAnchor.constraint(equalTo: emptyStateView.centerXAnchor),
+
+            messageLabel.topAnchor.constraint(equalTo: imageView.bottomAnchor, constant: 16),
+            messageLabel.leadingAnchor.constraint(equalTo: emptyStateView.leadingAnchor),
+            messageLabel.trailingAnchor.constraint(equalTo: emptyStateView.trailingAnchor),
+
+            subMessageLabel.topAnchor.constraint(equalTo: messageLabel.bottomAnchor, constant: 8),
+            subMessageLabel.leadingAnchor.constraint(equalTo: emptyStateView.leadingAnchor),
+            subMessageLabel.trailingAnchor.constraint(equalTo: emptyStateView.trailingAnchor),
+            subMessageLabel.bottomAnchor.constraint(equalTo: emptyStateView.bottomAnchor),
+        ])
+
+        self.emptyStateView = emptyStateView
     }
 
     private func hideEmptyOrLoadingState() {
-        // TODO: ローディング・空状態ビューの非表示
+        removeLoadingAndEmptyViews()
+    }
+
+    private func removeLoadingAndEmptyViews() {
+        loadingView?.stopAnimating()
+        loadingView?.removeFromSuperview()
+        loadingView = nil
+
+        emptyStateView?.removeFromSuperview()
+        emptyStateView = nil
     }
 
     private func showError(_ error: MediaError?) {
