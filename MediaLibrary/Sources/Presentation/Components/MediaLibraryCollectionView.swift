@@ -1,4 +1,5 @@
 import MediaLibraryApplication
+import MediaLibraryDomain
 import UIKit
 
 /// 写真ライブラリ用のCollectionView
@@ -9,6 +10,10 @@ final class MediaLibraryCollectionView: UIView {
     private weak var viewModel: MediaLibraryViewModel?
     private var thumbnailSize: CGSize = .init(width: 200, height: 200) // 初期値
     private var previousPreheatRect = CGRect.zero
+
+    // MARK: - DiffableDataSource
+
+    private var dataSource: UICollectionViewDiffableDataSource<MediaSection, MediaItem>!
 
     /// CollectionViewへのアクセス用プロパティ
     var collectionViewInstance: UICollectionView {
@@ -47,6 +52,35 @@ final class MediaLibraryCollectionView: UIView {
             MediaThumbnailCell.self,
             forCellWithReuseIdentifier: MediaThumbnailCell.identifier
         )
+
+        setupDataSource()
+    }
+
+    private func setupDataSource() {
+        dataSource = UICollectionViewDiffableDataSource<MediaSection, MediaItem>(
+            collectionView: collectionView
+        ) { [weak self] collectionView, indexPath, mediaItem in
+            guard let self = self else { return UICollectionViewCell() }
+
+            let cell = collectionView.dequeueReusableCell(
+                withReuseIdentifier: MediaThumbnailCell.identifier,
+                for: indexPath
+            ) as! MediaThumbnailCell
+
+            // Appleサンプル準拠：セルの再利用時の混乱を防ぐためIDを先に設定
+            cell.representedAssetIdentifier = mediaItem.media.id.value
+
+            // サムネイル取得
+            let thumbnail = self.viewModel?.thumbnails[mediaItem.media.id]
+            cell.configure(with: mediaItem, thumbnail: thumbnail)
+
+            // サムネイルが未取得の場合のみ読み込みを実行
+            if thumbnail == nil {
+                self.viewModel?.loadThumbnail(for: mediaItem.media.id, size: self.thumbnailSize)
+            }
+
+            return cell
+        }
     }
 
     private func setupLayout() {
@@ -65,23 +99,33 @@ final class MediaLibraryCollectionView: UIView {
     /// ViewModelを設定してCollectionViewを初期化
     func configure(viewModel: MediaLibraryViewModel) {
         collectionView.delegate = self
-        collectionView.dataSource = self
         collectionView.prefetchDataSource = self
         self.viewModel = viewModel
     }
 
-    /// 表示中のセルを更新
+    /// メディアデータを更新
+    func updateMedia(_ media: [Media]) {
+        var snapshot = NSDiffableDataSourceSnapshot<MediaSection, MediaItem>()
+        snapshot.appendSections([.photos])
+
+        let mediaItems = media.map { MediaItem(media: $0, isSelected: false) }
+        snapshot.appendItems(mediaItems, toSection: .photos)
+
+        dataSource.apply(snapshot, animatingDifferences: true)
+    }
+
+    /// 表示中のセルを更新（サムネイル読み込み完了時）
     func updateVisibleCells() {
         guard let viewModel = viewModel else { return }
 
         for cell in collectionView.visibleCells {
             guard let indexPath = collectionView.indexPath(for: cell),
-                  let thumbnailCell = cell as? MediaThumbnailCell,
-                  indexPath.item < viewModel.media.count else { continue }
+                  let thumbnailCell = cell as? MediaThumbnailCell else { continue }
 
-            let media = viewModel.media[indexPath.item]
-            let thumbnail = viewModel.thumbnails[media.id]
-            thumbnailCell.configure(with: media, thumbnail: thumbnail)
+            if let mediaItem = dataSource.itemIdentifier(for: indexPath) {
+                let thumbnail = viewModel.thumbnails[mediaItem.media.id]
+                thumbnailCell.configure(with: mediaItem, thumbnail: thumbnail)
+            }
         }
     }
 
@@ -187,45 +231,6 @@ final class MediaLibraryCollectionView: UIView {
             return []
         }
         return layoutAttributes.map { $0.indexPath }
-    }
-}
-
-// MARK: - UICollectionViewDataSource
-
-extension MediaLibraryCollectionView: UICollectionViewDataSource {
-    func numberOfSections(in _: UICollectionView) -> Int {
-        return 1
-    }
-
-    func collectionView(_: UICollectionView, numberOfItemsInSection _: Int) -> Int {
-        return viewModel?.media.count ?? 0
-    }
-
-    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCell(
-            withReuseIdentifier: MediaThumbnailCell.identifier,
-            for: indexPath
-        ) as! MediaThumbnailCell
-
-        guard let viewModel = viewModel,
-              indexPath.item < viewModel.media.count
-        else {
-            return cell
-        }
-
-        let media = viewModel.media[indexPath.item]
-        let thumbnail = viewModel.thumbnails[media.id]
-
-        // Apple Sample準拠: セルの再利用時の混乱を防ぐためIDを先に設定
-        cell.representedAssetIdentifier = media.id.value
-        cell.configure(with: media, thumbnail: thumbnail)
-
-        // サムネイルが未取得の場合のみ読み込みを実行（重複読み込み防止）
-        if thumbnail == nil {
-            viewModel.loadThumbnail(for: media.id, size: thumbnailSize)
-        }
-
-        return cell
     }
 }
 

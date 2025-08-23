@@ -91,8 +91,8 @@ final class MediaLibraryViewController: UIViewController {
             showError(viewModel.error)
         }
 
-        // CollectionViewの更新
-        mediaLibraryCollectionView.updateData()
+        // DiffableDataSourceでメディアを更新
+        mediaLibraryCollectionView.updateMedia(viewModel.media)
     }
 
     private func showError(_ error: MediaError?) {

@@ -34,11 +34,11 @@ final class MediaThumbnailCell: UICollectionViewCell {
 
     // MARK: - Configuration
 
-    func configure(with media: Media, thumbnail: Media.Thumbnail?) {
+    func configure(with mediaItem: MediaItem, thumbnail: Media.Thumbnail?) {
         // Appleサンプル準拠：representedAssetIdentifierを設定
-        representedAssetIdentifier = media.id.value
+        representedAssetIdentifier = mediaItem.media.id.value
 
-        // TEST: 純粋なUIImageViewでテスト
+        // 画像表示の設定
         if imageView == nil {
             setupImageView()
         }
