@@ -2,6 +2,18 @@ import MediaLibraryApplication
 import MediaLibraryDomain
 import UIKit
 
+/// DiffableDataSource用のセクション識別子
+package enum MediaSection: CaseIterable, Hashable {
+    case photos
+
+    package var title: String {
+        switch self {
+        case .photos:
+            return "Photos"
+        }
+    }
+}
+
 /// 写真ライブラリ用のCollectionView
 final class MediaLibraryCollectionView: UIView {
     // MARK: - Properties
@@ -13,7 +25,7 @@ final class MediaLibraryCollectionView: UIView {
 
     // MARK: - DiffableDataSource
 
-    private var dataSource: UICollectionViewDiffableDataSource<MediaSection, MediaItem>!
+    private var dataSource: UICollectionViewDiffableDataSource<MediaSection, Media>!
 
     /// CollectionViewへのアクセス用プロパティ
     var collectionViewInstance: UICollectionView {
@@ -57,9 +69,9 @@ final class MediaLibraryCollectionView: UIView {
     }
 
     private func setupDataSource() {
-        dataSource = UICollectionViewDiffableDataSource<MediaSection, MediaItem>(
+        dataSource = UICollectionViewDiffableDataSource<MediaSection, Media>(
             collectionView: collectionView
-        ) { [weak self] collectionView, indexPath, mediaItem in
+        ) { [weak self] collectionView, indexPath, media in
             guard let self = self else { return UICollectionViewCell() }
 
             let cell = collectionView.dequeueReusableCell(
@@ -68,15 +80,16 @@ final class MediaLibraryCollectionView: UIView {
             ) as! MediaThumbnailCell
 
             // Appleサンプル準拠：セルの再利用時の混乱を防ぐためIDを先に設定
-            cell.representedAssetIdentifier = mediaItem.media.id.value
+            cell.representedAssetIdentifier = media.id.value
 
-            // サムネイル取得
-            let thumbnail = self.viewModel?.thumbnails[mediaItem.media.id]
-            cell.configure(with: mediaItem, thumbnail: thumbnail)
+            // サムネイル取得と選択状態
+            let thumbnail = self.viewModel?.thumbnails[media.id]
+            let isSelected = self.viewModel?.selectedMediaIDs.contains(media.id) ?? false
+            cell.configure(with: media, thumbnail: thumbnail, isSelected: isSelected)
 
             // サムネイルが未取得の場合のみ読み込みを実行
             if thumbnail == nil {
-                self.viewModel?.loadThumbnail(for: mediaItem.media.id, size: self.thumbnailSize)
+                self.viewModel?.loadThumbnail(for: media.id, size: self.thumbnailSize)
             }
 
             return cell
@@ -105,12 +118,9 @@ final class MediaLibraryCollectionView: UIView {
 
     /// メディアデータを更新
     func updateMedia(_ media: [Media]) {
-        var snapshot = NSDiffableDataSourceSnapshot<MediaSection, MediaItem>()
+        var snapshot = NSDiffableDataSourceSnapshot<MediaSection, Media>()
         snapshot.appendSections([.photos])
-
-        let mediaItems = media.map { MediaItem(media: $0, isSelected: false) }
-        snapshot.appendItems(mediaItems, toSection: .photos)
-
+        snapshot.appendItems(media, toSection: .photos)
         dataSource.apply(snapshot, animatingDifferences: true)
     }
 
@@ -122,9 +132,10 @@ final class MediaLibraryCollectionView: UIView {
             guard let indexPath = collectionView.indexPath(for: cell),
                   let thumbnailCell = cell as? MediaThumbnailCell else { continue }
 
-            if let mediaItem = dataSource.itemIdentifier(for: indexPath) {
-                let thumbnail = viewModel.thumbnails[mediaItem.media.id]
-                thumbnailCell.configure(with: mediaItem, thumbnail: thumbnail)
+            if let media = dataSource.itemIdentifier(for: indexPath) {
+                let thumbnail = viewModel.thumbnails[media.id]
+                let isSelected = viewModel.selectedMediaIDs.contains(media.id)
+                thumbnailCell.configure(with: media, thumbnail: thumbnail, isSelected: isSelected)
             }
         }
     }
