@@ -82,10 +82,9 @@ final class MediaLibraryCollectionView: UIView {
             // Appleサンプル準拠：セルの再利用時の混乱を防ぐためIDを先に設定
             cell.representedAssetIdentifier = media.id.value
 
-            // サムネイル取得と選択状態
+            // サムネイル取得
             let thumbnail = self.viewModel?.thumbnails[media.id]
-            let isSelected = self.viewModel?.selectedMediaIDs.contains(media.id) ?? false
-            cell.configure(with: media, thumbnail: thumbnail, isSelected: isSelected)
+            cell.configure(with: media, thumbnail: thumbnail)
 
             // サムネイルが未取得の場合のみ読み込みを実行
             if thumbnail == nil {
@@ -134,8 +133,7 @@ final class MediaLibraryCollectionView: UIView {
 
             if let media = dataSource.itemIdentifier(for: indexPath) {
                 let thumbnail = viewModel.thumbnails[media.id]
-                let isSelected = viewModel.selectedMediaIDs.contains(media.id)
-                thumbnailCell.configure(with: media, thumbnail: thumbnail, isSelected: isSelected)
+                thumbnailCell.configure(with: media, thumbnail: thumbnail)
             }
         }
     }

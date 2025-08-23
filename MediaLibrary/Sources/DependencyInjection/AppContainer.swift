@@ -88,7 +88,7 @@ package enum AppDependencies {
             let config = UIImage.SymbolConfiguration(pointSize: min(size.width, size.height) * 0.6, weight: .medium)
             let image = UIImage(systemName: imageName, withConfiguration: config)?.withTintColor(color, renderingMode: .alwaysOriginal)
 
-            return try Media.Thumbnail(
+            return Media.Thumbnail(
                 mediaID: mediaID,
                 image: image ?? UIImage(),
                 size: size

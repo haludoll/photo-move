@@ -34,7 +34,7 @@ final class MediaThumbnailCell: UICollectionViewCell {
 
     // MARK: - Configuration
 
-    func configure(with media: Media, thumbnail: Media.Thumbnail?, isSelected _: Bool = false) {
+    func configure(with media: Media, thumbnail: Media.Thumbnail?) {
         // Appleサンプル準拠：representedAssetIdentifierを設定
         representedAssetIdentifier = media.id.value
 
