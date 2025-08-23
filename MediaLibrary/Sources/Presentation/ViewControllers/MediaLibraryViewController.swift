@@ -74,26 +74,33 @@ final class MediaLibraryViewController: UIViewController {
     }
 
     private func setupBindings() {
-        // ViewModelの変更を監視
-        viewModel.objectWillChange.sink { [weak self] in
-            DispatchQueue.main.async {
-                self?.updateUI()
+        // media配列の変更のみを監視
+        viewModel.$media
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] media in
+                self?.mediaLibraryCollectionView.updateMedia(media)
             }
-        }.store(in: &cancellables)
+            .store(in: &cancellables)
+            
+        // エラーの監視
+        viewModel.$error
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] error in
+                if let error = error {
+                    self?.showError(error)
+                }
+            }
+            .store(in: &cancellables)
+            
+        // サムネイル読み込み完了の監視（PassthroughSubject）
+        viewModel.thumbnailLoadedSubject
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] mediaID in
+                self?.mediaLibraryCollectionView.updateVisibleCells()
+            }
+            .store(in: &cancellables)
     }
 
-    private func updateUI() {
-        // TODO: ローディング状態の処理
-        // TODO: 空状態の処理
-
-        // エラー処理
-        if viewModel.hasError {
-            showError(viewModel.error)
-        }
-
-        // DiffableDataSourceでメディアを更新
-        mediaLibraryCollectionView.updateMedia(viewModel.media)
-    }
 
     private func showError(_ error: MediaError?) {
         guard let error = error else { return }

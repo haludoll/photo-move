@@ -82,7 +82,7 @@ final class MediaLibraryCollectionView: UIView {
             // Appleサンプル準拠：セルの再利用時の混乱を防ぐためIDを先に設定
             cell.representedAssetIdentifier = media.id.value
 
-            // サムネイル取得
+            // サムネイル取得（既に読み込み済みのもののみ表示）
             let thumbnail = self.viewModel?.thumbnails[media.id]
             cell.configure(with: media, thumbnail: thumbnail)
 

@@ -14,6 +14,9 @@ class MediaLibraryViewModel: ObservableObject {
     @Published private(set) var error: MediaError?
     @Published private(set) var permissionStatus: PhotoLibraryPermissionStatus = .notDetermined
     @Published private(set) var thumbnails: [Media.ID: Media.Thumbnail] = [:]
+    
+    // サムネイル読み込み完了の通知用Subject
+    let thumbnailLoadedSubject = PassthroughSubject<Media.ID, Never>()
 
     // MARK: - Private Properties
 
@@ -73,8 +76,8 @@ class MediaLibraryViewModel: ObservableObject {
                 if let thumbnail = thumbnail {
                     await MainActor.run {
                         self?.thumbnails[mediaID] = thumbnail
-                        // 個別のサムネイル更新を通知
-                        self?.objectWillChange.send()
+                        // PassthroughSubject経由で効率的に通知
+                        self?.thumbnailLoadedSubject.send(mediaID)
                     }
                 }
             } catch {
