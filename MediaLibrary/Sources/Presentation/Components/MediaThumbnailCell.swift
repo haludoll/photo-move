@@ -11,6 +11,7 @@ final class MediaThumbnailCell: UICollectionViewCell {
     private var hostingController: UIHostingController<PhotoThumbnailView>?
     private var imageView: UIImageView?
     private var checkmarkView: UIImageView?
+    private var overlayView: UIView?
 
     /// Appleサンプル準拠：セル再利用時の問題を防ぐため
     var representedAssetIdentifier: String!
@@ -59,9 +60,14 @@ final class MediaThumbnailCell: UICollectionViewCell {
             if checkmarkView == nil {
                 setupCheckmarkView()
             }
+            if overlayView == nil {
+                setupOverlayView()
+            }
             checkmarkView?.isHidden = false
+            overlayView?.isHidden = false
         } else {
             checkmarkView?.isHidden = true
+            overlayView?.isHidden = true
         }
     }
 
@@ -83,6 +89,23 @@ final class MediaThumbnailCell: UICollectionViewCell {
         ])
     }
     
+    private func setupOverlayView() {
+        let overlayView = UIView()
+        overlayView.backgroundColor = UIColor.black.withAlphaComponent(0.3)
+        overlayView.translatesAutoresizingMaskIntoConstraints = false
+        overlayView.isHidden = true
+        
+        self.overlayView = overlayView
+        contentView.addSubview(overlayView)
+        
+        NSLayoutConstraint.activate([
+            overlayView.topAnchor.constraint(equalTo: contentView.topAnchor),
+            overlayView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
+            overlayView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
+            overlayView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor)
+        ])
+    }
+    
     private func setupCheckmarkView() {
         let checkmarkView = UIImageView()
         checkmarkView.image = UIImage(systemName: "checkmark.circle.fill")
@@ -97,7 +120,7 @@ final class MediaThumbnailCell: UICollectionViewCell {
         contentView.addSubview(checkmarkView)
         
         NSLayoutConstraint.activate([
-            checkmarkView.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 8),
+            checkmarkView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -8),
             checkmarkView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -8),
             checkmarkView.widthAnchor.constraint(equalToConstant: 24),
             checkmarkView.heightAnchor.constraint(equalToConstant: 24)
@@ -137,6 +160,7 @@ final class MediaThumbnailCell: UICollectionViewCell {
         // TEST: UIImageViewのクリア
         imageView?.image = nil
         checkmarkView?.isHidden = true
+        overlayView?.isHidden = true
         representedAssetIdentifier = nil
     }
 }
