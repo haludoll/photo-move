@@ -5,9 +5,9 @@ import MediaLibraryApplication
 import Testing
 @testable import MediaLibraryPresentation
 
+@MainActor
 struct MediaLibraryViewModelTests {
     @Test("初期状態のテスト")
-    @MainActor
     func initialState() async {
         let mockRepository = MockSuccessRepository()
         let mockPermissionService = MockPermissionService()
@@ -25,7 +25,6 @@ struct MediaLibraryViewModelTests {
     }
 
     @Test("写真読み込み成功のテスト")
-    @MainActor
     func loadPhotosSuccess() async {
         let mockMedia = try! [
             createTestMedia(id: "1"),
@@ -51,7 +50,6 @@ struct MediaLibraryViewModelTests {
     }
 
     @Test("権限拒否エラーのテスト")
-    @MainActor
     func loadPhotosPermissionDenied() async {
         let mockRepository = MockFailureRepository()
         let mockPermissionService = MockDeniedPermissionService()
@@ -72,7 +70,6 @@ struct MediaLibraryViewModelTests {
     }
 
     @Test("メディア読み込み失敗のテスト")
-    @MainActor
     func loadPhotosMediaLoadFailed() async {
         let mockRepository = MockFailureRepository()
         let mockPermissionService = MockPermissionService()
@@ -93,7 +90,6 @@ struct MediaLibraryViewModelTests {
     }
 
     @Test("サムネイル読み込みのテスト")
-    @MainActor
     func testLoadThumbnail() async {
         let mockMedia = try! [createTestMedia(id: "1")]
         let mockRepository = MockSuccessRepository(media: mockMedia)
@@ -121,7 +117,6 @@ struct MediaLibraryViewModelTests {
     }
 
     @Test("サムネイル重複読み込みのテスト")
-    @MainActor
     func loadThumbnailDuplicate() async {
         let mockMedia = try! [createTestMedia(id: "1")]
         let mockRepository = MockSuccessRepository(media: mockMedia)
@@ -150,7 +145,6 @@ struct MediaLibraryViewModelTests {
     }
 
     @Test("エラークリアのテスト")
-    @MainActor
     func testClearError() async {
         let mockRepository = MockFailureRepository()
         let mockPermissionService = MockDeniedPermissionService()
@@ -172,7 +166,6 @@ struct MediaLibraryViewModelTests {
     }
 
     @Test("サムネイルタスクキャンセルのテスト")
-    @MainActor
     func testCancelAllThumbnailTasks() async {
         let mockMedia = try! [createTestMedia(id: "1")]
         let mockRepository = MockSuccessRepository(media: mockMedia)
@@ -201,7 +194,6 @@ struct MediaLibraryViewModelTests {
     // MARK: - Selection Tests
 
     @Test("選択モード初期状態のテスト")
-    @MainActor
     func selectionModeInitialState() async {
         let mockRepository = MockSuccessRepository()
         let mockPermissionService = MockPermissionService()
@@ -219,7 +211,6 @@ struct MediaLibraryViewModelTests {
     }
 
     @Test("選択モード開始のテスト")
-    @MainActor
     func enterSelectionMode() async {
         let mockRepository = MockSuccessRepository()
         let mockPermissionService = MockPermissionService()
@@ -238,7 +229,6 @@ struct MediaLibraryViewModelTests {
     }
 
     @Test("選択モード終了のテスト")
-    @MainActor
     func exitSelectionMode() async {
         let mockMedia = try! [
             createTestMedia(id: "1"),
@@ -273,7 +263,6 @@ struct MediaLibraryViewModelTests {
     }
 
     @Test("メディア選択のテスト")
-    @MainActor
     func toggleSelection() async {
         let mockMedia = try! [
             createTestMedia(id: "1"),
@@ -314,7 +303,6 @@ struct MediaLibraryViewModelTests {
     }
 
     @Test("選択モード外での選択無効化のテスト")
-    @MainActor
     func toggleSelectionOutsideSelectionMode() async {
         let mockMedia = try! [createTestMedia(id: "1")]
         let mockRepository = MockSuccessRepository(media: mockMedia)
@@ -340,7 +328,6 @@ struct MediaLibraryViewModelTests {
     }
 
     @Test("全選択のテスト")
-    @MainActor
     func selectAll() async {
         let mockMedia = try! [
             createTestMedia(id: "1"),
@@ -371,7 +358,6 @@ struct MediaLibraryViewModelTests {
     }
 
     @Test("全選択解除のテスト")
-    @MainActor
     func clearSelection() async {
         let mockMedia = try! [
             createTestMedia(id: "1"),
@@ -401,7 +387,6 @@ struct MediaLibraryViewModelTests {
     }
 
     @Test("選択状態の複数メディア操作のテスト")
-    @MainActor
     func multipleMediaSelection() async {
         let mockMedia = try! [
             createTestMedia(id: "1"),

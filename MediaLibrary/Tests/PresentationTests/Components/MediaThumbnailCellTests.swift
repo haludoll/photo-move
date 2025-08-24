@@ -3,10 +3,10 @@ import MediaLibraryDomain
 import Testing
 @testable import MediaLibraryPresentation
 
+@MainActor
 struct MediaThumbnailCellTests {
     
     @Test("初期状態のテスト")
-    @MainActor
     func initialState() async {
         let cell = MediaThumbnailCell(frame: CGRect(x: 0, y: 0, width: 100, height: 100))
         
@@ -29,7 +29,6 @@ struct MediaThumbnailCellTests {
     }
     
     @Test("選択状態設定のテスト")
-    @MainActor
     func configureWithSelection() async {
         let cell = MediaThumbnailCell(frame: CGRect(x: 0, y: 0, width: 100, height: 100))
         let media = try! createTestMedia(id: "test-id")
@@ -48,7 +47,6 @@ struct MediaThumbnailCellTests {
     }
     
     @Test("非選択状態設定のテスト")
-    @MainActor
     func configureWithoutSelection() async {
         let cell = MediaThumbnailCell(frame: CGRect(x: 0, y: 0, width: 100, height: 100))
         let media = try! createTestMedia(id: "test-id")
@@ -66,7 +64,6 @@ struct MediaThumbnailCellTests {
     }
     
     @Test("サムネイル設定のテスト")
-    @MainActor
     func configureWithThumbnail() async {
         let cell = MediaThumbnailCell(frame: CGRect(x: 0, y: 0, width: 100, height: 100))
         let media = try! createTestMedia(id: "test-id")
@@ -86,7 +83,6 @@ struct MediaThumbnailCellTests {
     }
     
     @Test("セル再利用のテスト")
-    @MainActor
     func prepareForReuse() async {
         let cell = MediaThumbnailCell(frame: CGRect(x: 0, y: 0, width: 100, height: 100))
         let media = try! createTestMedia(id: "test-id")
