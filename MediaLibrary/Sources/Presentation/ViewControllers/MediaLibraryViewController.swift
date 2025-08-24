@@ -83,18 +83,33 @@ final class MediaLibraryViewController: UIViewController {
         floatingButton = UIButton(type: .system)
         floatingButton.translatesAutoresizingMaskIntoConstraints = false
         
+        // ガラス効果のblur背景を追加
+        let blurEffect = UIBlurEffect(style: .systemMaterial)
+        let blurEffectView = UIVisualEffectView(effect: blurEffect)
+        blurEffectView.translatesAutoresizingMaskIntoConstraints = false
+        blurEffectView.layer.cornerRadius = 18
+        blurEffectView.clipsToBounds = true
+        
         // ボタンの基本設定
         updateFloatingButtonAppearance()
         floatingButton.addTarget(self, action: #selector(floatingButtonTapped), for: .touchUpInside)
         
+        view.addSubview(blurEffectView)
         view.addSubview(floatingButton)
         
         // レイアウト設定（右上に配置）
         NSLayoutConstraint.activate([
-            floatingButton.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 16),
-            floatingButton.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -16),
-            floatingButton.heightAnchor.constraint(equalToConstant: 36),
-            floatingButton.widthAnchor.constraint(greaterThanOrEqualToConstant: 60)
+            // blur背景のレイアウト
+            blurEffectView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 16),
+            blurEffectView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -16),
+            blurEffectView.heightAnchor.constraint(equalToConstant: 36),
+            blurEffectView.widthAnchor.constraint(greaterThanOrEqualToConstant: 60),
+            
+            // ボタンのレイアウト（blur背景と同じ位置）
+            floatingButton.topAnchor.constraint(equalTo: blurEffectView.topAnchor),
+            floatingButton.leadingAnchor.constraint(equalTo: blurEffectView.leadingAnchor),
+            floatingButton.trailingAnchor.constraint(equalTo: blurEffectView.trailingAnchor),
+            floatingButton.bottomAnchor.constraint(equalTo: blurEffectView.bottomAnchor)
         ])
     }
     
@@ -105,17 +120,10 @@ final class MediaLibraryViewController: UIViewController {
             floatingButton.setTitle(NSLocalizedString("Edit", bundle: .module, comment: ""), for: .normal)
         }
         
-        // カプセル型の背景スタイル
-        floatingButton.backgroundColor = UIColor.systemGray5
+        // ガラス効果背景なので背景色は透明に
+        floatingButton.backgroundColor = .clear
         floatingButton.setTitleColor(.label, for: .normal)
-        floatingButton.layer.cornerRadius = 18
         floatingButton.contentEdgeInsets = UIEdgeInsets(top: 8, left: 16, bottom: 8, right: 16)
-        
-        // 影を追加
-        floatingButton.layer.shadowColor = UIColor.black.cgColor
-        floatingButton.layer.shadowOffset = CGSize(width: 0, height: 2)
-        floatingButton.layer.shadowRadius = 4
-        floatingButton.layer.shadowOpacity = 0.1
     }
 
     private func setupBindings() {
