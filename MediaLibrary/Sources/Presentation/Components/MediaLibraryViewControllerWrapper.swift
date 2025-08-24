@@ -8,8 +8,8 @@ struct MediaLibraryViewControllerWrapper: UIViewControllerRepresentable {
         let viewController = MediaLibraryViewController()
         let navigationController = UINavigationController(rootViewController: viewController)
         
-        // ナビゲーションバーの外観設定
-        navigationController.navigationBar.prefersLargeTitles = true
+        // ナビゲーションバーを非表示に設定
+        navigationController.setNavigationBarHidden(true, animated: false)
         
         return navigationController
     }

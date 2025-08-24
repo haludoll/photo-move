@@ -13,6 +13,7 @@ final class MediaLibraryViewController: UIViewController {
     private let viewModel: MediaLibraryViewModel
     private var mediaLibraryCollectionView: MediaLibraryCollectionView!
     private var cancellables = Set<AnyCancellable>()
+    private var floatingButton: UIButton!
 
     /// CollectionViewへのアクセス用プロパティ
     private var collectionView: UICollectionView {
@@ -42,6 +43,12 @@ final class MediaLibraryViewController: UIViewController {
             await viewModel.loadPhotos()
         }
     }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        // ナビゲーションバーを非表示
+        navigationController?.setNavigationBarHidden(true, animated: animated)
+    }
 
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
@@ -53,24 +60,15 @@ final class MediaLibraryViewController: UIViewController {
     private func setupUI() {
         view.backgroundColor = .systemBackground
 
-        // Navigation設定
-        title = NSLocalizedString("Photos", bundle: .module, comment: "")
-        navigationController?.navigationBar.prefersLargeTitles = true
-        
-        // 編集ボタンを追加
-        navigationItem.rightBarButtonItem = UIBarButtonItem(
-            title: NSLocalizedString("Edit", bundle: .module, comment: ""),
-            style: .plain,
-            target: self,
-            action: #selector(editButtonTapped)
-        )
-
         // CollectionView設定
         mediaLibraryCollectionView = MediaLibraryCollectionView()
         mediaLibraryCollectionView.translatesAutoresizingMaskIntoConstraints = false
         mediaLibraryCollectionView.configure(viewModel: viewModel)
 
         view.addSubview(mediaLibraryCollectionView)
+
+        // フローティングボタン設定
+        setupFloatingButton()
 
         // レイアウト設定
         NSLayoutConstraint.activate([
@@ -79,6 +77,45 @@ final class MediaLibraryViewController: UIViewController {
             mediaLibraryCollectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             mediaLibraryCollectionView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
         ])
+    }
+    
+    private func setupFloatingButton() {
+        floatingButton = UIButton(type: .system)
+        floatingButton.translatesAutoresizingMaskIntoConstraints = false
+        
+        // ボタンの基本設定
+        updateFloatingButtonAppearance()
+        floatingButton.addTarget(self, action: #selector(floatingButtonTapped), for: .touchUpInside)
+        
+        view.addSubview(floatingButton)
+        
+        // レイアウト設定（右上に配置）
+        NSLayoutConstraint.activate([
+            floatingButton.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 16),
+            floatingButton.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -16),
+            floatingButton.heightAnchor.constraint(equalToConstant: 36),
+            floatingButton.widthAnchor.constraint(greaterThanOrEqualToConstant: 60)
+        ])
+    }
+    
+    private func updateFloatingButtonAppearance() {
+        if viewModel.isSelectionMode {
+            floatingButton.setTitle(NSLocalizedString("Done", bundle: .module, comment: ""), for: .normal)
+        } else {
+            floatingButton.setTitle(NSLocalizedString("Edit", bundle: .module, comment: ""), for: .normal)
+        }
+        
+        // カプセル型の背景スタイル
+        floatingButton.backgroundColor = UIColor.systemGray5
+        floatingButton.setTitleColor(.label, for: .normal)
+        floatingButton.layer.cornerRadius = 18
+        floatingButton.contentEdgeInsets = UIEdgeInsets(top: 8, left: 16, bottom: 8, right: 16)
+        
+        // 影を追加
+        floatingButton.layer.shadowColor = UIColor.black.cgColor
+        floatingButton.layer.shadowOffset = CGSize(width: 0, height: 2)
+        floatingButton.layer.shadowRadius = 4
+        floatingButton.layer.shadowOpacity = 0.1
     }
 
     private func setupBindings() {
@@ -112,7 +149,7 @@ final class MediaLibraryViewController: UIViewController {
         viewModel.$isSelectionMode
             .receive(on: DispatchQueue.main)
             .sink { [weak self] isSelectionMode in
-                self?.updateNavigationForSelectionMode(isSelectionMode)
+                self?.updateFloatingButtonAppearance()
                 self?.mediaLibraryCollectionView.setSelectionMode(isSelectionMode)
             }
             .store(in: &cancellables)
@@ -167,42 +204,11 @@ final class MediaLibraryViewController: UIViewController {
         }
     }
     
-    @objc private func editButtonTapped() {
+    @objc private func floatingButtonTapped() {
         if viewModel.isSelectionMode {
             viewModel.exitSelectionMode()
         } else {
             viewModel.enterSelectionMode()
-        }
-    }
-    
-    @objc private func cancelButtonTapped() {
-        viewModel.exitSelectionMode()
-    }
-    
-    private func updateNavigationForSelectionMode(_ isSelectionMode: Bool) {
-        if isSelectionMode {
-            // 選択モード時のナビゲーション設定
-            navigationItem.leftBarButtonItem = UIBarButtonItem(
-                title: NSLocalizedString("Cancel", bundle: .module, comment: ""),
-                style: .plain,
-                target: self,
-                action: #selector(cancelButtonTapped)
-            )
-            navigationItem.rightBarButtonItem = UIBarButtonItem(
-                title: NSLocalizedString("Done", bundle: .module, comment: ""),
-                style: .done,
-                target: self,
-                action: #selector(editButtonTapped)
-            )
-        } else {
-            // 通常モード時のナビゲーション設定
-            navigationItem.leftBarButtonItem = nil
-            navigationItem.rightBarButtonItem = UIBarButtonItem(
-                title: NSLocalizedString("Edit", bundle: .module, comment: ""),
-                style: .plain,
-                target: self,
-                action: #selector(editButtonTapped)
-            )
         }
     }
 }
