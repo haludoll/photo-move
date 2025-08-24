@@ -107,6 +107,23 @@ final class MediaLibraryViewController: UIViewController {
                 self?.mediaLibraryCollectionView.updateVisibleCells()
             }
             .store(in: &cancellables)
+            
+        // 選択モードの監視
+        viewModel.$isSelectionMode
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] isSelectionMode in
+                self?.updateNavigationForSelectionMode(isSelectionMode)
+                self?.mediaLibraryCollectionView.setSelectionMode(isSelectionMode)
+            }
+            .store(in: &cancellables)
+            
+        // 選択状態の監視
+        viewModel.$selectedMediaIDs
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] _ in
+                self?.mediaLibraryCollectionView.updateVisibleCells()
+            }
+            .store(in: &cancellables)
     }
 
 
@@ -151,6 +168,41 @@ final class MediaLibraryViewController: UIViewController {
     }
     
     @objc private func editButtonTapped() {
-        // TODO: 選択モードの実装
+        if viewModel.isSelectionMode {
+            viewModel.exitSelectionMode()
+        } else {
+            viewModel.enterSelectionMode()
+        }
+    }
+    
+    @objc private func cancelButtonTapped() {
+        viewModel.exitSelectionMode()
+    }
+    
+    private func updateNavigationForSelectionMode(_ isSelectionMode: Bool) {
+        if isSelectionMode {
+            // 選択モード時のナビゲーション設定
+            navigationItem.leftBarButtonItem = UIBarButtonItem(
+                title: NSLocalizedString("Cancel", bundle: .module, comment: ""),
+                style: .plain,
+                target: self,
+                action: #selector(cancelButtonTapped)
+            )
+            navigationItem.rightBarButtonItem = UIBarButtonItem(
+                title: NSLocalizedString("Done", bundle: .module, comment: ""),
+                style: .done,
+                target: self,
+                action: #selector(editButtonTapped)
+            )
+        } else {
+            // 通常モード時のナビゲーション設定
+            navigationItem.leftBarButtonItem = nil
+            navigationItem.rightBarButtonItem = UIBarButtonItem(
+                title: NSLocalizedString("Edit", bundle: .module, comment: ""),
+                style: .plain,
+                target: self,
+                action: #selector(editButtonTapped)
+            )
+        }
     }
 }

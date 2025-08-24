@@ -14,7 +14,8 @@ class MediaLibraryViewModel: ObservableObject {
     @Published private(set) var error: MediaError?
     @Published private(set) var permissionStatus: PhotoLibraryPermissionStatus = .notDetermined
     @Published private(set) var thumbnails: [Media.ID: Media.Thumbnail] = [:]
-    @Published private var selectedMediaIDs: Set<Media.ID> = []
+    @Published var selectedMediaIDs: Set<Media.ID> = []
+    @Published private(set) var isSelectionMode: Bool = false
     
     // サムネイル読み込み完了の通知用Subject
     let thumbnailLoadedSubject = PassthroughSubject<Media.ID, Never>()
@@ -163,6 +164,17 @@ class MediaLibraryViewModel: ObservableObject {
 
     // MARK: - Selection Methods
     
+    /// 選択モードを開始する
+    func enterSelectionMode() {
+        isSelectionMode = true
+    }
+    
+    /// 選択モードを終了する
+    func exitSelectionMode() {
+        isSelectionMode = false
+        selectedMediaIDs.removeAll()
+    }
+    
     /// メディアが選択されているかどうかを確認する
     /// - Parameter mediaID: 確認するメディアID
     /// - Returns: 選択されている場合はtrue
@@ -170,9 +182,11 @@ class MediaLibraryViewModel: ObservableObject {
         selectedMediaIDs.contains(mediaID)
     }
     
-    /// メディアの選択状態を切り替える
+    /// メディアの選択状態を切り替える（選択モード時のみ）
     /// - Parameter mediaID: 切り替えるメディアID
     func toggleSelection(for mediaID: Media.ID) {
+        guard isSelectionMode else { return }
+        
         if selectedMediaIDs.contains(mediaID) {
             selectedMediaIDs.remove(mediaID)
         } else {

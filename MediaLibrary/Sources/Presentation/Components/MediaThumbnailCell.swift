@@ -10,6 +10,7 @@ final class MediaThumbnailCell: UICollectionViewCell {
 
     private var hostingController: UIHostingController<PhotoThumbnailView>?
     private var imageView: UIImageView?
+    private var checkmarkView: UIImageView?
 
     /// Appleサンプル準拠：セル再利用時の問題を防ぐため
     var representedAssetIdentifier: String!
@@ -34,7 +35,7 @@ final class MediaThumbnailCell: UICollectionViewCell {
 
     // MARK: - Configuration
 
-    func configure(with media: Media, thumbnail: Media.Thumbnail?) {
+    func configure(with media: Media, thumbnail: Media.Thumbnail?, isSelected: Bool = false) {
         // Appleサンプル準拠：representedAssetIdentifierを設定
         representedAssetIdentifier = media.id.value
 
@@ -47,6 +48,20 @@ final class MediaThumbnailCell: UICollectionViewCell {
             imageView?.image = thumbnail.image
         } else {
             imageView?.image = nil
+        }
+        
+        // チェックマーク表示の設定
+        updateCheckmark(isSelected: isSelected)
+    }
+    
+    private func updateCheckmark(isSelected: Bool) {
+        if isSelected {
+            if checkmarkView == nil {
+                setupCheckmarkView()
+            }
+            checkmarkView?.isHidden = false
+        } else {
+            checkmarkView?.isHidden = true
         }
     }
 
@@ -65,6 +80,27 @@ final class MediaThumbnailCell: UICollectionViewCell {
             imageView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
             imageView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
             imageView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
+        ])
+    }
+    
+    private func setupCheckmarkView() {
+        let checkmarkView = UIImageView()
+        checkmarkView.image = UIImage(systemName: "checkmark.circle.fill")
+        checkmarkView.tintColor = .systemBlue
+        checkmarkView.backgroundColor = .white
+        checkmarkView.layer.cornerRadius = 12
+        checkmarkView.clipsToBounds = true
+        checkmarkView.translatesAutoresizingMaskIntoConstraints = false
+        checkmarkView.isHidden = true
+        
+        self.checkmarkView = checkmarkView
+        contentView.addSubview(checkmarkView)
+        
+        NSLayoutConstraint.activate([
+            checkmarkView.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 8),
+            checkmarkView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -8),
+            checkmarkView.widthAnchor.constraint(equalToConstant: 24),
+            checkmarkView.heightAnchor.constraint(equalToConstant: 24)
         ])
     }
 
@@ -100,6 +136,7 @@ final class MediaThumbnailCell: UICollectionViewCell {
 
         // TEST: UIImageViewのクリア
         imageView?.image = nil
+        checkmarkView?.isHidden = true
         representedAssetIdentifier = nil
     }
 }

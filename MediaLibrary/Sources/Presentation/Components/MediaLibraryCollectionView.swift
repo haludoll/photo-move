@@ -22,6 +22,7 @@ final class MediaLibraryCollectionView: UIView {
     private weak var viewModel: MediaLibraryViewModel?
     private var thumbnailSize: CGSize = .init(width: 200, height: 200) // 初期値
     private var previousPreheatRect = CGRect.zero
+    private var isSelectionMode: Bool = false
 
     // MARK: - DiffableDataSource
 
@@ -84,7 +85,8 @@ final class MediaLibraryCollectionView: UIView {
 
             // サムネイル取得（既に読み込み済みのもののみ表示）
             let thumbnail = self.viewModel?.thumbnails[media.id]
-            cell.configure(with: media, thumbnail: thumbnail)
+            let isSelected = self.viewModel?.isSelected(media.id) ?? false
+            cell.configure(with: media, thumbnail: thumbnail, isSelected: isSelected)
 
             // サムネイルが未取得の場合のみ読み込みを実行
             if thumbnail == nil {
@@ -114,6 +116,12 @@ final class MediaLibraryCollectionView: UIView {
         collectionView.prefetchDataSource = self
         self.viewModel = viewModel
     }
+    
+    /// 選択モードを設定
+    func setSelectionMode(_ isSelectionMode: Bool) {
+        self.isSelectionMode = isSelectionMode
+        collectionView.allowsSelection = isSelectionMode
+    }
 
     /// メディアデータを更新
     func updateMedia(_ media: [Media]) {
@@ -133,7 +141,8 @@ final class MediaLibraryCollectionView: UIView {
 
             if let media = dataSource.itemIdentifier(for: indexPath) {
                 let thumbnail = viewModel.thumbnails[media.id]
-                thumbnailCell.configure(with: media, thumbnail: thumbnail)
+                let isSelected = viewModel.isSelected(media.id)
+                thumbnailCell.configure(with: media, thumbnail: thumbnail, isSelected: isSelected)
             }
         }
     }
@@ -245,7 +254,16 @@ final class MediaLibraryCollectionView: UIView {
 
 // MARK: - UICollectionViewDelegate
 
-extension MediaLibraryCollectionView: UICollectionViewDelegate {}
+extension MediaLibraryCollectionView: UICollectionViewDelegate {
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        guard isSelectionMode,
+              let viewModel = viewModel,
+              let media = dataSource.itemIdentifier(for: indexPath) else { return }
+        
+        viewModel.toggleSelection(for: media.id)
+        collectionView.deselectItem(at: indexPath, animated: false)
+    }
+}
 
 // MARK: - UIScrollViewDelegate
 
