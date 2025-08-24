@@ -14,6 +14,7 @@ class MediaLibraryViewModel: ObservableObject {
     @Published private(set) var error: MediaError?
     @Published private(set) var permissionStatus: PhotoLibraryPermissionStatus = .notDetermined
     @Published private(set) var thumbnails: [Media.ID: Media.Thumbnail] = [:]
+    @Published private var selectedMediaIDs: Set<Media.ID> = []
     
     // サムネイル読み込み完了の通知用Subject
     let thumbnailLoadedSubject = PassthroughSubject<Media.ID, Never>()
@@ -27,6 +28,16 @@ class MediaLibraryViewModel: ObservableObject {
 
     var hasError: Bool {
         error != nil
+    }
+    
+    /// 選択されたメディア一覧
+    var selectedMedia: [Media] {
+        media.filter { selectedMediaIDs.contains($0.id) }
+    }
+    
+    /// 選択されたメディアの数
+    var selectedCount: Int {
+        selectedMediaIDs.count
     }
 
     // MARK: - Initialization
@@ -148,6 +159,35 @@ class MediaLibraryViewModel: ObservableObject {
                 print("Failed to reset cache: \(error)")
             }
         }
+    }
+
+    // MARK: - Selection Methods
+    
+    /// メディアが選択されているかどうかを確認する
+    /// - Parameter mediaID: 確認するメディアID
+    /// - Returns: 選択されている場合はtrue
+    func isSelected(_ mediaID: Media.ID) -> Bool {
+        selectedMediaIDs.contains(mediaID)
+    }
+    
+    /// メディアの選択状態を切り替える
+    /// - Parameter mediaID: 切り替えるメディアID
+    func toggleSelection(for mediaID: Media.ID) {
+        if selectedMediaIDs.contains(mediaID) {
+            selectedMediaIDs.remove(mediaID)
+        } else {
+            selectedMediaIDs.insert(mediaID)
+        }
+    }
+    
+    /// すべての選択を解除する
+    func clearSelection() {
+        selectedMediaIDs.removeAll()
+    }
+    
+    /// すべてのメディアを選択する
+    func selectAll() {
+        selectedMediaIDs = Set(media.map(\.id))
     }
 
     // MARK: - Private Methods
