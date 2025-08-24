@@ -197,6 +197,243 @@ struct MediaLibraryViewModelTests {
         // Assert - タスクがキャンセルされても例外が発生しないことを確認
         #expect(true)  // テストが完了すれば成功
     }
+
+    // MARK: - Selection Tests
+
+    @Test("選択モード初期状態のテスト")
+    @MainActor
+    func selectionModeInitialState() async {
+        let mockRepository = MockSuccessRepository()
+        let mockPermissionService = MockPermissionService()
+        let mockAppService = MediaLibraryAppServiceImpl(
+            mediaRepository: mockRepository,
+            permissionService: mockPermissionService
+        )
+        let viewModel = MediaLibraryViewModel(mediaLibraryService: mockAppService)
+
+        // Assert
+        #expect(viewModel.isSelectionMode == false)
+        #expect(viewModel.selectedMediaIDs.isEmpty)
+        #expect(viewModel.selectedMedia.isEmpty)
+        #expect(viewModel.selectedCount == 0)
+    }
+
+    @Test("選択モード開始のテスト")
+    @MainActor
+    func enterSelectionMode() async {
+        let mockRepository = MockSuccessRepository()
+        let mockPermissionService = MockPermissionService()
+        let mockAppService = MediaLibraryAppServiceImpl(
+            mediaRepository: mockRepository,
+            permissionService: mockPermissionService
+        )
+        let viewModel = MediaLibraryViewModel(mediaLibraryService: mockAppService)
+
+        // Act
+        viewModel.enterSelectionMode()
+
+        // Assert
+        #expect(viewModel.isSelectionMode == true)
+        #expect(viewModel.selectedMediaIDs.isEmpty)
+    }
+
+    @Test("選択モード終了のテスト")
+    @MainActor
+    func exitSelectionMode() async {
+        let mockMedia = try! [
+            createTestMedia(id: "1"),
+            createTestMedia(id: "2")
+        ]
+        let mockRepository = MockSuccessRepository(media: mockMedia)
+        let mockPermissionService = MockPermissionService()
+        let mockAppService = MediaLibraryAppServiceImpl(
+            mediaRepository: mockRepository,
+            permissionService: mockPermissionService
+        )
+        let viewModel = MediaLibraryViewModel(mediaLibraryService: mockAppService)
+
+        await viewModel.loadPhotos()
+        viewModel.enterSelectionMode()
+        
+        // いくつか選択
+        if let firstMedia = viewModel.media.first {
+            viewModel.toggleSelection(for: firstMedia.id)
+        }
+
+        #expect(viewModel.isSelectionMode == true)
+        #expect(viewModel.selectedCount > 0)
+
+        // Act
+        viewModel.exitSelectionMode()
+
+        // Assert
+        #expect(viewModel.isSelectionMode == false)
+        #expect(viewModel.selectedMediaIDs.isEmpty)
+        #expect(viewModel.selectedCount == 0)
+    }
+
+    @Test("メディア選択のテスト")
+    @MainActor
+    func toggleSelection() async {
+        let mockMedia = try! [
+            createTestMedia(id: "1"),
+            createTestMedia(id: "2")
+        ]
+        let mockRepository = MockSuccessRepository(media: mockMedia)
+        let mockPermissionService = MockPermissionService()
+        let mockAppService = MediaLibraryAppServiceImpl(
+            mediaRepository: mockRepository,
+            permissionService: mockPermissionService
+        )
+        let viewModel = MediaLibraryViewModel(mediaLibraryService: mockAppService)
+
+        await viewModel.loadPhotos()
+        viewModel.enterSelectionMode()
+
+        guard let firstMedia = viewModel.media.first else {
+            Issue.record("No media loaded")
+            return
+        }
+
+        // Act - 選択
+        viewModel.toggleSelection(for: firstMedia.id)
+
+        // Assert
+        #expect(viewModel.isSelected(firstMedia.id) == true)
+        #expect(viewModel.selectedCount == 1)
+        #expect(viewModel.selectedMedia.count == 1)
+        #expect(viewModel.selectedMedia.first?.id == firstMedia.id)
+
+        // Act - 選択解除
+        viewModel.toggleSelection(for: firstMedia.id)
+
+        // Assert
+        #expect(viewModel.isSelected(firstMedia.id) == false)
+        #expect(viewModel.selectedCount == 0)
+        #expect(viewModel.selectedMedia.isEmpty)
+    }
+
+    @Test("選択モード外での選択無効化のテスト")
+    @MainActor
+    func toggleSelectionOutsideSelectionMode() async {
+        let mockMedia = try! [createTestMedia(id: "1")]
+        let mockRepository = MockSuccessRepository(media: mockMedia)
+        let mockPermissionService = MockPermissionService()
+        let mockAppService = MediaLibraryAppServiceImpl(
+            mediaRepository: mockRepository,
+            permissionService: mockPermissionService
+        )
+        let viewModel = MediaLibraryViewModel(mediaLibraryService: mockAppService)
+
+        await viewModel.loadPhotos()
+        guard let firstMedia = viewModel.media.first else {
+            Issue.record("No media loaded")
+            return
+        }
+
+        // Act - 選択モード外で選択を試行
+        viewModel.toggleSelection(for: firstMedia.id)
+
+        // Assert - 選択されない
+        #expect(viewModel.isSelected(firstMedia.id) == false)
+        #expect(viewModel.selectedCount == 0)
+    }
+
+    @Test("全選択のテスト")
+    @MainActor
+    func selectAll() async {
+        let mockMedia = try! [
+            createTestMedia(id: "1"),
+            createTestMedia(id: "2"),
+            createTestMedia(id: "3")
+        ]
+        let mockRepository = MockSuccessRepository(media: mockMedia)
+        let mockPermissionService = MockPermissionService()
+        let mockAppService = MediaLibraryAppServiceImpl(
+            mediaRepository: mockRepository,
+            permissionService: mockPermissionService
+        )
+        let viewModel = MediaLibraryViewModel(mediaLibraryService: mockAppService)
+
+        await viewModel.loadPhotos()
+        viewModel.enterSelectionMode()
+
+        // Act
+        viewModel.selectAll()
+
+        // Assert
+        #expect(viewModel.selectedCount == 3)
+        #expect(viewModel.selectedMedia.count == 3)
+        
+        for media in viewModel.media {
+            #expect(viewModel.isSelected(media.id) == true)
+        }
+    }
+
+    @Test("全選択解除のテスト")
+    @MainActor
+    func clearSelection() async {
+        let mockMedia = try! [
+            createTestMedia(id: "1"),
+            createTestMedia(id: "2")
+        ]
+        let mockRepository = MockSuccessRepository(media: mockMedia)
+        let mockPermissionService = MockPermissionService()
+        let mockAppService = MediaLibraryAppServiceImpl(
+            mediaRepository: mockRepository,
+            permissionService: mockPermissionService
+        )
+        let viewModel = MediaLibraryViewModel(mediaLibraryService: mockAppService)
+
+        await viewModel.loadPhotos()
+        viewModel.enterSelectionMode()
+        viewModel.selectAll()
+
+        #expect(viewModel.selectedCount == 2)
+
+        // Act
+        viewModel.clearSelection()
+
+        // Assert
+        #expect(viewModel.selectedCount == 0)
+        #expect(viewModel.selectedMedia.isEmpty)
+        #expect(viewModel.selectedMediaIDs.isEmpty)
+    }
+
+    @Test("選択状態の複数メディア操作のテスト")
+    @MainActor
+    func multipleMediaSelection() async {
+        let mockMedia = try! [
+            createTestMedia(id: "1"),
+            createTestMedia(id: "2"),
+            createTestMedia(id: "3")
+        ]
+        let mockRepository = MockSuccessRepository(media: mockMedia)
+        let mockPermissionService = MockPermissionService()
+        let mockAppService = MediaLibraryAppServiceImpl(
+            mediaRepository: mockRepository,
+            permissionService: mockPermissionService
+        )
+        let viewModel = MediaLibraryViewModel(mediaLibraryService: mockAppService)
+
+        await viewModel.loadPhotos()
+        viewModel.enterSelectionMode()
+
+        // Act - 一部を選択
+        viewModel.toggleSelection(for: mockMedia[0].id)
+        viewModel.toggleSelection(for: mockMedia[2].id)
+
+        // Assert
+        #expect(viewModel.selectedCount == 2)
+        #expect(viewModel.isSelected(mockMedia[0].id) == true)
+        #expect(viewModel.isSelected(mockMedia[1].id) == false)
+        #expect(viewModel.isSelected(mockMedia[2].id) == true)
+
+        let selectedMediaIDs = Set(viewModel.selectedMedia.map(\.id))
+        #expect(selectedMediaIDs.contains(mockMedia[0].id))
+        #expect(selectedMediaIDs.contains(mockMedia[2].id))
+        #expect(!selectedMediaIDs.contains(mockMedia[1].id))
+    }
 }
 
 // MARK: - Helper Methods
