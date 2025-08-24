@@ -56,6 +56,14 @@ final class MediaLibraryViewController: UIViewController {
         // Navigation設定
         title = NSLocalizedString("Photos", bundle: .module, comment: "")
         navigationController?.navigationBar.prefersLargeTitles = true
+        
+        // 編集ボタンを追加
+        navigationItem.rightBarButtonItem = UIBarButtonItem(
+            title: NSLocalizedString("Edit", bundle: .module, comment: ""),
+            style: .plain,
+            target: self,
+            action: #selector(editButtonTapped)
+        )
 
         // CollectionView設定
         mediaLibraryCollectionView = MediaLibraryCollectionView()
@@ -140,5 +148,9 @@ final class MediaLibraryViewController: UIViewController {
         case .mediaLoadFailed:
             return NSLocalizedString("Photo loading failed", bundle: .module, comment: "")
         }
+    }
+    
+    @objc private func editButtonTapped() {
+        // TODO: 選択モードの実装
     }
 }
