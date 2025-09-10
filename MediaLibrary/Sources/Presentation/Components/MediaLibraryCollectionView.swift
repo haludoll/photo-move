@@ -121,6 +121,8 @@ final class MediaLibraryCollectionView: UIView {
     func setSelectionMode(_ isSelectionMode: Bool) {
         self.isSelectionMode = isSelectionMode
         collectionView.allowsSelection = isSelectionMode
+        collectionView.allowsMultipleSelection = isSelectionMode
+        collectionView.allowsMultipleSelectionDuringEditing = isSelectionMode
     }
 
     /// メディアデータを更新

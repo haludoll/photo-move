@@ -222,8 +222,12 @@ final class MediaLibraryViewController: UIViewController {
     
     @objc private func floatingButtonTapped() {
         if viewModel.isSelectionMode {
+            // 編集モードを終了
+            setEditing(false, animated: true)
             viewModel.exitSelectionMode()
         } else {
+            // 編集モードに入る
+            setEditing(true, animated: true)
             viewModel.enterSelectionMode()
         }
     }
