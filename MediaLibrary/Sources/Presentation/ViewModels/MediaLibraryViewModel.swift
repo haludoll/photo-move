@@ -12,7 +12,6 @@ class MediaLibraryViewModel: ObservableObject {
     @Published private(set) var media: [Media] = []
     @Published private(set) var isLoadingMedia = false
     @Published private(set) var error: MediaError?
-    @Published private(set) var permissionStatus: PhotoLibraryPermissionStatus = .notDetermined
     @Published private(set) var thumbnails: [Media.ID: Media.Thumbnail] = [:]
     @Published var selectedMediaIDs: Set<Media.ID> = []
     @Published private(set) var isSelectionMode: Bool = false
