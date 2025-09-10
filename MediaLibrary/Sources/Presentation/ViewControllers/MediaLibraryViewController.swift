@@ -61,9 +61,8 @@ final class MediaLibraryViewController: UIViewController {
         view.backgroundColor = .systemBackground
 
         // CollectionView設定
-        mediaLibraryCollectionView = MediaLibraryCollectionView()
+        mediaLibraryCollectionView = MediaLibraryCollectionView(viewModel: viewModel)
         mediaLibraryCollectionView.translatesAutoresizingMaskIntoConstraints = false
-        mediaLibraryCollectionView.configure(viewModel: viewModel)
 
         view.addSubview(mediaLibraryCollectionView)
 

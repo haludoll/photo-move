@@ -2,30 +2,30 @@ import MediaLibraryApplication
 import MediaLibraryDomain
 import UIKit
 
-/// DiffableDataSource用のセクション識別子
-package enum MediaSection: CaseIterable, Hashable {
-    case photos
-
-    package var title: String {
-        switch self {
-        case .photos:
-            return "Photos"
-        }
-    }
-}
-
 /// 写真ライブラリ用のCollectionView
 final class MediaLibraryCollectionView: UIView {
     // MARK: - Properties
 
     private let collectionView: UICollectionView
-    private weak var viewModel: MediaLibraryViewModel?
+    private weak var viewModel: MediaLibraryViewModel!
     private var thumbnailSize: CGSize = .init(width: 200, height: 200) // 初期値
     private var isSelectionMode: Bool = false
 
     // MARK: - DiffableDataSource
 
     private var dataSource: UICollectionViewDiffableDataSource<MediaSection, Media>!
+
+    /// DiffableDataSource用のセクション識別子
+    enum MediaSection: CaseIterable, Hashable {
+        case photos
+
+        package var title: String {
+            switch self {
+            case .photos:
+                return "Photos"
+            }
+        }
+    }
 
     /// CollectionViewへのアクセス用プロパティ
     var collectionViewInstance: UICollectionView {
@@ -34,8 +34,7 @@ final class MediaLibraryCollectionView: UIView {
 
     // MARK: - Initialization
 
-    override init(frame: CGRect) {
-        // CollectionView設定
+    init(frame: CGRect = .zero, viewModel: MediaLibraryViewModel) {
         let layout = UICollectionViewFlowLayout()
         layout.minimumInteritemSpacing = 2
         layout.minimumLineSpacing = 2
@@ -43,9 +42,13 @@ final class MediaLibraryCollectionView: UIView {
         collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
 
         super.init(frame: frame)
-
+        
+        self.viewModel = viewModel
         setupCollectionView()
         setupLayout()
+
+        collectionView.delegate = self
+        collectionView.prefetchDataSource = self
     }
 
     @available(*, unavailable)
@@ -62,7 +65,6 @@ final class MediaLibraryCollectionView: UIView {
         collectionView.allowsMultipleSelection = false
         collectionView.allowsMultipleSelectionDuringEditing = true
 
-        // セル登録
         collectionView.register(
             MediaThumbnailCell.self,
             forCellWithReuseIdentifier: MediaThumbnailCell.identifier
@@ -82,18 +84,18 @@ final class MediaLibraryCollectionView: UIView {
                 for: indexPath
             ) as! MediaThumbnailCell
 
-            // Appleサンプル準拠：セルの再利用時の混乱を防ぐためIDを先に設定
+            // セルの再利用時に間違った画像が表示されるのを防ぐ
             cell.representedAssetIdentifier = media.id.value
 
             // サムネイル取得（既に読み込み済みのもののみ表示）
-            let thumbnail = self.viewModel?.thumbnails[media.id]
-            let isSelected = self.viewModel?.isSelected(media.id) ?? false
+            let thumbnail = self.viewModel.thumbnails[media.id]
+            let isSelected = self.viewModel.isSelected(media.id)
 
             cell.configure(with: media.id, thumbnail: thumbnail, isSelected: isSelected)
 
             // サムネイルが未取得の場合のみ読み込みを実行
             if thumbnail == nil {
-                self.viewModel?.loadThumbnail(for: media.id, size: self.thumbnailSize)
+                self.viewModel.loadThumbnail(for: media.id, size: self.thumbnailSize)
             }
 
             return cell
@@ -113,13 +115,6 @@ final class MediaLibraryCollectionView: UIView {
 
     // MARK: - Public Methods
 
-    /// ViewModelを設定してCollectionViewを初期化
-    func configure(viewModel: MediaLibraryViewModel) {
-        collectionView.delegate = self
-        collectionView.prefetchDataSource = self
-        self.viewModel = viewModel
-    }
-    
     /// 選択モードを設定
     func setSelectionMode(_ isSelectionMode: Bool) {
         self.isSelectionMode = isSelectionMode
@@ -140,7 +135,7 @@ final class MediaLibraryCollectionView: UIView {
     func updateThumbnail(from mediaID: Media.ID) {
         guard let indexPath = indexPath(for: mediaID),
               let cell = collectionView.cellForItem(at: indexPath) as? MediaThumbnailCell,
-              let thumbnail = viewModel?.thumbnails[mediaID] else { return }
+              let thumbnail = viewModel.thumbnails[mediaID] else { return }
 
         if cell.representedAssetIdentifier == mediaID.value {
             cell.updateThumbnail(with: thumbnail)
@@ -164,7 +159,6 @@ final class MediaLibraryCollectionView: UIView {
 
     /// 初期表示用サムネイルを読み込み（最初の20件を先行読み込み）
     private func loadInitialThumbnails() {
-        guard let viewModel = viewModel else { return }
         let visibleItemsCount = min(20, viewModel.media.count)
 
         for index in 0 ..< visibleItemsCount {
@@ -187,7 +181,6 @@ final class MediaLibraryCollectionView: UIView {
         let scale = UIScreen.main.scale
         thumbnailSize = CGSize(width: itemSize.width * scale, height: itemSize.height * scale)
     }
-
 }
 
 // MARK: - UICollectionViewDelegate
@@ -195,19 +188,10 @@ final class MediaLibraryCollectionView: UIView {
 extension MediaLibraryCollectionView: UICollectionViewDelegate {
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         guard isSelectionMode,
-              let viewModel = viewModel,
               let media = dataSource.itemIdentifier(for: indexPath) else { return }
         
         viewModel.toggleSelection(for: media.id)
         collectionView.deselectItem(at: indexPath, animated: false)
-    }
-}
-
-// MARK: - UIScrollViewDelegate
-
-extension MediaLibraryCollectionView: UIScrollViewDelegate {
-    func scrollViewDidScroll(_: UIScrollView) {
-        // キャッシュ処理を削除：パフォーマンスが良好なため不要
     }
 }
 
@@ -228,8 +212,6 @@ extension MediaLibraryCollectionView: UICollectionViewDelegateFlowLayout {
 extension MediaLibraryCollectionView: UICollectionViewDataSourcePrefetching {
     /// 表示予定セルのサムネイルを先行読み込み（スムーズなスクロールを実現）
     func collectionView(_: UICollectionView, prefetchItemsAt indexPaths: [IndexPath]) {
-        guard let viewModel = viewModel else { return }
-
         for indexPath in indexPaths {
             guard indexPath.item < viewModel.media.count else { continue }
             let media = viewModel.media[indexPath.item]
@@ -239,8 +221,6 @@ extension MediaLibraryCollectionView: UICollectionViewDataSourcePrefetching {
 
     /// 表示予定がキャンセルされたセルのサムネイル読み込みを中止
     func collectionView(_: UICollectionView, cancelPrefetchingForItemsAt indexPaths: [IndexPath]) {
-        guard let viewModel = viewModel else { return }
-
         for indexPath in indexPaths {
             guard indexPath.item < viewModel.media.count else { continue }
             let media = viewModel.media[indexPath.item]
