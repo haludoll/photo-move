@@ -26,9 +26,9 @@ struct MediaSelectionModeButton: View {
     
     private var buttonTitle: String {
         if isSelectionMode {
-            return NSLocalizedString("Done", bundle: .module, comment: "")
+            String(localized: "Cancel", bundle: .module)
         } else {
-            return NSLocalizedString("Edit", bundle: .module, comment: "")
+            String(localized: "Select", bundle: .module)
         }
     }
 }

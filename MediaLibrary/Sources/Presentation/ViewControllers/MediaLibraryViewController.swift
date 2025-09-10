@@ -133,13 +133,13 @@ final class MediaLibraryViewController: UIViewController {
         guard let error = error else { return }
 
         let alert = UIAlertController(
-            title: NSLocalizedString("Error", bundle: .module, comment: ""),
+            title: String(localized: "Error", bundle: .module),
             message: error.localizedMessage,
             preferredStyle: .alert
         )
 
         alert.addAction(UIAlertAction(
-            title: NSLocalizedString("OK", bundle: .module, comment: ""),
+            title: String(localized: "OK", bundle: .module),
             style: .default
         ) { [weak self] _ in
             self?.viewModel.clearError()
@@ -191,21 +191,21 @@ extension MediaError {
     var localizedMessage: String {
         switch self {
         case .invalidMediaID:
-            return NSLocalizedString("Invalid media ID", bundle: .module, comment: "")
+            String(localized: "Invalid media ID", bundle: .module)
         case .invalidFilePath:
-            return NSLocalizedString("Invalid file path", bundle: .module, comment: "")
+            String(localized: "Invalid file path", bundle: .module)
         case .invalidThumbnailData:
-            return NSLocalizedString("Invalid thumbnail data", bundle: .module, comment: "")
+            String(localized: "Invalid thumbnail data", bundle: .module)
         case .permissionDenied:
-            return NSLocalizedString("Photo library access permission denied. Please allow access in Settings.", bundle: .module, comment: "")
+            String(localized: "Photo library access permission denied. Please allow access in Settings.", bundle: .module)
         case .mediaNotFound:
-            return NSLocalizedString("Photo not found", bundle: .module, comment: "")
+            String(localized: "Photo not found", bundle: .module)
         case .unsupportedFormat:
-            return NSLocalizedString("Unsupported file format", bundle: .module, comment: "")
+            String(localized: "Unsupported file format", bundle: .module)
         case .thumbnailGenerationFailed:
-            return NSLocalizedString("Thumbnail generation failed", bundle: .module, comment: "")
+            String(localized: "Thumbnail generation failed", bundle: .module)
         case .mediaLoadFailed:
-            return NSLocalizedString("Photo loading failed", bundle: .module, comment: "")
+            String(localized: "Photo loading failed", bundle: .module)
         }
     }
 }
