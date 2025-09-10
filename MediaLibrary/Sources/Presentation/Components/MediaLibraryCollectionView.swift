@@ -6,7 +6,7 @@ import UIKit
 final class MediaLibraryCollectionView: UIView {
     // MARK: - Properties
 
-    private let collectionView: UICollectionView
+    let collectionView: UICollectionView
     private weak var viewModel: MediaLibraryViewModel!
     private var thumbnailSize: CGSize = .init(width: 200, height: 200) // 初期値
     private var isSelectionMode: Bool = false
@@ -25,11 +25,6 @@ final class MediaLibraryCollectionView: UIView {
                 return "Photos"
             }
         }
-    }
-
-    /// CollectionViewへのアクセス用プロパティ
-    var collectionViewInstance: UICollectionView {
-        return collectionView
     }
 
     // MARK: - Initialization

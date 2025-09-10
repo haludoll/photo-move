@@ -13,12 +13,7 @@ final class MediaLibraryViewController: UIViewController {
     private let viewModel: MediaLibraryViewModel
     private var mediaLibraryCollectionView: MediaLibraryCollectionView!
     private var cancellables = Set<AnyCancellable>()
-    private var floatingButton: UIButton!
-
-    /// CollectionViewへのアクセス用プロパティ
-    private var collectionView: UICollectionView {
-        return mediaLibraryCollectionView.collectionViewInstance
-    }
+    private var selectionModeButtonHostingController: UIHostingController<MediaSelectionModeButton>!
 
     // MARK: - Initialization
 
@@ -43,12 +38,6 @@ final class MediaLibraryViewController: UIViewController {
             await viewModel.loadPhotos()
         }
     }
-    
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        // ナビゲーションバーを非表示
-        navigationController?.setNavigationBarHidden(true, animated: animated)
-    }
 
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
@@ -66,8 +55,8 @@ final class MediaLibraryViewController: UIViewController {
 
         view.addSubview(mediaLibraryCollectionView)
 
-        // フローティングボタン設定
-        setupFloatingButton()
+        // 選択モードボタン設定
+        setupSelectionModeButton()
 
         // レイアウト設定
         NSLayoutConstraint.activate([
@@ -77,60 +66,23 @@ final class MediaLibraryViewController: UIViewController {
             mediaLibraryCollectionView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
         ])
     }
-    
-    private func setupFloatingButton() {
-        floatingButton = UIButton(type: .system)
-        floatingButton.translatesAutoresizingMaskIntoConstraints = false
-        
-        // ガラス効果のblur背景を追加
-        let blurEffect = UIBlurEffect(style: .systemMaterial)
-        let blurEffectView = UIVisualEffectView(effect: blurEffect)
-        blurEffectView.translatesAutoresizingMaskIntoConstraints = false
-        blurEffectView.layer.cornerRadius = 18
-        blurEffectView.clipsToBounds = true
-        
-        // ボタンの基本設定
-        updateFloatingButtonAppearance()
-        floatingButton.addTarget(self, action: #selector(floatingButtonTapped), for: .touchUpInside)
-        
-        view.addSubview(blurEffectView)
-        view.addSubview(floatingButton)
-        
-        // レイアウト設定（右上に配置）
-        NSLayoutConstraint.activate([
-            // blur背景のレイアウト
-            blurEffectView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 16),
-            blurEffectView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -16),
-            blurEffectView.heightAnchor.constraint(equalToConstant: 36),
-            blurEffectView.widthAnchor.constraint(greaterThanOrEqualToConstant: 60),
-            
-            // ボタンのレイアウト（blur背景と同じ位置）
-            floatingButton.topAnchor.constraint(equalTo: blurEffectView.topAnchor),
-            floatingButton.leadingAnchor.constraint(equalTo: blurEffectView.leadingAnchor),
-            floatingButton.trailingAnchor.constraint(equalTo: blurEffectView.trailingAnchor),
-            floatingButton.bottomAnchor.constraint(equalTo: blurEffectView.bottomAnchor)
-        ])
+
+    private func setupSelectionModeButton() {
+        let selectionModeButton = MediaSelectionModeButton(isSelectionMode: viewModel.isSelectionMode) { [weak self] in
+            self?.toggleSelectionMode()
+        }
+
+        selectionModeButtonHostingController = embed(selectionModeButton, at: .topTrailing)
     }
-    
-    private func updateFloatingButtonAppearance() {
-        if viewModel.isSelectionMode {
-            floatingButton.setTitle(NSLocalizedString("Done", bundle: .module, comment: ""), for: .normal)
-        } else {
-            floatingButton.setTitle(NSLocalizedString("Edit", bundle: .module, comment: ""), for: .normal)
+
+    private func updateSelectionModeButton() {
+        let updatedButton = MediaSelectionModeButton(
+            isSelectionMode: viewModel.isSelectionMode
+        ) { [weak self] in
+            self?.toggleSelectionMode()
         }
-        
-        // ガラス効果背景なので背景色は透明に
-        floatingButton.backgroundColor = .clear
-        floatingButton.setTitleColor(.label, for: .normal)
-        
-        // iOS 15以降の新しい方法でパディングを設定
-        if #available(iOS 15.0, *) {
-            var config = UIButton.Configuration.plain()
-            config.contentInsets = NSDirectionalEdgeInsets(top: 8, leading: 16, bottom: 8, trailing: 16)
-            floatingButton.configuration = config
-        } else {
-            floatingButton.contentEdgeInsets = UIEdgeInsets(top: 8, left: 16, bottom: 8, right: 16)
-        }
+
+        selectionModeButtonHostingController.rootView = updatedButton
     }
 
     private func setupBindings() {
@@ -163,7 +115,7 @@ final class MediaLibraryViewController: UIViewController {
         viewModel.$isSelectionMode
             .receive(on: DispatchQueue.main)
             .sink { [weak self] isSelectionMode in
-                self?.updateFloatingButtonAppearance()
+                self?.updateSelectionModeButton()
                 self?.mediaLibraryCollectionView.setSelectionMode(isSelectionMode)
             }
             .store(in: &cancellables)
@@ -177,14 +129,12 @@ final class MediaLibraryViewController: UIViewController {
             .store(in: &cancellables)
     }
 
-    
-
     private func showError(_ error: MediaError?) {
         guard let error = error else { return }
 
         let alert = UIAlertController(
             title: NSLocalizedString("Error", bundle: .module, comment: ""),
-            message: errorMessage(for: error),
+            message: error.localizedMessage,
             preferredStyle: .alert
         )
 
@@ -197,9 +147,49 @@ final class MediaLibraryViewController: UIViewController {
 
         present(alert, animated: true)
     }
+    
+    // MARK: - Editing Mode
+    
+    override func setEditing(_ editing: Bool, animated: Bool) {
+        if isEditing != editing {
+            super.setEditing(editing, animated: animated)
+            mediaLibraryCollectionView.collectionView.isEditing = editing
 
-    private func errorMessage(for error: MediaError) -> String {
-        switch error {
+            // DiffableDataSourceを使用しているため、CollectionView経由でセルを更新
+            mediaLibraryCollectionView.updateSelectionState()
+            
+            if !editing {
+                // Clear selection if leaving edit mode.
+                mediaLibraryCollectionView.collectionView.indexPathsForSelectedItems?.forEach({ (indexPath) in
+                    mediaLibraryCollectionView.collectionView.deselectItem(at: indexPath, animated: animated)
+                })
+            }
+            
+            updateUserInterface()
+        }
+    }
+    
+    private func updateUserInterface() {
+        // ViewModelの選択モード状態を更新
+        if isEditing && !viewModel.isSelectionMode {
+            viewModel.enterSelectionMode()
+        } else if !isEditing && viewModel.isSelectionMode {
+            viewModel.exitSelectionMode()
+        }
+    }
+    
+    private func toggleSelectionMode() {
+        // Toggle selection state.
+        setEditing(!isEditing, animated: true)
+    }
+}
+
+// MARK: - MediaError Extension
+
+extension MediaError {
+    /// ユーザー向けのローカライズされたエラーメッセージ
+    var localizedMessage: String {
+        switch self {
         case .invalidMediaID:
             return NSLocalizedString("Invalid media ID", bundle: .module, comment: "")
         case .invalidFilePath:
@@ -217,40 +207,5 @@ final class MediaLibraryViewController: UIViewController {
         case .mediaLoadFailed:
             return NSLocalizedString("Photo loading failed", bundle: .module, comment: "")
         }
-    }
-    
-    // MARK: - Editing Mode
-    
-    override func setEditing(_ editing: Bool, animated: Bool) {
-        if isEditing != editing {
-            super.setEditing(editing, animated: animated)
-            collectionView.isEditing = editing
-            
-            // DiffableDataSourceを使用しているため、CollectionView経由でセルを更新
-            mediaLibraryCollectionView.updateSelectionState()
-            
-            if !editing {
-                // Clear selection if leaving edit mode.
-                collectionView.indexPathsForSelectedItems?.forEach({ (indexPath) in
-                    collectionView.deselectItem(at: indexPath, animated: animated)
-                })
-            }
-            
-            updateUserInterface()
-        }
-    }
-    
-    private func updateUserInterface() {
-        // ViewModelの選択モード状態を更新
-        if isEditing && !viewModel.isSelectionMode {
-            viewModel.enterSelectionMode()
-        } else if !isEditing && viewModel.isSelectionMode {
-            viewModel.exitSelectionMode()
-        }
-    }
-    
-    @objc private func floatingButtonTapped() {
-        // Toggle selection state.
-        setEditing(!isEditing, animated: true)
     }
 }
