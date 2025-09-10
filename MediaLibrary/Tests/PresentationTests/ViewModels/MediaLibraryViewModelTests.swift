@@ -20,7 +20,6 @@ struct MediaLibraryViewModelTests {
         #expect(viewModel.media.count == 0)
         #expect(viewModel.isLoadingMedia == false)
         #expect(viewModel.error == nil)
-        #expect(viewModel.hasError == false)
         #expect(viewModel.thumbnails.count == 0)
     }
 
@@ -46,7 +45,6 @@ struct MediaLibraryViewModelTests {
         #expect(viewModel.media.count == 2)
         #expect(viewModel.isLoadingMedia == false)
         #expect(viewModel.error == nil)
-        #expect(viewModel.hasError == false)
     }
 
     @Test("権限拒否エラーのテスト")
@@ -66,7 +64,6 @@ struct MediaLibraryViewModelTests {
         #expect(viewModel.media.count == 0)
         #expect(viewModel.isLoadingMedia == false)
         #expect(viewModel.error == .permissionDenied)
-        #expect(viewModel.hasError == true)
     }
 
     @Test("メディア読み込み失敗のテスト")
@@ -86,7 +83,6 @@ struct MediaLibraryViewModelTests {
         #expect(viewModel.media.count == 0)
         #expect(viewModel.isLoadingMedia == false)
         #expect(viewModel.error == .permissionDenied)
-        #expect(viewModel.hasError == true)
     }
 
     @Test("サムネイル読み込みのテスト")
@@ -155,14 +151,13 @@ struct MediaLibraryViewModelTests {
         let viewModel = MediaLibraryViewModel(mediaLibraryService: mockAppService)
 
         await viewModel.loadPhotos()
-        #expect(viewModel.hasError == true)
+        #expect(viewModel.error != nil)
 
         // Act
         viewModel.clearError()
 
         // Assert
         #expect(viewModel.error == nil)
-        #expect(viewModel.hasError == false)
     }
 
     @Test("サムネイルタスクキャンセルのテスト")
@@ -207,7 +202,6 @@ struct MediaLibraryViewModelTests {
         #expect(viewModel.isSelectionMode == false)
         #expect(viewModel.selectedMediaIDs.isEmpty)
         #expect(viewModel.selectedMedia.isEmpty)
-        #expect(viewModel.selectedCount == 0)
     }
 
     @Test("選択モード開始のテスト")
@@ -251,7 +245,7 @@ struct MediaLibraryViewModelTests {
         }
 
         #expect(viewModel.isSelectionMode == true)
-        #expect(viewModel.selectedCount > 0)
+        #expect(viewModel.selectedMedia.count > 0)
 
         // Act
         viewModel.exitSelectionMode()
@@ -259,7 +253,7 @@ struct MediaLibraryViewModelTests {
         // Assert
         #expect(viewModel.isSelectionMode == false)
         #expect(viewModel.selectedMediaIDs.isEmpty)
-        #expect(viewModel.selectedCount == 0)
+        #expect(viewModel.selectedMedia.count == 0)
     }
 
     @Test("メディア選択のテスト")
@@ -289,7 +283,6 @@ struct MediaLibraryViewModelTests {
 
         // Assert
         #expect(viewModel.isSelected(firstMedia.id) == true)
-        #expect(viewModel.selectedCount == 1)
         #expect(viewModel.selectedMedia.count == 1)
         #expect(viewModel.selectedMedia.first?.id == firstMedia.id)
 
@@ -298,7 +291,7 @@ struct MediaLibraryViewModelTests {
 
         // Assert
         #expect(viewModel.isSelected(firstMedia.id) == false)
-        #expect(viewModel.selectedCount == 0)
+        #expect(viewModel.selectedMedia.count == 0)
         #expect(viewModel.selectedMedia.isEmpty)
     }
 
@@ -324,7 +317,7 @@ struct MediaLibraryViewModelTests {
 
         // Assert - 選択されない
         #expect(viewModel.isSelected(firstMedia.id) == false)
-        #expect(viewModel.selectedCount == 0)
+        #expect(viewModel.selectedMedia.count == 0)
     }
 
     @Test("全選択のテスト")
@@ -349,7 +342,6 @@ struct MediaLibraryViewModelTests {
         viewModel.selectAll()
 
         // Assert
-        #expect(viewModel.selectedCount == 3)
         #expect(viewModel.selectedMedia.count == 3)
         
         for media in viewModel.media {
@@ -375,13 +367,12 @@ struct MediaLibraryViewModelTests {
         viewModel.enterSelectionMode()
         viewModel.selectAll()
 
-        #expect(viewModel.selectedCount == 2)
+        #expect(viewModel.selectedMedia.count == 2)
 
         // Act
         viewModel.clearSelection()
 
         // Assert
-        #expect(viewModel.selectedCount == 0)
         #expect(viewModel.selectedMedia.isEmpty)
         #expect(viewModel.selectedMediaIDs.isEmpty)
     }
@@ -409,7 +400,7 @@ struct MediaLibraryViewModelTests {
         viewModel.toggleSelection(for: mockMedia[2].id)
 
         // Assert
-        #expect(viewModel.selectedCount == 2)
+        #expect(viewModel.selectedMedia.count == 2)
         #expect(viewModel.isSelected(mockMedia[0].id) == true)
         #expect(viewModel.isSelected(mockMedia[1].id) == false)
         #expect(viewModel.isSelected(mockMedia[2].id) == true)
@@ -508,4 +499,10 @@ private struct MockMediaCacheRepository: MediaCacheRepository, Sendable {
     func startCaching(for media: [MediaLibraryDomain.Media], size: CGSize) {}
     func stopCaching(for media: [MediaLibraryDomain.Media], size: CGSize) {}
     func resetCache() {}
+}
+
+extension MediaLibraryViewModel {
+    var selectedMedia: [Media] {
+        media.filter { selectedMediaIDs.contains($0.id) }
+    }
 }

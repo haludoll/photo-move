@@ -23,8 +23,8 @@ struct MediaThumbnailCellTests {
         let media = try! createTestMedia(id: "test-id")
         
         // Act
-        cell.configure(with: media, thumbnail: nil, isSelected: false)
-        
+        cell.configure(with: media.id, thumbnail: nil, isSelected: false)
+
         // Assert
         #expect(cell.representedAssetIdentifier == "test-id")
     }
@@ -35,8 +35,8 @@ struct MediaThumbnailCellTests {
         let media = try! createTestMedia(id: "test-id")
         
         // Act - 選択状態で設定
-        cell.configure(with: media, thumbnail: nil, isSelected: true)
-        
+        cell.configure(with: media.id, thumbnail: nil, isSelected: true)
+
         // Assert - チェックマークビューが作成されていることを確認
         let checkmarkView = findCheckmarkView(in: cell.contentView)
         #expect(checkmarkView != nil)
@@ -53,9 +53,9 @@ struct MediaThumbnailCellTests {
         let media = try! createTestMedia(id: "test-id")
         
         // Act - まず選択状態にして、その後非選択に
-        cell.configure(with: media, thumbnail: nil, isSelected: true)
-        cell.configure(with: media, thumbnail: nil, isSelected: false)
-        
+        cell.configure(with: media.id, thumbnail: nil, isSelected: true)
+        cell.configure(with: media.id, thumbnail: nil, isSelected: false)
+
         // Assert
         let checkmarkView = findCheckmarkView(in: cell.contentView)
         #expect(checkmarkView?.isHidden == true)
@@ -75,8 +75,8 @@ struct MediaThumbnailCellTests {
         )
         
         // Act
-        cell.configure(with: media, thumbnail: thumbnail, isSelected: false)
-        
+        cell.configure(with: media.id, thumbnail: thumbnail, isSelected: false)
+
         // Assert
         let imageView = findImageView(in: cell.contentView)
         #expect(imageView != nil)
@@ -89,7 +89,7 @@ struct MediaThumbnailCellTests {
         let media = try! createTestMedia(id: "test-id")
         
         // セルを設定
-        cell.configure(with: media, thumbnail: nil, isSelected: true)
+        cell.configure(with: media.id, thumbnail: nil, isSelected: true)
         #expect(cell.representedAssetIdentifier == "test-id")
         
         // Act - 再利用準備

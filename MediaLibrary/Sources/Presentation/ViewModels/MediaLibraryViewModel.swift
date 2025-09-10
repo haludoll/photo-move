@@ -24,22 +24,6 @@ class MediaLibraryViewModel: ObservableObject {
     private let mediaLibraryService: any MediaLibraryAppService
     private var thumbnailLoadingTasks: [Media.ID: Task<Void, Never>] = [:]
 
-    // MARK: - Computed Properties
-
-    var hasError: Bool {
-        error != nil
-    }
-    
-    /// 選択されたメディア一覧
-    var selectedMedia: [Media] {
-        media.filter { selectedMediaIDs.contains($0.id) }
-    }
-    
-    /// 選択されたメディアの数
-    var selectedCount: Int {
-        selectedMediaIDs.count
-    }
-
     // MARK: - Initialization
 
     init(mediaLibraryService: any MediaLibraryAppService) {
