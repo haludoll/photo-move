@@ -227,8 +227,9 @@ final class MediaLibraryViewController: UIViewController {
             super.setEditing(editing, animated: animated)
             collectionView.isEditing = editing
             
-            // Reload visible items to make sure our collection view cells show their selection indicators.
-            collectionView.reloadItems(at: collectionView.indexPathsForVisibleItems)
+            // DiffableDataSourceを使用しているため、CollectionView経由でセルを更新
+            mediaLibraryCollectionView.updateVisibleCells()
+            
             if !editing {
                 // Clear selection if leaving edit mode.
                 collectionView.indexPathsForSelectedItems?.forEach({ (indexPath) in
