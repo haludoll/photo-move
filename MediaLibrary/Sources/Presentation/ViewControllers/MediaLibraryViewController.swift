@@ -220,15 +220,37 @@ final class MediaLibraryViewController: UIViewController {
         }
     }
     
-    @objc private func floatingButtonTapped() {
-        if viewModel.isSelectionMode {
-            // 編集モードを終了
-            setEditing(false, animated: true)
-            viewModel.exitSelectionMode()
-        } else {
-            // 編集モードに入る
-            setEditing(true, animated: true)
-            viewModel.enterSelectionMode()
+    // MARK: - Editing Mode
+    
+    override func setEditing(_ editing: Bool, animated: Bool) {
+        if isEditing != editing {
+            super.setEditing(editing, animated: animated)
+            collectionView.isEditing = editing
+            
+            // Reload visible items to make sure our collection view cells show their selection indicators.
+            collectionView.reloadItems(at: collectionView.indexPathsForVisibleItems)
+            if !editing {
+                // Clear selection if leaving edit mode.
+                collectionView.indexPathsForSelectedItems?.forEach({ (indexPath) in
+                    collectionView.deselectItem(at: indexPath, animated: animated)
+                })
+            }
+            
+            updateUserInterface()
         }
+    }
+    
+    private func updateUserInterface() {
+        // ViewModelの選択モード状態を更新
+        if isEditing && !viewModel.isSelectionMode {
+            viewModel.enterSelectionMode()
+        } else if !isEditing && viewModel.isSelectionMode {
+            viewModel.exitSelectionMode()
+        }
+    }
+    
+    @objc private func floatingButtonTapped() {
+        // Toggle selection state.
+        setEditing(!isEditing, animated: true)
     }
 }

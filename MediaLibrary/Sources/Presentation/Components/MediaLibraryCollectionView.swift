@@ -59,6 +59,9 @@ final class MediaLibraryCollectionView: UIView {
     private func setupCollectionView() {
         collectionView.backgroundColor = .systemBackground
         collectionView.translatesAutoresizingMaskIntoConstraints = false
+        collectionView.allowsSelection = true
+        collectionView.allowsMultipleSelection = false
+        collectionView.allowsMultipleSelectionDuringEditing = true
 
         // セル登録
         collectionView.register(
