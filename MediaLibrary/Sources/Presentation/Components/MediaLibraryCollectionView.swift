@@ -138,18 +138,9 @@ final class MediaLibraryCollectionView: UIView {
 
     /// 表示中のセルを更新（サムネイル読み込み完了時）
     func updateVisibleCells() {
-        guard let viewModel = viewModel else { return }
-
-        for cell in collectionView.visibleCells {
-            guard let indexPath = collectionView.indexPath(for: cell),
-                  let thumbnailCell = cell as? MediaThumbnailCell else { continue }
-
-            if let media = dataSource.itemIdentifier(for: indexPath) {
-                let thumbnail = viewModel.thumbnails[media.id]
-                let isSelected = viewModel.isSelected(media.id)
-                thumbnailCell.configure(with: media, thumbnail: thumbnail, isSelected: isSelected)
-            }
-        }
+        // DiffableDataSourceの場合は現在のスナップショットを再適用
+        let snapshot = dataSource.snapshot()
+        dataSource.apply(snapshot, animatingDifferences: false)
     }
 
     /// レイアウト確定後の初期化処理
