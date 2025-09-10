@@ -9,9 +9,9 @@ final class MediaThumbnailCell: UICollectionViewCell {
     static let identifier = "MediaThumbnailCell"
 
     private var hostingController: UIHostingController<PhotoThumbnailView>?
-    private var imageView: UIImageView?
-    private var checkmarkView: UIImageView?
-    private var overlayView: UIView?
+    private var imageView: UIImageView!
+    private var checkmarkView: UIImageView!
+    private var overlayView: UIView!
 
     /// セル再利用時に誤った画像が表示されるのを防ぐ
     var representedAssetIdentifier: String!
@@ -32,49 +32,33 @@ final class MediaThumbnailCell: UICollectionViewCell {
 
     private func setupUI() {
         contentView.backgroundColor = .clear
+        setupImageView()
+        setupOverlayView()
+        setupCheckmarkView()
     }
 
     // MARK: - Configuration
 
     func configure(with mediaID: Media.ID, thumbnail: Media.Thumbnail?, isSelected: Bool = false) {
         representedAssetIdentifier = mediaID.value
-
-        // 画像表示の設定
-        if imageView == nil {
-            setupImageView()
-        }
-
         updateThumbnail(with: thumbnail)
-
         updateCheckmark(isSelected: isSelected)
     }
 
     func updateThumbnail(with thumbnail: Media.Thumbnail?) {
-        if let thumbnail = thumbnail {
-            imageView?.image = ThumbnailConverter.createImage(from: thumbnail)
+        if let thumbnail {
+            imageView.image = ThumbnailConverter.createImage(from: thumbnail)
         } else {
-            imageView?.image = nil
+            imageView.image = nil
         }
     }
 
     private func updateCheckmark(isSelected: Bool) {
-        if isSelected {
-            if checkmarkView == nil {
-                setupCheckmarkView()
-            }
-            if overlayView == nil {
-                setupOverlayView()
-            }
-            checkmarkView?.isHidden = false
-            overlayView?.isHidden = false
-        } else {
-            checkmarkView?.isHidden = true
-            overlayView?.isHidden = true
-        }
+        checkmarkView.isHidden = !isSelected
+        overlayView.isHidden = !isSelected
     }
 
     private func setupImageView() {
-        // TEST: Appleサンプルと同じUIImageViewを使用
         let imageView = UIImageView()
         imageView.contentMode = .scaleAspectFill
         imageView.clipsToBounds = true
@@ -127,41 +111,5 @@ final class MediaThumbnailCell: UICollectionViewCell {
             checkmarkView.widthAnchor.constraint(equalToConstant: 24),
             checkmarkView.heightAnchor.constraint(equalToConstant: 24)
         ])
-    }
-
-    private func setupHostingController() {
-        // 初回のみUIHostingControllerを作成
-        let initialView = PhotoThumbnailView(
-            media: nil,
-            thumbnail: nil,
-            size: CGSize(width: 200, height: 200)
-        )
-
-        let hostingController = UIHostingController(rootView: initialView)
-        hostingController.view.backgroundColor = .clear
-        hostingController.view.translatesAutoresizingMaskIntoConstraints = false
-
-        self.hostingController = hostingController
-
-        contentView.addSubview(hostingController.view)
-
-        // レイアウト制約を設定（一度のみ）
-        NSLayoutConstraint.activate([
-            hostingController.view.topAnchor.constraint(equalTo: contentView.topAnchor),
-            hostingController.view.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
-            hostingController.view.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
-            hostingController.view.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
-        ])
-    }
-
-    // MARK: - Reuse
-
-    override func prepareForReuse() {
-        super.prepareForReuse()
-
-        // TEST: UIImageViewのクリア
-        imageView?.image = nil
-        checkmarkView?.isHidden = true
-        overlayView?.isHidden = true
     }
 }

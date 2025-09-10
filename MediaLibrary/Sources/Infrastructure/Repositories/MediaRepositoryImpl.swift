@@ -1,6 +1,6 @@
 import Foundation
 import MediaLibraryDomain
-import Photos
+@preconcurrency import Photos
 import UIKit
 
 /// PhotoKitを使用したMediaRepositoryの実装

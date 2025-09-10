@@ -30,6 +30,11 @@ class MediaLibraryViewModel: ObservableObject {
         self.mediaLibraryService = mediaLibraryService
     }
 
+    deinit {
+        // MainActorのコンテキストでタスクをキャンセル
+        thumbnailLoadingTasks.values.forEach { $0.cancel() }
+    }
+
     // MARK: - Public Methods
 
     /// 写真を読み込む
@@ -141,12 +146,5 @@ class MediaLibraryViewModel: ObservableObject {
     /// すべてのメディアを選択する
     func selectAll() {
         selectedMediaIDs = Set(media.map(\.id))
-    }
-
-    // MARK: - Private Methods
-
-    deinit {
-        // MainActorのコンテキストでタスクをキャンセル
-        thumbnailLoadingTasks.values.forEach { $0.cancel() }
     }
 }
