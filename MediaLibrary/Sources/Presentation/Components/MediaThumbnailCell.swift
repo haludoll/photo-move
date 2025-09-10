@@ -13,7 +13,7 @@ final class MediaThumbnailCell: UICollectionViewCell {
     private var checkmarkView: UIImageView?
     private var overlayView: UIView?
 
-    /// Appleサンプル準拠：セル再利用時の問題を防ぐため
+    /// セル再利用時に誤った画像が表示されるのを防ぐ
     var representedAssetIdentifier: String!
 
     // MARK: - Initialization
@@ -36,25 +36,27 @@ final class MediaThumbnailCell: UICollectionViewCell {
 
     // MARK: - Configuration
 
-    func configure(with media: Media, thumbnail: Media.Thumbnail?, isSelected: Bool = false) {
-        // Appleサンプル準拠：representedAssetIdentifierを設定
-        representedAssetIdentifier = media.id.value
+    func configure(with mediaID: Media.ID, thumbnail: Media.Thumbnail?, isSelected: Bool = false) {
+        representedAssetIdentifier = mediaID.value
 
         // 画像表示の設定
         if imageView == nil {
             setupImageView()
         }
 
+        updateThumbnail(with: thumbnail)
+
+        updateCheckmark(isSelected: isSelected)
+    }
+
+    func updateThumbnail(with thumbnail: Media.Thumbnail?) {
         if let thumbnail = thumbnail {
             imageView?.image = ThumbnailConverter.createImage(from: thumbnail)
         } else {
             imageView?.image = nil
         }
-        
-        // チェックマーク表示の設定
-        updateCheckmark(isSelected: isSelected)
     }
-    
+
     private func updateCheckmark(isSelected: Bool) {
         if isSelected {
             if checkmarkView == nil {
@@ -161,6 +163,5 @@ final class MediaThumbnailCell: UICollectionViewCell {
         imageView?.image = nil
         checkmarkView?.isHidden = true
         overlayView?.isHidden = true
-        representedAssetIdentifier = nil
     }
 }

@@ -78,27 +78,21 @@ class MediaLibraryViewModel: ObservableObject {
 
         // サムネイル読み込みタスクを開始
         let task = Task { [weak self] in
+            guard let self else { return }
             do {
-                let thumbnail = try await self?.mediaLibraryService.loadThumbnail(
+                let thumbnail = try await self.mediaLibraryService.loadThumbnail(
                     for: mediaID,
                     size: size
                 )
 
-                if let thumbnail = thumbnail {
-                    await MainActor.run {
-                        self?.thumbnails[mediaID] = thumbnail
-                        // PassthroughSubject経由で効率的に通知
-                        self?.thumbnailLoadedSubject.send(mediaID)
-                    }
-                }
+                self.thumbnails[mediaID] = thumbnail
+                self.thumbnailLoadedSubject.send(mediaID)
             } catch {
-                // サムネイル読み込みエラーは個別に処理せず、デフォルト画像を表示
+                // TODO: サムネイル読み込みエラーは個別に処理せず、デフォルト画像を表示
                 print("Failed to load thumbnail for \(mediaID.value): \(error)")
             }
 
-            await MainActor.run {
-                self?.thumbnailLoadingTasks[mediaID] = nil
-            }
+            self.thumbnailLoadingTasks[mediaID] = nil
         }
 
         thumbnailLoadingTasks[mediaID] = task

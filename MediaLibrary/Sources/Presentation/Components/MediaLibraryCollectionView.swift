@@ -89,7 +89,8 @@ final class MediaLibraryCollectionView: UIView {
             // サムネイル取得（既に読み込み済みのもののみ表示）
             let thumbnail = self.viewModel?.thumbnails[media.id]
             let isSelected = self.viewModel?.isSelected(media.id) ?? false
-            cell.configure(with: media, thumbnail: thumbnail, isSelected: isSelected)
+
+            cell.configure(with: media.id, thumbnail: thumbnail, isSelected: isSelected)
 
             // サムネイルが未取得の場合のみ読み込みを実行
             if thumbnail == nil {
@@ -136,23 +137,17 @@ final class MediaLibraryCollectionView: UIView {
         dataSource.apply(snapshot, animatingDifferences: true)
     }
 
-    /// 表示中のセルを更新（サムネイル読み込み完了時）
-    func updateVisibleCells() {
-        // サムネイル更新の場合は直接セルを更新
-        guard let viewModel = viewModel else { return }
+    /// サムネイルを更新
+    func updateThumbnail(from mediaID: Media.ID) {
+        guard let indexPath = indexPath(for: mediaID),
+              let cell = collectionView.cellForItem(at: indexPath) as? MediaThumbnailCell,
+              let thumbnail = viewModel?.thumbnails[mediaID] else { return }
 
-        for cell in collectionView.visibleCells {
-            guard let indexPath = collectionView.indexPath(for: cell),
-                  let thumbnailCell = cell as? MediaThumbnailCell else { continue }
-
-            if let media = dataSource.itemIdentifier(for: indexPath) {
-                let thumbnail = viewModel.thumbnails[media.id]
-                let isSelected = viewModel.isSelected(media.id)
-                thumbnailCell.configure(with: media, thumbnail: thumbnail, isSelected: isSelected)
-            }
+        if cell.representedAssetIdentifier == mediaID.value {
+            cell.updateThumbnail(with: thumbnail)
         }
     }
-    
+
     /// 選択状態のみ更新（編集モード切り替え時）
     func updateSelectionState() {
         // 選択状態の変更はスナップショット再適用で効率的に処理
@@ -165,17 +160,6 @@ final class MediaLibraryCollectionView: UIView {
         updateThumbnailSize()
         loadInitialThumbnails()
         updateCachedAssets()
-    }
-
-    /// CollectionViewデータを更新
-    func updateData() {
-        guard let viewModel = viewModel else { return }
-
-        if collectionView.numberOfItems(inSection: 0) != viewModel.media.count {
-            collectionView.reloadData()
-        } else {
-            updateVisibleCells()
-        }
     }
 
     // MARK: - Private Methods
@@ -321,5 +305,24 @@ extension MediaLibraryCollectionView: UICollectionViewDataSourcePrefetching {
             let media = viewModel.media[indexPath.item]
             viewModel.cancelThumbnailLoading(for: media.id)
         }
+    }
+}
+
+
+// MARK: - Helper Method
+
+extension MediaLibraryCollectionView {
+    /// mediaID から indexPath を取得するヘルパー
+    private func indexPath(for mediaID: Media.ID) -> IndexPath? {
+        for section in 0..<(dataSource.numberOfSections(in: collectionView)) {
+            for itemIndex in 0..<(collectionView.numberOfItems(inSection: section)) {
+                let indexPath = IndexPath(item: itemIndex, section: section)
+                if let item = dataSource.itemIdentifier(for: indexPath),
+                   item.id == mediaID {
+                    return indexPath
+                }
+            }
+        }
+        return nil
     }
 }

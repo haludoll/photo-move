@@ -152,15 +152,14 @@ final class MediaLibraryViewController: UIViewController {
                 }
             }
             .store(in: &cancellables)
-            
-        // サムネイル読み込み完了の監視（PassthroughSubject）
+
         viewModel.thumbnailLoadedSubject
             .receive(on: DispatchQueue.main)
             .sink { [weak self] mediaID in
-                self?.mediaLibraryCollectionView.updateVisibleCells()
+                self?.mediaLibraryCollectionView.updateThumbnail(from: mediaID)
             }
             .store(in: &cancellables)
-            
+
         // 選択モードの監視
         viewModel.$isSelectionMode
             .receive(on: DispatchQueue.main)
@@ -179,6 +178,7 @@ final class MediaLibraryViewController: UIViewController {
             .store(in: &cancellables)
     }
 
+    
 
     private func showError(_ error: MediaError?) {
         guard let error = error else { return }
