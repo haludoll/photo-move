@@ -10,7 +10,7 @@ class MediaLibraryViewModel: ObservableObject {
     // MARK: - Published Properties
 
     @Published private(set) var media: [Media] = []
-    @Published private(set) var isLoading = false
+    @Published private(set) var isLoadingMedia = false
     @Published private(set) var error: MediaError?
     @Published private(set) var permissionStatus: PhotoLibraryPermissionStatus = .notDetermined
     @Published private(set) var thumbnails: [Media.ID: Media.Thumbnail] = [:]
@@ -51,7 +51,7 @@ class MediaLibraryViewModel: ObservableObject {
 
     /// 写真を読み込む
     func loadPhotos() async {
-        isLoading = true
+        isLoadingMedia = true
         error = nil
 
         do {
@@ -64,7 +64,7 @@ class MediaLibraryViewModel: ObservableObject {
             media = []
         }
 
-        isLoading = false
+        isLoadingMedia = false
     }
 
     /// サムネイルを読み込む

@@ -18,7 +18,7 @@ struct MediaLibraryViewModelTests {
         let viewModel = MediaLibraryViewModel(mediaLibraryService: mockAppService)
 
         #expect(viewModel.media.count == 0)
-        #expect(viewModel.isLoading == false)
+        #expect(viewModel.isLoadingMedia == false)
         #expect(viewModel.error == nil)
         #expect(viewModel.hasError == false)
         #expect(viewModel.thumbnails.count == 0)
@@ -44,7 +44,7 @@ struct MediaLibraryViewModelTests {
 
         // Assert
         #expect(viewModel.media.count == 2)
-        #expect(viewModel.isLoading == false)
+        #expect(viewModel.isLoadingMedia == false)
         #expect(viewModel.error == nil)
         #expect(viewModel.hasError == false)
     }
@@ -64,7 +64,7 @@ struct MediaLibraryViewModelTests {
 
         // Assert
         #expect(viewModel.media.count == 0)
-        #expect(viewModel.isLoading == false)
+        #expect(viewModel.isLoadingMedia == false)
         #expect(viewModel.error == .permissionDenied)
         #expect(viewModel.hasError == true)
     }
@@ -84,7 +84,7 @@ struct MediaLibraryViewModelTests {
 
         // Assert
         #expect(viewModel.media.count == 0)
-        #expect(viewModel.isLoading == false)
+        #expect(viewModel.isLoadingMedia == false)
         #expect(viewModel.error == .permissionDenied)
         #expect(viewModel.hasError == true)
     }
