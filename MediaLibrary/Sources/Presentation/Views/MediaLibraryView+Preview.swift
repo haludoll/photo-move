@@ -40,9 +40,9 @@ import UIKit
                 let config = UIImage.SymbolConfiguration(pointSize: 40, weight: .medium)
                 let image = UIImage(systemName: "photo.fill", withConfiguration: config)?.withTintColor(color, renderingMode: .alwaysOriginal) ?? UIImage()
 
-                let thumbnail = try Media.Thumbnail.from(
+                let thumbnail = try ThumbnailConverter.createThumbnail(
+                    from: image,
                     mediaID: mediaItem.id,
-                    image: image,
                     size: CGSize(width: 80, height: 80)
                 )
 

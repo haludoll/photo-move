@@ -12,7 +12,8 @@ struct MediaThumbnailCellTests {
         
         // Assert
         #expect(cell.representedAssetIdentifier == nil)
-        #expect(cell.contentView.subviews.isEmpty == false) // setupUI により何かしらのビューが追加される
+        #expect(cell.contentView.subviews.isEmpty == true) // 初期状態では何もsubviewは追加されていない
+        #expect(cell.contentView.backgroundColor == .clear) // setupUIでbackgroundColorのみ設定される
     }
     
     @Test("メディア設定のテスト")

@@ -46,7 +46,7 @@ final class MediaThumbnailCell: UICollectionViewCell {
         }
 
         if let thumbnail = thumbnail {
-            imageView?.image = thumbnail.image
+            imageView?.image = ThumbnailConverter.createImage(from: thumbnail)
         } else {
             imageView?.image = nil
         }

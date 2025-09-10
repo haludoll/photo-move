@@ -1,5 +1,4 @@
 import Foundation
-import UIKit
 
 /// メディア（写真）エンティティ
 package struct Media: Identifiable, Hashable {
@@ -41,19 +40,6 @@ package struct Media: Identifiable, Hashable {
             self.mediaID = mediaID
             self.imageData = imageData
             self.size = size
-        }
-        
-        /// UIImageからThumbnailを作成する便利メソッド（UI層で使用）
-        package static func from(mediaID: ID, image: UIImage, size: CGSize) throws -> Thumbnail {
-            guard let imageData = image.pngData() else {
-                throw MediaError.invalidThumbnailData
-            }
-            return try Thumbnail(mediaID: mediaID, imageData: imageData, size: size)
-        }
-        
-        /// imageDataからUIImageを作成する便利メソッド（UI層で使用）
-        package var image: UIImage? {
-            return UIImage(data: imageData)
         }
     }
 
