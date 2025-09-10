@@ -111,15 +111,12 @@ struct MediaLibraryAppServiceTests {
 
 /// 成功用のMockRepository
 private struct MockSuccessRepository: MediaRepository, Sendable {
-    var cacheRepository: any MediaLibraryDomain.MediaCacheRepository
-    
     let media: [Media]
     let thumbnail: Media.Thumbnail?
 
     init(media: [Media] = [], thumbnail: Media.Thumbnail? = nil) {
         self.media = media
         self.thumbnail = thumbnail
-        self.cacheRepository = MockMediaCacheRepository()
     }
 
     func fetchMedia() async throws -> [Media] {
@@ -141,11 +138,8 @@ private struct MockSuccessRepository: MediaRepository, Sendable {
 
 /// 失敗用のMockRepository
 private struct MockFailureRepository: MediaRepository, Sendable {
-    var cacheRepository: any MediaLibraryDomain.MediaCacheRepository
     
-    init() {
-        self.cacheRepository = MockMediaCacheRepository()
-    }
+    init() {}
     
     func fetchMedia() async throws -> [Media] {
         throw MediaError.permissionDenied
@@ -180,11 +174,3 @@ private struct MockPermissionDeniedService: PhotoLibraryPermissionService, Senda
     }
 }
 
-// MARK: - Mock Cache Repository
-
-/// MediaCacheRepositoryのモック実装
-private struct MockMediaCacheRepository: MediaCacheRepository, Sendable {
-    func startCaching(for media: [MediaLibraryDomain.Media], size: CGSize) {}
-    func stopCaching(for media: [MediaLibraryDomain.Media], size: CGSize) {}
-    func resetCache() {}
-}

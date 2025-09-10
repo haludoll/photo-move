@@ -21,7 +21,6 @@ final class MediaLibraryCollectionView: UIView {
     private let collectionView: UICollectionView
     private weak var viewModel: MediaLibraryViewModel?
     private var thumbnailSize: CGSize = .init(width: 200, height: 200) // 初期値
-    private var previousPreheatRect = CGRect.zero
     private var isSelectionMode: Bool = false
 
     // MARK: - DiffableDataSource
@@ -159,7 +158,6 @@ final class MediaLibraryCollectionView: UIView {
     func viewDidAppear() {
         updateThumbnailSize()
         loadInitialThumbnails()
-        updateCachedAssets()
     }
 
     // MARK: - Private Methods
@@ -190,63 +188,6 @@ final class MediaLibraryCollectionView: UIView {
         thumbnailSize = CGSize(width: itemSize.width * scale, height: itemSize.height * scale)
     }
 
-    private func resetCachedAssets() {
-        viewModel?.resetCache()
-        previousPreheatRect = .zero
-    }
-
-    /// Apple Sample準拠のプリロードキャッシュ管理
-    /// - 現在の表示範囲の上下0.5倍の範囲をキャッシュ対象とする
-    /// - スクロール量が1/3以上変化した場合のみキャッシュ更新を実行
-    private func updateCachedAssets() {
-        guard let viewModel = viewModel,
-              bounds.width > 0 else { return }
-
-        // 現在の表示範囲を取得
-        let visibleRect = CGRect(origin: collectionView.contentOffset, size: collectionView.bounds.size)
-        // プリロード範囲を作成
-        let preheatRect = RectangleDifferenceCalculator.createPreheatRect(from: visibleRect)
-
-        // 前回との差分が小さい場合は処理をスキップ
-        let threshold = bounds.height / 3
-        guard RectangleDifferenceCalculator.shouldUpdateCache(
-            currentRect: preheatRect,
-            previousRect: previousPreheatRect,
-            threshold: threshold
-        ) else { return }
-
-        // 新しいキャッシュ範囲と前回の差分を計算
-        let differences = RectangleDifferenceCalculator.calculateDifferences(
-            between: previousPreheatRect,
-            and: preheatRect
-        )
-        // 新しくキャッシュするメディアを取得
-        let addedMedia = differences.added
-            .flatMap { rect in indexPathsForElements(in: rect) }
-            .compactMap { indexPath in
-                indexPath.item < viewModel.media.count ? viewModel.media[indexPath.item] : nil
-            }
-        // キャッシュから除去するメディアを取得
-        let removedMedia = differences.removed
-            .flatMap { rect in indexPathsForElements(in: rect) }
-            .compactMap { indexPath in
-                indexPath.item < viewModel.media.count ? viewModel.media[indexPath.item] : nil
-            }
-
-        // キャッシュを更新（追加・削除）
-        viewModel.startCaching(for: addedMedia, size: thumbnailSize)
-        viewModel.stopCaching(for: removedMedia, size: thumbnailSize)
-
-        previousPreheatRect = preheatRect
-    }
-
-    /// 指定した矩形範囲内に含まれるセルのIndexPathを取得
-    private func indexPathsForElements(in rect: CGRect) -> [IndexPath] {
-        guard let layoutAttributes = collectionView.collectionViewLayout.layoutAttributesForElements(in: rect) else {
-            return []
-        }
-        return layoutAttributes.map { $0.indexPath }
-    }
 }
 
 // MARK: - UICollectionViewDelegate
@@ -266,7 +207,7 @@ extension MediaLibraryCollectionView: UICollectionViewDelegate {
 
 extension MediaLibraryCollectionView: UIScrollViewDelegate {
     func scrollViewDidScroll(_: UIScrollView) {
-        updateCachedAssets()
+        // キャッシュ処理を削除：パフォーマンスが良好なため不要
     }
 }
 

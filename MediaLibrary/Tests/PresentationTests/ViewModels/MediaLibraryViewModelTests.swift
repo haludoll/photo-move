@@ -429,14 +429,12 @@ private func createTestMedia(id: String) throws -> Media {
 // MARK: - Mock Services
 
 private struct MockSuccessRepository: MediaRepository, Sendable {
-    var cacheRepository: any MediaLibraryDomain.MediaCacheRepository
     let media: [Media]
     let thumbnail: Media.Thumbnail?
 
     init(media: [Media] = [], thumbnail: Media.Thumbnail? = nil) {
         self.media = media
         self.thumbnail = thumbnail
-        self.cacheRepository = MockMediaCacheRepository()
     }
 
     func fetchMedia() async throws -> [Media] {
@@ -457,11 +455,8 @@ private struct MockSuccessRepository: MediaRepository, Sendable {
 }
 
 private struct MockFailureRepository: MediaRepository, Sendable {
-    var cacheRepository: any MediaLibraryDomain.MediaCacheRepository
     
-    init() {
-        self.cacheRepository = MockMediaCacheRepository()
-    }
+    init() {}
     
     func fetchMedia() async throws -> [Media] {
         throw MediaError.permissionDenied
@@ -492,14 +487,6 @@ private struct MockDeniedPermissionService: PhotoLibraryPermissionService, Senda
     }
 }
 
-// MARK: - Mock Cache Repository
-
-/// MediaCacheRepositoryのモック実装
-private struct MockMediaCacheRepository: MediaCacheRepository, Sendable {
-    func startCaching(for media: [MediaLibraryDomain.Media], size: CGSize) {}
-    func stopCaching(for media: [MediaLibraryDomain.Media], size: CGSize) {}
-    func resetCache() {}
-}
 
 extension MediaLibraryViewModel {
     var selectedMedia: [Media] {

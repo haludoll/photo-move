@@ -6,14 +6,12 @@ import UIKit
 /// PhotoKitを使用したMediaRepositoryの実装
 package struct MediaRepositoryImpl: MediaRepository {
     // MARK: - Properties
-
-    package let cacheRepository: MediaCacheRepository
+    
+    private let imageManager = PHImageManager()
 
     // MARK: - Initialization
 
-    package init(cacheRepository: MediaCacheRepository = MediaCacheRepositoryImpl()) {
-        self.cacheRepository = cacheRepository
-    }
+    package init() {}
 
     // MARK: - Public Methods
 
@@ -97,14 +95,6 @@ package struct MediaRepositoryImpl: MediaRepository {
 
     private func generateThumbnail(from asset: PHAsset, size: CGSize) async throws -> UIImage {
         return try await withCheckedThrowingContinuation { continuation in
-            // PHCachingImageManagerの参照を取得
-            let imageManager: PHCachingImageManager
-            if let cacheImpl = cacheRepository as? MediaCacheRepositoryImpl {
-                imageManager = cacheImpl.cachingImageManager
-            } else {
-                imageManager = PHCachingImageManager()
-            }
-
             // 高品質サムネイル取得のためのオプション設定
             let options = PHImageRequestOptions()
             options.deliveryMode = .highQualityFormat
