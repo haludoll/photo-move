@@ -136,6 +136,7 @@ private func createTestImageData() -> Data {
 
 // MARK: - View Finding Helpers
 
+@MainActor
 private func findImageView(in view: UIView) -> UIImageView? {
     if let imageView = view as? UIImageView {
         return imageView
@@ -150,6 +151,7 @@ private func findImageView(in view: UIView) -> UIImageView? {
     return nil
 }
 
+@MainActor
 private func findCheckmarkView(in view: UIView) -> UIImageView? {
     for subview in view.subviews {
         if let imageView = subview as? UIImageView,
@@ -166,6 +168,7 @@ private func findCheckmarkView(in view: UIView) -> UIImageView? {
     return nil
 }
 
+@MainActor
 private func findOverlayView(in view: UIView) -> UIView? {
     for subview in view.subviews {
         // 黒い半透明のオーバーレイビューを探す

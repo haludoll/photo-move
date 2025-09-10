@@ -43,10 +43,15 @@ package struct MediaRepositoryImpl: MediaRepository {
 
         // サムネイル生成
         let image = try await generateThumbnail(from: asset, size: size)
+        
+        // UIImageからDataに変換
+        guard let imageData = image.pngData() else {
+            throw MediaError.invalidThumbnailData
+        }
 
-        return Media.Thumbnail(
+        return try Media.Thumbnail(
             mediaID: mediaID,
-            image: image,
+            imageData: imageData,
             size: size
         )
     }

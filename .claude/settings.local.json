@@ -28,7 +28,8 @@
       "WebFetch(domain:developer.apple.com)",
       "Bash(swift package:*)",
       "Bash(y)",
-      "Bash(xcodebuild:*)"
+      "Bash(xcodebuild:*)",
+      "Bash(grep:*)"
     ],
     "deny": [],
     "defaultMode": "acceptEdits"
