@@ -174,7 +174,7 @@ final class MediaLibraryViewController: UIViewController {
         viewModel.$selectedMediaIDs
             .receive(on: DispatchQueue.main)
             .sink { [weak self] _ in
-                self?.mediaLibraryCollectionView.updateVisibleCells()
+                self?.mediaLibraryCollectionView.updateSelectionState()
             }
             .store(in: &cancellables)
     }
@@ -228,7 +228,7 @@ final class MediaLibraryViewController: UIViewController {
             collectionView.isEditing = editing
             
             // DiffableDataSourceを使用しているため、CollectionView経由でセルを更新
-            mediaLibraryCollectionView.updateVisibleCells()
+            mediaLibraryCollectionView.updateSelectionState()
             
             if !editing {
                 // Clear selection if leaving edit mode.
