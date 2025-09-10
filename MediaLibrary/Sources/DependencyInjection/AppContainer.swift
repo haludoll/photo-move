@@ -3,6 +3,7 @@ import MediaLibraryApplication
 import MediaLibraryDomain
 import MediaLibraryInfrastructure
 import SwiftUI
+import UIKit
 
 /// アプリケーション全体の依存関係を管理する構造体
 /// Composition Rootパターンを実装
@@ -86,11 +87,11 @@ package enum AppDependencies {
             let color = colors[index]
 
             let config = UIImage.SymbolConfiguration(pointSize: min(size.width, size.height) * 0.6, weight: .medium)
-            let image = UIImage(systemName: imageName, withConfiguration: config)?.withTintColor(color, renderingMode: .alwaysOriginal)
+            let image = UIImage(systemName: imageName, withConfiguration: config)?.withTintColor(color, renderingMode: .alwaysOriginal) ?? UIImage()
 
-            return Media.Thumbnail(
+            return try Media.Thumbnail.from(
                 mediaID: mediaID,
-                image: image ?? UIImage(),
+                image: image,
                 size: size
             )
         }

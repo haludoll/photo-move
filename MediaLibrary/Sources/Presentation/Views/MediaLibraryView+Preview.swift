@@ -32,17 +32,17 @@ import UIKit
     private func createSampleThumbnails() -> [Media.ID: Media.Thumbnail] {
         do {
             let media = try createSampleMedia()
-            return Dictionary(uniqueKeysWithValues: media.compactMap { mediaItem in
+            return Dictionary(uniqueKeysWithValues: try media.compactMap { mediaItem in
                 let colors: [UIColor] = [.systemBlue, .systemGreen, .systemOrange]
                 let index = abs(mediaItem.id.value.hashValue) % colors.count
                 let color = colors[index]
 
                 let config = UIImage.SymbolConfiguration(pointSize: 40, weight: .medium)
-                let image = UIImage(systemName: "photo.fill", withConfiguration: config)?.withTintColor(color, renderingMode: .alwaysOriginal)
+                let image = UIImage(systemName: "photo.fill", withConfiguration: config)?.withTintColor(color, renderingMode: .alwaysOriginal) ?? UIImage()
 
-                let thumbnail = Media.Thumbnail(
+                let thumbnail = try Media.Thumbnail.from(
                     mediaID: mediaItem.id,
-                    image: image ?? UIImage(),
+                    image: image,
                     size: CGSize(width: 80, height: 80)
                 )
 

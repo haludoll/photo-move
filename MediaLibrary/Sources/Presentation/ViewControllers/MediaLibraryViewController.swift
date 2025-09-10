@@ -123,7 +123,15 @@ final class MediaLibraryViewController: UIViewController {
         // ガラス効果背景なので背景色は透明に
         floatingButton.backgroundColor = .clear
         floatingButton.setTitleColor(.label, for: .normal)
-        floatingButton.contentEdgeInsets = UIEdgeInsets(top: 8, left: 16, bottom: 8, right: 16)
+        
+        // iOS 15以降の新しい方法でパディングを設定
+        if #available(iOS 15.0, *) {
+            var config = UIButton.Configuration.plain()
+            config.contentInsets = NSDirectionalEdgeInsets(top: 8, leading: 16, bottom: 8, trailing: 16)
+            floatingButton.configuration = config
+        } else {
+            floatingButton.contentEdgeInsets = UIEdgeInsets(top: 8, left: 16, bottom: 8, right: 16)
+        }
     }
 
     private func setupBindings() {
