@@ -10,15 +10,15 @@ import UIKit
 final class MediaLibraryViewController: UIViewController {
     // MARK: - Properties
 
-    private let viewModel: MediaLibraryViewModel
+    private let mediaLibraryViewModel: MediaLibraryViewModel
     private var mediaLibraryCollectionView: MediaLibraryCollectionView!
     private var cancellables = Set<AnyCancellable>()
-    private var selectionModeButtonHostingController: UIHostingController<MediaSelectionModeButton>!
+    private var previousSelectedIDs: Set<Media.ID> = []
 
     // MARK: - Initialization
 
-    init() {
-        viewModel = MediaLibraryViewModel(mediaLibraryService: AppDependencies.mediaLibraryAppService)
+    init(mediaLibraryViewModel: MediaLibraryViewModel) {
+        self.mediaLibraryViewModel = mediaLibraryViewModel
         super.init(nibName: nil, bundle: nil)
     }
 
@@ -35,7 +35,7 @@ final class MediaLibraryViewController: UIViewController {
         setupBindings()
 
         Task {
-            await viewModel.loadPhotos()
+            await mediaLibraryViewModel.loadPhotos()
         }
     }
 
@@ -50,13 +50,10 @@ final class MediaLibraryViewController: UIViewController {
         view.backgroundColor = .systemBackground
 
         // CollectionView設定
-        mediaLibraryCollectionView = MediaLibraryCollectionView(viewModel: viewModel)
+        mediaLibraryCollectionView = MediaLibraryCollectionView(viewModel: mediaLibraryViewModel)
         mediaLibraryCollectionView.translatesAutoresizingMaskIntoConstraints = false
 
         view.addSubview(mediaLibraryCollectionView)
-
-        // 選択モードボタン設定
-        setupSelectionModeButton()
 
         // レイアウト設定
         NSLayoutConstraint.activate([
@@ -67,35 +64,17 @@ final class MediaLibraryViewController: UIViewController {
         ])
     }
 
-    private func setupSelectionModeButton() {
-        let selectionModeButton = MediaSelectionModeButton(isSelectionMode: viewModel.isSelectionMode) { [weak self] in
-            self?.toggleSelectionMode()
-        }
-
-        selectionModeButtonHostingController = embed(selectionModeButton, at: .topTrailing)
-    }
-
-    private func updateSelectionModeButton() {
-        let updatedButton = MediaSelectionModeButton(
-            isSelectionMode: viewModel.isSelectionMode
-        ) { [weak self] in
-            self?.toggleSelectionMode()
-        }
-
-        selectionModeButtonHostingController.rootView = updatedButton
-    }
-
     private func setupBindings() {
         // media配列の変更のみを監視
-        viewModel.$media
+        mediaLibraryViewModel.$media
             .receive(on: DispatchQueue.main)
             .sink { [weak self] media in
-                self?.mediaLibraryCollectionView.updateMedia(media)
+                self?.mediaLibraryCollectionView.createInitialSnapshot(media)
             }
             .store(in: &cancellables)
-            
+
         // エラーの監視
-        viewModel.$error
+        mediaLibraryViewModel.$error
             .receive(on: DispatchQueue.main)
             .sink { [weak self] error in
                 if let error = error {
@@ -104,7 +83,8 @@ final class MediaLibraryViewController: UIViewController {
             }
             .store(in: &cancellables)
 
-        viewModel.thumbnailLoadedSubject
+        // サムネイルの読み込み監視
+        mediaLibraryViewModel.thumbnailLoadedSubject
             .receive(on: DispatchQueue.main)
             .sink { [weak self] mediaID in
                 self?.mediaLibraryCollectionView.updateThumbnail(from: mediaID)
@@ -112,19 +92,26 @@ final class MediaLibraryViewController: UIViewController {
             .store(in: &cancellables)
 
         // 選択モードの監視
-        viewModel.$isSelectionMode
+        mediaLibraryViewModel.$isSelectionMode
             .receive(on: DispatchQueue.main)
             .sink { [weak self] isSelectionMode in
-                self?.updateSelectionModeButton()
-                self?.mediaLibraryCollectionView.setSelectionMode(isSelectionMode)
+                self?.setEditing(isSelectionMode, animated: true)
             }
             .store(in: &cancellables)
-            
+
         // 選択状態の監視
-        viewModel.$selectedMediaIDs
+        mediaLibraryViewModel.$selectedMediaIDs
             .receive(on: DispatchQueue.main)
-            .sink { [weak self] _ in
-                self?.mediaLibraryCollectionView.updateSelectionState()
+            .sink { [weak self] currentSelectedIDs in
+                guard let self else { return }
+                let added = currentSelectedIDs.subtracting(self.previousSelectedIDs)
+                let removed = self.previousSelectedIDs.subtracting(currentSelectedIDs)
+
+                if !added.isEmpty || !removed.isEmpty {
+                    self.mediaLibraryCollectionView.updateSnapshot(addedIDs: added, removedIDs: removed)
+                }
+
+                self.previousSelectedIDs = currentSelectedIDs
             }
             .store(in: &cancellables)
     }
@@ -142,45 +129,17 @@ final class MediaLibraryViewController: UIViewController {
             title: String(localized: "OK", bundle: .module),
             style: .default
         ) { [weak self] _ in
-            self?.viewModel.clearError()
+            self?.mediaLibraryViewModel.clearError()
         })
 
         present(alert, animated: true)
     }
-    
-    // MARK: - Editing Mode
-    
-    override func setEditing(_ editing: Bool, animated: Bool) {
-        if isEditing != editing {
-            super.setEditing(editing, animated: animated)
-            mediaLibraryCollectionView.collectionView.isEditing = editing
 
-            // DiffableDataSourceを使用しているため、CollectionView経由でセルを更新
-            mediaLibraryCollectionView.updateSelectionState()
-            
-            if !editing {
-                // Clear selection if leaving edit mode.
-                mediaLibraryCollectionView.collectionView.indexPathsForSelectedItems?.forEach({ (indexPath) in
-                    mediaLibraryCollectionView.collectionView.deselectItem(at: indexPath, animated: animated)
-                })
-            }
-            
-            updateUserInterface()
-        }
-    }
-    
-    private func updateUserInterface() {
-        // ViewModelの選択モード状態を更新
-        if isEditing && !viewModel.isSelectionMode {
-            viewModel.enterSelectionMode()
-        } else if !isEditing && viewModel.isSelectionMode {
-            viewModel.exitSelectionMode()
-        }
-    }
-    
-    private func toggleSelectionMode() {
-        // Toggle selection state.
-        setEditing(!isEditing, animated: true)
+    // MARK: - Editing Mode
+
+    override func setEditing(_ editing: Bool, animated: Bool) {
+        super.setEditing(editing, animated: animated)
+        mediaLibraryCollectionView.collectionView.isEditing = editing
     }
 }
 

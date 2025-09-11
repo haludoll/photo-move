@@ -107,18 +107,16 @@ class MediaLibraryViewModel: ObservableObject {
 
 
     // MARK: - Selection Methods
-    
-    /// 選択モードを開始する
-    func enterSelectionMode() {
-        isSelectionMode = true
+
+    func toggleSelectionMode() {
+        if isSelectionMode {
+            isSelectionMode = false
+            selectedMediaIDs.removeAll()
+        } else {
+            isSelectionMode = true
+        }
     }
-    
-    /// 選択モードを終了する
-    func exitSelectionMode() {
-        isSelectionMode = false
-        selectedMediaIDs.removeAll()
-    }
-    
+
     /// メディアが選択されているかどうかを確認する
     /// - Parameter mediaID: 確認するメディアID
     /// - Returns: 選択されている場合はtrue
@@ -128,7 +126,7 @@ class MediaLibraryViewModel: ObservableObject {
     
     /// メディアの選択状態を切り替える（選択モード時のみ）
     /// - Parameter mediaID: 切り替えるメディアID
-    func toggleSelection(for mediaID: Media.ID) {
+    func toggleMediaSelection(for mediaID: Media.ID) {
         guard isSelectionMode else { return }
         
         if selectedMediaIDs.contains(mediaID) {

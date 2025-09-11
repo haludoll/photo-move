@@ -7,7 +7,7 @@ final class MediaLibraryCollectionView: UIView {
     // MARK: - Properties
 
     let collectionView: UICollectionView
-    private weak var viewModel: MediaLibraryViewModel!
+    private let viewModel: MediaLibraryViewModel
     private var thumbnailSize: CGSize = .init(width: 200, height: 200) // 初期値
     private var isSelectionMode: Bool = false
 
@@ -35,10 +35,9 @@ final class MediaLibraryCollectionView: UIView {
         layout.minimumLineSpacing = 2
 
         collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
-
-        super.init(frame: frame)
-        
         self.viewModel = viewModel
+        super.init(frame: frame)
+
         setupCollectionView()
         setupLayout()
 
@@ -74,10 +73,12 @@ final class MediaLibraryCollectionView: UIView {
         ) { [weak self] collectionView, indexPath, media in
             guard let self = self else { return UICollectionViewCell() }
 
-            let cell = collectionView.dequeueReusableCell(
+            guard let cell = collectionView.dequeueReusableCell(
                 withReuseIdentifier: MediaThumbnailCell.identifier,
                 for: indexPath
-            ) as! MediaThumbnailCell
+            ) as? MediaThumbnailCell else {
+                return UICollectionViewCell()
+            }
 
             // セルの再利用時に間違った画像が表示されるのを防ぐ
             cell.representedAssetIdentifier = media.id.value
@@ -110,20 +111,21 @@ final class MediaLibraryCollectionView: UIView {
 
     // MARK: - Public Methods
 
-    /// 選択モードを設定
-    func setSelectionMode(_ isSelectionMode: Bool) {
-        self.isSelectionMode = isSelectionMode
-        collectionView.allowsSelection = isSelectionMode
-        collectionView.allowsMultipleSelection = isSelectionMode
-        collectionView.allowsMultipleSelectionDuringEditing = isSelectionMode
-    }
-
-    /// メディアデータを更新
-    func updateMedia(_ media: [Media]) {
+    /// メディアデータを元にsnapshotを作成
+    func createInitialSnapshot(_ media: [Media]) {
         var snapshot = NSDiffableDataSourceSnapshot<MediaSection, Media>()
         snapshot.appendSections([.photos])
         snapshot.appendItems(media, toSection: .photos)
         dataSource.apply(snapshot, animatingDifferences: true)
+    }
+
+    func updateSnapshot(addedIDs: Set<Media.ID>, removedIDs: Set<Media.ID>) {
+        var snapshot = dataSource.snapshot()
+        let itemsToReload = snapshot.itemIdentifiers.filter { addedIDs.contains($0.id) || removedIDs.contains($0.id) }
+        if !itemsToReload.isEmpty {
+            snapshot.reloadItems(itemsToReload)
+            dataSource.apply(snapshot, animatingDifferences: false)
+        }
     }
 
     /// サムネイルを更新
@@ -135,13 +137,6 @@ final class MediaLibraryCollectionView: UIView {
         if cell.representedAssetIdentifier == mediaID.value {
             cell.updateThumbnail(with: thumbnail)
         }
-    }
-
-    /// 選択状態のみ更新（編集モード切り替え時）
-    func updateSelectionState() {
-        // 選択状態の変更はスナップショット再適用で効率的に処理
-        let snapshot = dataSource.snapshot()
-        dataSource.apply(snapshot, animatingDifferences: false)
     }
 
     /// レイアウト確定後の初期化処理
@@ -182,11 +177,15 @@ final class MediaLibraryCollectionView: UIView {
 
 extension MediaLibraryCollectionView: UICollectionViewDelegate {
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        guard isSelectionMode,
-              let media = dataSource.itemIdentifier(for: indexPath) else { return }
-        
-        viewModel.toggleSelection(for: media.id)
+        guard let media = dataSource.itemIdentifier(for: indexPath) else { return }
+
+        viewModel.toggleMediaSelection(for: media.id)
         collectionView.deselectItem(at: indexPath, animated: false)
+    }
+
+    // 編集モードのときだけ選択許可
+    func collectionView(_ collectionView: UICollectionView, shouldSelectItemAt _: IndexPath) -> Bool {
+        return collectionView.isEditing
     }
 }
 
@@ -224,17 +223,17 @@ extension MediaLibraryCollectionView: UICollectionViewDataSourcePrefetching {
     }
 }
 
-
 // MARK: - Helper Method
 
 extension MediaLibraryCollectionView {
     /// mediaID から indexPath を取得するヘルパー
     private func indexPath(for mediaID: Media.ID) -> IndexPath? {
-        for section in 0..<(dataSource.numberOfSections(in: collectionView)) {
-            for itemIndex in 0..<(collectionView.numberOfItems(inSection: section)) {
+        for section in 0 ..< (dataSource.numberOfSections(in: collectionView)) {
+            for itemIndex in 0 ..< (collectionView.numberOfItems(inSection: section)) {
                 let indexPath = IndexPath(item: itemIndex, section: section)
                 if let item = dataSource.itemIdentifier(for: indexPath),
-                   item.id == mediaID {
+                   item.id == mediaID
+                {
                     return indexPath
                 }
             }

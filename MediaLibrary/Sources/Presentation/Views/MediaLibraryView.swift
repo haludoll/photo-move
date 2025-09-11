@@ -1,11 +1,25 @@
 import SwiftUI
+import MediaLibraryDependencyInjection
 
 /// メディアライブラリ画面（Public API）
 public struct MediaLibraryView: View {
+    @StateObject private var mediaLibraryViewModel = MediaLibraryViewModel(mediaLibraryService: AppDependencies.mediaLibraryAppService)
+
     public init() {}
 
     public var body: some View {
-        MediaLibraryViewControllerWrapper()
-            .ignoresSafeArea()
+        ZStack(alignment: .topTrailing) {
+            MediaLibraryViewControllerWrapper(mediaLibraryViewModel: mediaLibraryViewModel)
+                .ignoresSafeArea()
+
+            MediaSelectionModeButton(isSelectionMode: mediaLibraryViewModel.isSelectionMode) {
+                mediaLibraryViewModel.toggleSelectionMode()
+            }
+            .padding(.all)
+        }
     }
+}
+
+#Preview {
+    MediaLibraryView()
 }
