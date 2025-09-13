@@ -1,5 +1,6 @@
 import SwiftUI
 import MediaLibraryDependencyInjection
+import MediaLibraryDomain
 
 /// メディアライブラリ画面（Public API）
 public struct MediaLibraryView: View {
@@ -16,6 +17,15 @@ public struct MediaLibraryView: View {
                 mediaLibraryViewModel.toggleSelectionMode()
             }
             .padding(.all)
+        }
+        .alert("Error", isPresented: .constant(mediaLibraryViewModel.error != nil)) {
+            Button("OK") {
+                mediaLibraryViewModel.clearError()
+            }
+        } message: {
+            if let error = mediaLibraryViewModel.error {
+                Text(error.localizedMessage)
+            }
         }
     }
 }

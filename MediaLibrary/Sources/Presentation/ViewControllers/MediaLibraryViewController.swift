@@ -73,15 +73,7 @@ final class MediaLibraryViewController: UIViewController {
             }
             .store(in: &cancellables)
 
-        // エラーの監視
-        mediaLibraryViewModel.$error
-            .receive(on: DispatchQueue.main)
-            .sink { [weak self] error in
-                if let error = error {
-                    self?.showError(error)
-                }
-            }
-            .store(in: &cancellables)
+        // エラーの監視はSwiftUIで行うため削除
 
         // サムネイルの読み込み監視
         mediaLibraryViewModel.thumbnailLoadedSubject
@@ -117,24 +109,6 @@ final class MediaLibraryViewController: UIViewController {
             .store(in: &cancellables)
     }
 
-    private func showError(_ error: MediaError?) {
-        guard let error = error else { return }
-
-        let alert = UIAlertController(
-            title: String(localized: "Error", bundle: .module),
-            message: error.localizedMessage,
-            preferredStyle: .alert
-        )
-
-        alert.addAction(UIAlertAction(
-            title: String(localized: "OK", bundle: .module),
-            style: .default
-        ) { [weak self] _ in
-            self?.mediaLibraryViewModel.clearError()
-        })
-
-        present(alert, animated: true)
-    }
 
     // MARK: - Editing Mode
 
@@ -144,28 +118,3 @@ final class MediaLibraryViewController: UIViewController {
     }
 }
 
-// MARK: - MediaError Extension
-
-extension MediaError {
-    /// ユーザー向けのローカライズされたエラーメッセージ
-    var localizedMessage: String {
-        switch self {
-        case .invalidMediaID:
-            String(localized: "Invalid media ID", bundle: .module)
-        case .invalidFilePath:
-            String(localized: "Invalid file path", bundle: .module)
-        case .invalidThumbnailData:
-            String(localized: "Invalid thumbnail data", bundle: .module)
-        case .permissionDenied:
-            String(localized: "Photo library access permission denied. Please allow access in Settings.", bundle: .module)
-        case .mediaNotFound:
-            String(localized: "Photo not found", bundle: .module)
-        case .unsupportedFormat:
-            String(localized: "Unsupported file format", bundle: .module)
-        case .thumbnailGenerationFailed:
-            String(localized: "Thumbnail generation failed", bundle: .module)
-        case .mediaLoadFailed:
-            String(localized: "Photo loading failed", bundle: .module)
-        }
-    }
-}

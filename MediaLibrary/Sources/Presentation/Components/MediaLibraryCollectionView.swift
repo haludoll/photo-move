@@ -58,7 +58,6 @@ final class MediaLibraryCollectionView: UIView {
         collectionView.allowsSelection = true
         collectionView.allowsMultipleSelection = true
         collectionView.allowsMultipleSelectionDuringEditing = true
-        collectionView.delaysContentTouches = false
 
         collectionView.register(
             MediaThumbnailCell.self,
@@ -146,7 +145,6 @@ final class MediaLibraryCollectionView: UIView {
 
         if cell.representedAssetIdentifier == mediaID.value {
             let isSelected = viewModel.selectedMediaIDs.contains(mediaID)
-            print("⭐️")
             cell.updateCheckmark(isSelected: isSelected)
         }
     }
@@ -190,15 +188,11 @@ final class MediaLibraryCollectionView: UIView {
 extension MediaLibraryCollectionView: UICollectionViewDelegate {
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         guard let media = dataSource.itemIdentifier(for: indexPath) else { return }
-        
-        print("❤️ 選択")
         viewModel.selectMedia(for: media.id)
     }
     
     func collectionView(_ collectionView: UICollectionView, didDeselectItemAt indexPath: IndexPath) {
         guard let media = dataSource.itemIdentifier(for: indexPath) else { return }
-        
-        print("💔 選択解除")
         viewModel.deselectMedia(for: media.id)
     }
 
