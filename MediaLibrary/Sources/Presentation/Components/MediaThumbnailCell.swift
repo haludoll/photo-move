@@ -37,6 +37,16 @@ final class MediaThumbnailCell: UICollectionViewCell {
         setupCheckmarkView()
     }
 
+    // MARK: - Cell Lifecycle
+
+    override func prepareForReuse() {
+        super.prepareForReuse()
+        representedAssetIdentifier = nil
+        imageView.image = nil
+        checkmarkView.isHidden = true
+        overlayView.isHidden = true
+    }
+
     // MARK: - Configuration
 
     func configure(with mediaID: Media.ID, thumbnail: Media.Thumbnail?, isSelected: Bool = false) {
