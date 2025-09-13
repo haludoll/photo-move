@@ -53,7 +53,7 @@ final class MediaThumbnailCell: UICollectionViewCell {
         }
     }
 
-    private func updateCheckmark(isSelected: Bool) {
+    func updateCheckmark(isSelected: Bool) {
         checkmarkView.isHidden = !isSelected
         overlayView.isHidden = !isSelected
     }

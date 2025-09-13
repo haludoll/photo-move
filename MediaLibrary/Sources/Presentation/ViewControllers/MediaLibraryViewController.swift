@@ -107,8 +107,9 @@ final class MediaLibraryViewController: UIViewController {
                 let added = currentSelectedIDs.subtracting(self.previousSelectedIDs)
                 let removed = self.previousSelectedIDs.subtracting(currentSelectedIDs)
 
-                if !added.isEmpty || !removed.isEmpty {
-                    self.mediaLibraryCollectionView.updateSnapshot(addedIDs: added, removedIDs: removed)
+                // 選択状態が変更されたセルの表示を直接更新
+                for mediaID in added.union(removed) {
+                    self.mediaLibraryCollectionView.updateSelectionStatus(from: mediaID)
                 }
 
                 self.previousSelectedIDs = currentSelectedIDs

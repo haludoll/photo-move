@@ -56,8 +56,9 @@ final class MediaLibraryCollectionView: UIView {
         collectionView.backgroundColor = .systemBackground
         collectionView.translatesAutoresizingMaskIntoConstraints = false
         collectionView.allowsSelection = true
-        collectionView.allowsMultipleSelection = false
+        collectionView.allowsMultipleSelection = true
         collectionView.allowsMultipleSelectionDuringEditing = true
+        collectionView.delaysContentTouches = false
 
         collectionView.register(
             MediaThumbnailCell.self,
@@ -139,6 +140,17 @@ final class MediaLibraryCollectionView: UIView {
         }
     }
 
+    func updateSelectionStatus(from mediaID: Media.ID) {
+        guard let indexPath = indexPath(for: mediaID),
+              let cell = collectionView.cellForItem(at: indexPath) as? MediaThumbnailCell else { return }
+
+        if cell.representedAssetIdentifier == mediaID.value {
+            let isSelected = viewModel.selectedMediaIDs.contains(mediaID)
+            print("⭐️")
+            cell.updateCheckmark(isSelected: isSelected)
+        }
+    }
+
     /// レイアウト確定後の初期化処理
     func viewDidAppear() {
         updateThumbnailSize()
@@ -178,9 +190,16 @@ final class MediaLibraryCollectionView: UIView {
 extension MediaLibraryCollectionView: UICollectionViewDelegate {
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         guard let media = dataSource.itemIdentifier(for: indexPath) else { return }
-
-        viewModel.toggleMediaSelection(for: media.id)
-        collectionView.deselectItem(at: indexPath, animated: false)
+        
+        print("❤️ 選択")
+        viewModel.selectMedia(for: media.id)
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, didDeselectItemAt indexPath: IndexPath) {
+        guard let media = dataSource.itemIdentifier(for: indexPath) else { return }
+        
+        print("💔 選択解除")
+        viewModel.deselectMedia(for: media.id)
     }
 
     // 編集モードのときだけ選択許可
