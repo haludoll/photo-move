@@ -3,12 +3,12 @@ import SwiftUI
 /// メディア選択モードの切り替えボタン
 struct MediaSelectionModeButton: View {
     // MARK: - Properties
-    
+
     let isSelectionMode: Bool
     let action: () -> Void
-    
+
     // MARK: - Body
-    
+
     var body: some View {
         Button(action: action) {
             Text(buttonTitle)
@@ -21,9 +21,9 @@ struct MediaSelectionModeButton: View {
         }
         .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 18))
     }
-    
+
     // MARK: - Private Properties
-    
+
     private var buttonTitle: String {
         if isSelectionMode {
             String(localized: "Cancel", bundle: .module)

@@ -14,7 +14,8 @@ struct PhotoThumbnailView: View {
             .overlay(
                 Group {
                     if let thumbnail = thumbnail,
-                       let image = ThumbnailConverter.createImage(from: thumbnail) {
+                       let image = ThumbnailConverter.createImage(from: thumbnail)
+                    {
                         Image(uiImage: image)
                             .resizable()
                             .scaledToFill()

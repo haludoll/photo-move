@@ -74,24 +74,24 @@ final class MediaThumbnailCell: UICollectionViewCell {
             imageView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
         ])
     }
-    
+
     private func setupOverlayView() {
         let overlayView = UIView()
         overlayView.backgroundColor = UIColor.black.withAlphaComponent(0.3)
         overlayView.translatesAutoresizingMaskIntoConstraints = false
         overlayView.isHidden = true
-        
+
         self.overlayView = overlayView
         contentView.addSubview(overlayView)
-        
+
         NSLayoutConstraint.activate([
             overlayView.topAnchor.constraint(equalTo: contentView.topAnchor),
             overlayView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
             overlayView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
-            overlayView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor)
+            overlayView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
         ])
     }
-    
+
     private func setupCheckmarkView() {
         let checkmarkView = UIImageView()
         checkmarkView.image = UIImage(systemName: "checkmark.circle.fill")
@@ -101,15 +101,15 @@ final class MediaThumbnailCell: UICollectionViewCell {
         checkmarkView.clipsToBounds = true
         checkmarkView.translatesAutoresizingMaskIntoConstraints = false
         checkmarkView.isHidden = true
-        
+
         self.checkmarkView = checkmarkView
         contentView.addSubview(checkmarkView)
-        
+
         NSLayoutConstraint.activate([
             checkmarkView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -8),
             checkmarkView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -8),
             checkmarkView.widthAnchor.constraint(equalToConstant: 24),
-            checkmarkView.heightAnchor.constraint(equalToConstant: 24)
+            checkmarkView.heightAnchor.constraint(equalToConstant: 24),
         ])
     }
 }

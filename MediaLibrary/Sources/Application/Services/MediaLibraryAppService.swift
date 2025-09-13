@@ -8,5 +8,4 @@ package protocol MediaLibraryAppService: Sendable {
 
     /// 指定されたメディアのサムネイルを取得する
     func loadThumbnail(for mediaID: Media.ID, size: CGSize) async throws -> Media.Thumbnail
-
 }

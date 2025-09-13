@@ -215,7 +215,7 @@ struct MediaLibraryViewModelTests {
         let viewModel = MediaLibraryViewModel(mediaLibraryService: mockAppService)
 
         // Act
-        viewModel.enterSelectionMode()
+        viewModel.toggleSelectionMode()
 
         // Assert
         #expect(viewModel.isSelectionMode == true)
@@ -237,18 +237,18 @@ struct MediaLibraryViewModelTests {
         let viewModel = MediaLibraryViewModel(mediaLibraryService: mockAppService)
 
         await viewModel.loadPhotos()
-        viewModel.enterSelectionMode()
+        viewModel.toggleSelectionMode()
         
         // いくつか選択
         if let firstMedia = viewModel.media.first {
-            viewModel.toggleMediaSelection(for: firstMedia.id)
+            viewModel.selectMedia(for: firstMedia.id)
         }
 
         #expect(viewModel.isSelectionMode == true)
         #expect(viewModel.selectedMedia.count > 0)
 
         // Act
-        viewModel.exitSelectionMode()
+        viewModel.toggleSelectionMode()
 
         // Assert
         #expect(viewModel.isSelectionMode == false)
@@ -271,7 +271,7 @@ struct MediaLibraryViewModelTests {
         let viewModel = MediaLibraryViewModel(mediaLibraryService: mockAppService)
 
         await viewModel.loadPhotos()
-        viewModel.enterSelectionMode()
+        viewModel.toggleSelectionMode()
 
         guard let firstMedia = viewModel.media.first else {
             Issue.record("No media loaded")
@@ -279,7 +279,7 @@ struct MediaLibraryViewModelTests {
         }
 
         // Act - 選択
-        viewModel.toggleMediaSelection(for: firstMedia.id)
+        viewModel.selectMedia(for: firstMedia.id)
 
         // Assert
         #expect(viewModel.isSelected(firstMedia.id) == true)
@@ -287,7 +287,7 @@ struct MediaLibraryViewModelTests {
         #expect(viewModel.selectedMedia.first?.id == firstMedia.id)
 
         // Act - 選択解除
-        viewModel.toggleMediaSelection(for: firstMedia.id)
+        viewModel.deselectMedia(for: firstMedia.id)
 
         // Assert
         #expect(viewModel.isSelected(firstMedia.id) == false)
@@ -313,7 +313,7 @@ struct MediaLibraryViewModelTests {
         }
 
         // Act - 選択モード外で選択を試行
-        viewModel.toggleMediaSelection(for: firstMedia.id)
+        viewModel.selectMedia(for: firstMedia.id)
 
         // Assert - 選択されない
         #expect(viewModel.isSelected(firstMedia.id) == false)
@@ -336,7 +336,7 @@ struct MediaLibraryViewModelTests {
         let viewModel = MediaLibraryViewModel(mediaLibraryService: mockAppService)
 
         await viewModel.loadPhotos()
-        viewModel.enterSelectionMode()
+        viewModel.toggleSelectionMode()
 
         // Act
         viewModel.selectAll()
@@ -364,7 +364,7 @@ struct MediaLibraryViewModelTests {
         let viewModel = MediaLibraryViewModel(mediaLibraryService: mockAppService)
 
         await viewModel.loadPhotos()
-        viewModel.enterSelectionMode()
+        viewModel.toggleSelectionMode()
         viewModel.selectAll()
 
         #expect(viewModel.selectedMedia.count == 2)
@@ -393,11 +393,11 @@ struct MediaLibraryViewModelTests {
         let viewModel = MediaLibraryViewModel(mediaLibraryService: mockAppService)
 
         await viewModel.loadPhotos()
-        viewModel.enterSelectionMode()
+        viewModel.toggleSelectionMode()
 
         // Act - 一部を選択
-        viewModel.toggleMediaSelection(for: mockMedia[0].id)
-        viewModel.toggleMediaSelection(for: mockMedia[2].id)
+        viewModel.selectMedia(for: mockMedia[0].id)
+        viewModel.selectMedia(for: mockMedia[2].id)
 
         // Assert
         #expect(viewModel.selectedMedia.count == 2)

@@ -6,7 +6,7 @@ import UIKit
 /// PhotoKitを使用したMediaRepositoryの実装
 package struct MediaRepositoryImpl: MediaRepository {
     // MARK: - Properties
-    
+
     private let imageManager = PHImageManager()
 
     // MARK: - Initialization
@@ -41,7 +41,7 @@ package struct MediaRepositoryImpl: MediaRepository {
 
         // サムネイル生成
         let image = try await generateThumbnail(from: asset, size: size)
-        
+
         // UIImageからDataに変換
         guard let imageData = image.pngData() else {
             throw MediaError.invalidThumbnailData

@@ -32,7 +32,7 @@ import UIKit
     private func createSampleThumbnails() -> [Media.ID: Media.Thumbnail] {
         do {
             let media = try createSampleMedia()
-            return Dictionary(uniqueKeysWithValues: try media.compactMap { mediaItem in
+            return try Dictionary(uniqueKeysWithValues: media.compactMap { mediaItem in
                 let colors: [UIColor] = [.systemBlue, .systemGreen, .systemOrange]
                 let index = abs(mediaItem.id.value.hashValue) % colors.count
                 let color = colors[index]

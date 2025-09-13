@@ -186,12 +186,12 @@ final class MediaLibraryCollectionView: UIView {
 // MARK: - UICollectionViewDelegate
 
 extension MediaLibraryCollectionView: UICollectionViewDelegate {
-    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+    func collectionView(_: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         guard let media = dataSource.itemIdentifier(for: indexPath) else { return }
         viewModel.selectMedia(for: media.id)
     }
-    
-    func collectionView(_ collectionView: UICollectionView, didDeselectItemAt indexPath: IndexPath) {
+
+    func collectionView(_: UICollectionView, didDeselectItemAt indexPath: IndexPath) {
         guard let media = dataSource.itemIdentifier(for: indexPath) else { return }
         viewModel.deselectMedia(for: media.id)
     }

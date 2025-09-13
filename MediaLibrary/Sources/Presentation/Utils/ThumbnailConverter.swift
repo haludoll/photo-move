@@ -1,6 +1,6 @@
 import Foundation
-import UIKit
 import MediaLibraryDomain
+import UIKit
 
 /// UIImageとMedia.Thumbnailの変換を行うユーティリティ
 enum ThumbnailConverter {
@@ -11,7 +11,7 @@ enum ThumbnailConverter {
         }
         return try Media.Thumbnail(mediaID: mediaID, imageData: imageData, size: size)
     }
-    
+
     /// Media.ThumbnailからUIImageを作成
     static func createImage(from thumbnail: Media.Thumbnail) -> UIImage? {
         return UIImage(data: thumbnail.imageData)

@@ -36,7 +36,7 @@ package struct Media: Identifiable, Hashable {
             guard !imageData.isEmpty else {
                 throw MediaError.invalidThumbnailData
             }
-            
+
             self.mediaID = mediaID
             self.imageData = imageData
             self.size = size

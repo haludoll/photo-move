@@ -109,7 +109,6 @@ final class MediaLibraryViewController: UIViewController {
             .store(in: &cancellables)
     }
 
-
     // MARK: - Editing Mode
 
     override func setEditing(_ editing: Bool, animated: Bool) {
@@ -117,4 +116,3 @@ final class MediaLibraryViewController: UIViewController {
         mediaLibraryCollectionView.collectionView.isEditing = editing
     }
 }
-

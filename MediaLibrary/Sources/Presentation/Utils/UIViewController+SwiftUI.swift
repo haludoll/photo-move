@@ -15,18 +15,18 @@ extension UIViewController {
         let hostingController = UIHostingController(rootView: swiftUIView)
         hostingController.view.backgroundColor = .clear
         hostingController.view.translatesAutoresizingMaskIntoConstraints = false
-        
+
         addChild(hostingController)
         view.addSubview(hostingController.view)
         hostingController.didMove(toParent: self)
-        
+
         // 制約を適用
         let layoutConstraints = constraints(hostingController.view, view)
         NSLayoutConstraint.activate(layoutConstraints)
-        
+
         return hostingController
     }
-    
+
     /// SwiftUIビューをUIViewControllerの指定位置に埋め込むためのヘルパーメソッド
     /// - Parameters:
     ///   - swiftUIView: 埋め込むSwiftUIビュー
@@ -53,7 +53,7 @@ enum SwiftUIPosition {
     case bottomTrailing
     case center
     case fullScreen
-    
+
     /// 指定された位置に対応するAuto Layout制約を生成
     @MainActor func constraints(
         for hostingView: UIView,
@@ -61,39 +61,39 @@ enum SwiftUIPosition {
         margins: UIEdgeInsets
     ) -> [NSLayoutConstraint] {
         let safeArea = containerView.safeAreaLayoutGuide
-        
+
         switch self {
         case .topLeading:
             return [
                 hostingView.topAnchor.constraint(equalTo: safeArea.topAnchor, constant: margins.top),
-                hostingView.leadingAnchor.constraint(equalTo: safeArea.leadingAnchor, constant: margins.left)
+                hostingView.leadingAnchor.constraint(equalTo: safeArea.leadingAnchor, constant: margins.left),
             ]
         case .topTrailing:
             return [
                 hostingView.topAnchor.constraint(equalTo: safeArea.topAnchor, constant: margins.top),
-                hostingView.trailingAnchor.constraint(equalTo: safeArea.trailingAnchor, constant: -margins.right)
+                hostingView.trailingAnchor.constraint(equalTo: safeArea.trailingAnchor, constant: -margins.right),
             ]
         case .bottomLeading:
             return [
                 hostingView.bottomAnchor.constraint(equalTo: safeArea.bottomAnchor, constant: -margins.bottom),
-                hostingView.leadingAnchor.constraint(equalTo: safeArea.leadingAnchor, constant: margins.left)
+                hostingView.leadingAnchor.constraint(equalTo: safeArea.leadingAnchor, constant: margins.left),
             ]
         case .bottomTrailing:
             return [
                 hostingView.bottomAnchor.constraint(equalTo: safeArea.bottomAnchor, constant: -margins.bottom),
-                hostingView.trailingAnchor.constraint(equalTo: safeArea.trailingAnchor, constant: -margins.right)
+                hostingView.trailingAnchor.constraint(equalTo: safeArea.trailingAnchor, constant: -margins.right),
             ]
         case .center:
             return [
                 hostingView.centerXAnchor.constraint(equalTo: safeArea.centerXAnchor),
-                hostingView.centerYAnchor.constraint(equalTo: safeArea.centerYAnchor)
+                hostingView.centerYAnchor.constraint(equalTo: safeArea.centerYAnchor),
             ]
         case .fullScreen:
             return [
                 hostingView.topAnchor.constraint(equalTo: safeArea.topAnchor, constant: margins.top),
                 hostingView.leadingAnchor.constraint(equalTo: safeArea.leadingAnchor, constant: margins.left),
                 hostingView.trailingAnchor.constraint(equalTo: safeArea.trailingAnchor, constant: -margins.right),
-                hostingView.bottomAnchor.constraint(equalTo: safeArea.bottomAnchor, constant: -margins.bottom)
+                hostingView.bottomAnchor.constraint(equalTo: safeArea.bottomAnchor, constant: -margins.bottom),
             ]
         }
     }

@@ -50,5 +50,4 @@ package struct MediaLibraryAppServiceImpl: MediaLibraryAppService {
     package func loadThumbnail(for mediaID: Media.ID, size: CGSize) async throws -> Media.Thumbnail {
         return try await mediaRepository.fetchThumbnail(for: mediaID, size: size)
     }
-
 }
