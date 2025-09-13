@@ -1,6 +1,5 @@
 import Foundation
 import Testing
-
 @testable import MediaLibraryDomain
 
 @Test("Media.Thumbnail - 正常な値で初期化できる")

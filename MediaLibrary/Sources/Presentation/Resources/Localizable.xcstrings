@@ -171,6 +171,40 @@
         }
       }
     },
+    "Cancel" : {
+      "comment" : "Selection mode cancellation button text",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cancel"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "キャンセル"
+          }
+        }
+      }
+    },
+    "Select" : {
+      "comment" : "Selection mode activation button text",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Select"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "選択"
+          }
+        }
+      }
+    },
     "Photos" : {
       "comment" : "Navigation title for photos screen",
       "localizations" : {

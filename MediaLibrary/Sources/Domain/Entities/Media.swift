@@ -1,7 +1,7 @@
 import Foundation
 
 /// メディア（写真）エンティティ
-package struct Media: Identifiable {
+package struct Media: Identifiable, Hashable {
     /// メディアIDの値オブジェクト
     package struct ID: Hashable, Identifiable {
         package let value: String
@@ -61,5 +61,15 @@ package struct Media: Identifiable {
         self.type = type
         self.metadata = metadata
         self.filePath = filePath
+    }
+
+    // MARK: - Hashable
+
+    package func hash(into hasher: inout Hasher) {
+        hasher.combine(id)
+    }
+
+    package static func == (lhs: Media, rhs: Media) -> Bool {
+        return lhs.id == rhs.id
     }
 }

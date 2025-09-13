@@ -4,138 +4,62 @@ import UIKit
 
 #if DEBUG
 
-// MARK: - Preview Data
+    // MARK: - Preview Data
 
-private func createSampleMedia() throws -> [Media] {
-    return try [
-        Media(
-            id: Media.ID("1"),
-            type: .photo,
-            metadata: Media.Metadata(format: .jpeg, capturedAt: Date()),
-            filePath: "photo1.jpg"
-        ),
-        Media(
-            id: Media.ID("2"),
-            type: .photo,
-            metadata: Media.Metadata(format: .png, capturedAt: Date()),
-            filePath: "photo2.png"
-        ),
-        Media(
-            id: Media.ID("3"),
-            type: .photo,
-            metadata: Media.Metadata(format: .jpeg, capturedAt: Date()),
-            filePath: "photo3.jpg"
-        ),
-    ]
-}
-
-private func createSampleThumbnails() -> [Media.ID: Media.Thumbnail] {
-    do {
-        let media = try createSampleMedia()
-        return Dictionary(uniqueKeysWithValues: media.compactMap { mediaItem in
-            let colors: [UIColor] = [.systemBlue, .systemGreen, .systemOrange]
-            let index = abs(mediaItem.id.value.hashValue) % colors.count
-            let color = colors[index]
-            
-            let config = UIImage.SymbolConfiguration(pointSize: 40, weight: .medium)
-            let image = UIImage(systemName: "photo.fill", withConfiguration: config)?.withTintColor(color, renderingMode: .alwaysOriginal)
-            let data = image?.jpegData(compressionQuality: 0.8) ?? Data()
-            
-            guard let thumbnail = try? Media.Thumbnail(
-                mediaID: mediaItem.id,
-                imageData: data,
-                size: CGSize(width: 80, height: 80)
-            ) else { return nil }
-            
-            return (mediaItem.id, thumbnail)
-        })
-    } catch {
-        return [:]
+    private func createSampleMedia() throws -> [Media] {
+        return try [
+            Media(
+                id: Media.ID("1"),
+                type: .photo,
+                metadata: Media.Metadata(format: .jpeg, capturedAt: Date()),
+                filePath: "photo1.jpg"
+            ),
+            Media(
+                id: Media.ID("2"),
+                type: .photo,
+                metadata: Media.Metadata(format: .png, capturedAt: Date()),
+                filePath: "photo2.png"
+            ),
+            Media(
+                id: Media.ID("3"),
+                type: .photo,
+                metadata: Media.Metadata(format: .jpeg, capturedAt: Date()),
+                filePath: "photo3.jpg"
+            ),
+        ]
     }
-}
 
-// MARK: - Previews
+    private func createSampleThumbnails() -> [Media.ID: Media.Thumbnail] {
+        do {
+            let media = try createSampleMedia()
+            return try Dictionary(uniqueKeysWithValues: media.compactMap { mediaItem in
+                let colors: [UIColor] = [.systemBlue, .systemGreen, .systemOrange]
+                let index = abs(mediaItem.id.value.hashValue) % colors.count
+                let color = colors[index]
 
-#Preview("Default - with DI") {
-    MediaLibraryView()
-}
+                let config = UIImage.SymbolConfiguration(pointSize: 40, weight: .medium)
+                let image = UIImage(systemName: "photo.fill", withConfiguration: config)?.withTintColor(color, renderingMode: .alwaysOriginal) ?? UIImage()
 
-#Preview("Loading State") {
-    MediaLibraryContentView(
-        media: [],
-        isLoading: true,
-        error: nil,
-        hasError: false,
-        thumbnails: [:],
-        onLoadPhotos: {},
-        onLoadThumbnail: { _, _ in },
-        onClearError: {}
-    )
-}
+                let thumbnail = try ThumbnailConverter.createThumbnail(
+                    from: image,
+                    mediaID: mediaItem.id,
+                    size: CGSize(width: 80, height: 80)
+                )
 
-#Preview("Empty State") {
-    MediaLibraryContentView(
-        media: [],
-        isLoading: false,
-        error: nil,
-        hasError: false,
-        thumbnails: [:],
-        onLoadPhotos: {},
-        onLoadThumbnail: { _, _ in },
-        onClearError: {}
-    )
-}
+                return (mediaItem.id, thumbnail)
+            })
+        } catch {
+            return [:]
+        }
+    }
 
-#Preview("With Media") {
-    MediaLibraryContentView(
-        media: (try? createSampleMedia()) ?? [],
-        isLoading: false,
-        error: nil,
-        hasError: false,
-        thumbnails: createSampleThumbnails(),
-        onLoadPhotos: {},
-        onLoadThumbnail: { _, _ in },
-        onClearError: {}
-    )
-}
+    // MARK: - Previews
 
-#Preview("Permission Error") {
-    MediaLibraryContentView(
-        media: [],
-        isLoading: false,
-        error: .permissionDenied,
-        hasError: true,
-        thumbnails: [:],
-        onLoadPhotos: {},
-        onLoadThumbnail: { _, _ in },
-        onClearError: {}
-    )
-}
+    #Preview("Default - with DI") {
+        MediaLibraryView()
+    }
 
-#Preview("Load Failed Error") {
-    MediaLibraryContentView(
-        media: [],
-        isLoading: false,
-        error: .mediaLoadFailed,
-        hasError: true,
-        thumbnails: [:],
-        onLoadPhotos: {},
-        onLoadThumbnail: { _, _ in },
-        onClearError: {}
-    )
-}
-
-#Preview("Loading with some media") {
-    MediaLibraryContentView(
-        media: (try? createSampleMedia()) ?? [],
-        isLoading: true,
-        error: nil,
-        hasError: false,
-        thumbnails: createSampleThumbnails(),
-        onLoadPhotos: {},
-        onLoadThumbnail: { _, _ in },
-        onClearError: {}
-    )
-}
+    // プレビューは基本のMediaLibraryViewのみ提供
+    // 詳細な状態テストはUIテストで行う
 
 #endif

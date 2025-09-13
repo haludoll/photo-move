@@ -138,6 +138,9 @@ private struct MockSuccessRepository: MediaRepository, Sendable {
 
 /// 失敗用のMockRepository
 private struct MockFailureRepository: MediaRepository, Sendable {
+    
+    init() {}
+    
     func fetchMedia() async throws -> [Media] {
         throw MediaError.permissionDenied
     }
@@ -170,3 +173,4 @@ private struct MockPermissionDeniedService: PhotoLibraryPermissionService, Senda
         return .denied
     }
 }
+
