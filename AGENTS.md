@@ -1,36 +1,112 @@
-# Repository Guidelines
+# AGENTS.md
 
-## Project Structure & Module Organization
-- `App/`: iOS app (SwiftUI), Xcode project and UI/unit tests (`photo-move.xcodeproj`, `photo-move.xcworkspace`, `photo-moveTests`, `photo-moveUITests`).
-- `MediaLibrary/`: Swift Package with DDD layers: `Domain/`, `Application/`, `Infrastructure/`, `Presentation/`, `DependencyInjection/`, plus `Tests/` and `MediaLibrary.xctestplan`.
-- `AppFoundation/`: Swift Package for app-wide scaffolding (`Sources/`, `Tests/`).
-- `Scripts/`: helper scripts (`format.sh`, `build.sh`, `test.sh`, `xcode-swiftformat.sh`).
-- `docs/`: architecture, specs, and issue docs.
+## ブランチ戦略
 
-## Build, Test, and Development Commands
-- Format code: `./Scripts/format.sh` (uses `.swift-format`).
-- Build packages: `./Scripts/build.sh` (runs formatter, then `swift build --package-path MediaLibrary`).
-- Test packages: `./Scripts/test.sh` (runs formatter, then `swift test --package-path MediaLibrary`).
-- Xcode: open `App/photo-move.xcworkspace` and use the `photo-move` scheme. Test plans: `App/photo-move.xctestplan`, `MediaLibrary/MediaLibrary.xctestplan`.
+本プロジェクトでは**トランクベース開発戦略**を採用します：
 
-## Coding Style & Naming Conventions
-- Swift 6; strict concurrency where applicable; prefer `struct` and protocols.
-- Formatting: `.swift-format` (4 spaces, line length 120). Always run the formatter before committing.
-- Naming: Types `UpperCamelCase`, methods/vars `lowerCamelCase`, protocols end with `Protocol` when clarifying intent; concrete implementations may use `Impl` (e.g., `MediaRepositoryImpl`).
-- Files mirror type names; group by layer (e.g., `Domain/Entities/Media.swift`).
+### ブランチフロー
+1. **Issue作成**: 機能・バグ修正ごとにGitHub Issueを作成
+2. **ブランチ作成**: `issue-{issue番号}-{簡潔な説明}` 形式でブランチを作成
+   - 例: `issue-42-add-upload-feature`
+3. **初回コミット**: 最初のコミット後、直ちにdraft Pull Requestを作成
+4. **継続開発**: ブランチで継続的に開発・コミット
+5. **レビュー準備**: 実装完了時にPull Requestを「Ready for review」に変更
+6. **自動レビュー**: PR がopenになったタイミングでClaude Codeによる自動レビューを実行
+7. **マージ**: レビュー完了後、mainブランチにマージ
 
-## Testing Guidelines
-- Framework: `swift-testing` (`import Testing`, `@Test`, `#expect`).
-- Structure tests by layer: `Tests/DomainTests/...`, `Tests/ApplicationTests/...`, etc. File names end with `Tests.swift`.
-- Cover both happy-path and failure cases (e.g., permission denied, not found). Keep tests deterministic; use small helpers/mocks.
+### ブランチ命名規則
+- `issue-{番号}-{機能名}`: 新機能開発
+- `issue-{番号}-fix-{バグ内容}`: バグ修正
+- `issue-{番号}-refactor-{対象}`: リファクタリング
+- `issue-{番号}-docs-{ドキュメント種類}`: ドキュメント更新
 
-## Commit & Pull Request Guidelines
-- Commits: short, imperative subject; scoped when helpful (e.g., "MediaLibrary: refactor thumbnail caching"). Japanese or English is OK. Reference issues (e.g., `#15`).
-- PRs: clear description, linked issues, screenshots/screen recordings for UI changes, test plan, and impact notes. Require green CI and `./Scripts/format.sh` clean.
+### Pull Request運用
+- **Draft作成**: 初回コミット時に自動でdraft PRを作成
+- **継続的更新**: 開発中も定期的にコミット・プッシュ
+- **マージ条件**: レビュー承認 + CI/CDパス
 
-## Security & Configuration Tips
-- Do not commit secrets or user-specific paths. Keep assets out of VCS unless required. Follow PhotoKit permissions best practices; local-only processing by design.
+## コメント記述ガイドライン
 
-## Agent-Specific Notes
-- Keep changes minimal and within scope; do not mass‑reformat. Obey this file’s guidance for any directories you touch.
-- すべての思考および最終的な回答は日本語で記述すること。
+### DocCコメント（推奨）
+- **対象**: public/internal API、クラス、構造体、プロトコル、重要なメソッド
+- **形式**: SwiftDoc形式の三重スラッシュ（`///`）を使用
+- **内容**: 目的、パラメータ、戻り値、使用例を記述
+
+### インラインコメント（最小限）
+- **原則**: コードを見れば分かることは書かない
+- **対象**: 複雑なアルゴリズム、非自明なビジネスロジック、なぜその実装にしたかの理由
+- **避けるべき**: 変数代入、関数呼び出し、自明な処理の説明
+
+## Swift コード構造ガイドライン
+
+### プロパティの配置順序
+
+**基本原則**: プロパティは機能的に関連するもの同士を近くに配置し、アクセスレベルと性質により整理する
+
+**推奨配置順序**:
+1. **Stored Properties** (保存プロパティ)
+2. **Computed Properties** (計算プロパティ)  
+3. **Initialization** (イニシャライザ)
+4. **Instance Methods** (インスタンスメソッド)
+5. **Static/Class Members** (静的メンバー)
+
+## 開発プロセスの基本原則
+
+### イテレーション開発
+- **アジャイル開発**: 小さな機能単位でイテレーションを積み上げて開発する
+- **Issue単位**: 「写真ライブラリの一覧を取得する」「複数選択できるようにする」といった小さい機能を1つのIssueとして取り扱う
+
+### ドキュメント駆動開発
+Issue取り組み時の標準的な開発フロー：
+
+1. **仕様策定**
+   - 機能仕様の策定
+   - 概念モデルの設計（DDD）
+   - 技術的詳細設計
+2. **テスト作成（TDD）**: テストファーストでの開発
+3. **実装**: 実際のコード実装
+4. **動作検証**: 機能の動作確認
+5. **レビュー・マージ**: 完成した機能のマージ
+
+### ドキュメント管理の原則
+- **現在のスコープ**: 仕様やDDD概念モデルの検討は、その小さい機能を実現するスコープに限定して行う
+- **最新状態の維持**: DDDドキュメントは常に現在決定している仕様の最新状態を表現する
+- **段階的更新**: 機能追加・変更時は該当ドキュメントを更新して最新状態を保つ
+- **スコープ注釈不要**: ドキュメント内で「〜機能に限定」「〜に焦点を当てて」等の注釈は不要
+
+## タスク実行時の運用
+
+### 段階的実装の原則
+- **Issue調査の必須**: Issue取り組み前にIssueに紐づくコメントを全て確認
+- **一度で全てを実装しない**: 一度のタスクですべての実装を行わない
+- **段階的指示待ち**: 必要な作業をリストアップ後、上から順に指示を受けて実行
+- **レビュー負荷軽減**: 一度のタスクでのコード差分量を最小限に抑制
+- **独立動作単位**: 各段階は独立して動作確認可能な単位で実装
+
+### Git運用ルール
+- **コミット**: タスク完了時に必ずgit commitとpushを実行
+- **コミットメッセージ**: 求められたプロンプトと実施した変更内容を日本語で簡潔に記述
+- **小さなコミット単位**: 複雑な機能実装時は、タスクを小さく分割して1つずつコミット
+  - レビュー負荷軽減のため、一度にすべてを実装せず段階的に進める
+  - 各タスクは独立して動作確認可能な単位で区切る
+  - **TODO単位コミット**: 各TODOタスク完了時に必ずコミットを実行
+  - 例：「モデル定義」→「API実装」→「UI実装」→「エラーハンドリング」
+
+### コードフォーマット自動実行
+- **自動フォーマット**: タスク実行後に必ずコードフォーマットを実行
+- **フォーマット対象**: Swiftファイル（.swift）のみ
+- **フォーマットコマンド**: `swiftformat`
+- **実行タイミング**: コード変更を伴うタスク完了時
+
+#### フォーマット実行手順
+1. コード変更を伴うタスクの完了
+2. swift-formatによる自動フォーマット実行
+3. フォーマット後のコードをgit commitに含める
+
+### ビルド検証手順
+- **ビルド確認**: コード変更後の動作確認時は、必ずxcodebuildでiOSシミュレータ向けにビルドして確認する
+- **ビルドコマンド**: `xcodebuild -workspace photo-move.xcworkspace -scheme photo-move -destination 'platform=iOS Simulator,name=iPhone 16' build`
+- **対象プラットフォーム**: iOS専用プロジェクトのため、macOSはサポート対象外
+
+## その他
+思考や回答はすべて日本語で返答する。
